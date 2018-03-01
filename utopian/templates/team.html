@@ -1,55 +1,69 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div class="supervisor overview">{{supervisor}}'s team</div>
-    <table class="table table-bordered table-sm table-hover table-striped">
-        <thead>
-            <tr>
-            <th scope="col">Category</th>
-            <th scope="col">Moderated</th>
-            <th scope="col">Accepted</th>
-            <th scope="col">Rejected</th>
-            <th scope="col">%</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category in team_performance["categories"] %}
-            <tr>
-                <td>{{category}}</td>
-                <td>{{team_performance["categories"][category]["moderated"]}}</td>
-                <td>{{team_performance["categories"][category]["accepted"]}}</td>
-                <td>{{team_performance["categories"][category]["rejected"]}}</td>
-                <td>{{team_performance["categories"][category]["percentage"]}}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td><b>Overall</b></td>
-                <td><b>{{team_performance["overall"]["moderated"]}}</b></td>
-                <td><b>{{team_performance["overall"]["accepted"]}}</b></td>
-                <td><b>{{team_performance["overall"]["rejected"]}}</b></td>
-                <td><b>{{team_performance["overall"]["percentage"]}}</b></td>
-            </tr>
-        </tbody>
-    </table>
-    
-    {% for category in category_performance["moderators"] %}
-        <div class="supervisor {{category}}">{{category}}</div>
+    <div class="supervisor overview" data-toggle="collapse" data-target="#overview">Overview of {{supervisor}}'s team</div>
+    <div class="collapse show" id="overview">
         <table class="table table-bordered table-sm table-hover table-striped">
             <thead>
                 <tr>
-                <th scope="col">Moderator</th>
-                <th scope="col">Moderated</th>
-                <th scope="col">Accepted</th>
-                <th scope="col">Rejected</th>
-                <th scope="col">%</th>
+                <th scope="col" style="width: 23.75%">Category</th>
+                <th scope="col" style="width: 23.75%">Moderated</th>
+                <th scope="col" style="width: 23.75%">Accepted</th>
+                <th scope="col" style="width: 23.75%">Rejected</th>
+                <th scope="col" style="width: 5%">%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in team_performance["categories"] %}
+                <tr>
+                    <td>{{category["category"].replace("-", " ").title()}}</td>
+                    <td>{{category["moderated"]}}</td>
+                    <td>{{category["accepted"]}}</td>
+                    <td>{{category["rejected"]}}</td>
+                    {% if category["percentage"] < 50 %}
+                    <td><span style="color: red;">{{category["percentage"]}}</span></td>
+                    {% else %}
+                    <td><span style="color: green;">{{category["percentage"]}}</span></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td><b>Overall</b></td>
+                    <td><b>{{team_performance["overall"]["moderated"]}}</b></td>
+                    <td><b>{{team_performance["overall"]["accepted"]}}</b></td>
+                    <td><b>{{team_performance["overall"]["rejected"]}}</b></td>
+                    {% if team_performance["overall"]["percentage"] < 50 %}
+                    <td><span style="color: red;"><b>{{team_performance["overall"]["percentage"]}}</b></span></td>
+                    {% else %}
+                    <td><span style="color: green;"><b>{{team_performance["overall"]["percentage"]}}</b></span></td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% for category in category_performance["moderators"] %}
+        <div class="supervisor {{category}}" data-toggle="collapse" data-target="#collapse-{{category}}" aria-expanded="false"><span>{{category.replace("-", " ").title()}}</span></div>
+        <div class="collapse" id="collapse-{{category}}">
+        <table class="table table-bordered table-sm table-hover table-striped">
+            <thead>
+                <tr>
+                <th scope="col" style="width: 23.75%">Moderator</th>
+                <th scope="col" style="width: 23.75%">Moderated</th>
+                <th scope="col" style="width: 23.75%">Accepted</th>
+                <th scope="col" style="width: 23.75%">Rejected</th>
+                <th scope="col" style="width: 5%">%</th>
                 </tr>
             </thead>
             {% for moderator in category_performance["moderators"][category]%}
             <tr>
-                <td>{{moderator}}</td>
-                <td>{{category_performance["moderators"][category][moderator]["moderated"]}}</td>
-                <td>{{category_performance["moderators"][category][moderator]["accepted"]}}</td>
-                <td>{{category_performance["moderators"][category][moderator]["rejected"]}}</td>
-                <td>{{category_performance["moderators"][category][moderator]["percentage"]}}</td>
+                <td>{{moderator["moderator"]}}</td>
+                <td>{{moderator["moderated"]}}</td>
+                <td>{{moderator["accepted"]}}</td>
+                <td>{{moderator["rejected"]}}</td>
+                {% if moderator["percentage"] < 50 %}
+                <td><span style="color: red;">{{moderator["percentage"]}}</span></td>
+                {% else %}
+                <td><span style="color: green;">{{moderator["percentage"]}}</span></td>
+                {% endif %}
             </tr>
             {% endfor %}
             <tr>
@@ -57,8 +71,13 @@
                 <td><b>{{category_performance["overall"][category]["moderated"]}}</b></td>
                 <td><b>{{category_performance["overall"][category]["accepted"]}}</b></td>
                 <td><b>{{category_performance["overall"][category]["rejected"]}}</b></td>
-                <td><b>{{category_performance["overall"][category]["percentage"]}}</b></td>
+                {% if category_performance["overall"][category]["percentage"] < 50 %}
+                <td><span style="color: red;"><b>{{category_performance["overall"][category]["percentage"]}}</b></span></td>
+                {% else %}
+                <td><span style="color: green;"><b>{{category_performance["overall"][category]["percentage"]}}</b></span></td>
+                {% endif %}
             </tr>
         </table>
+        </div>
     {% endfor %}
 {% endblock %}
