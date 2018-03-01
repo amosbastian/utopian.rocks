@@ -1,0 +1,164 @@
+.supervisor {
+    padding-left: 5px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    color: white;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+div.overview::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E8D3";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.overview {
+    background-color: #7954A7;
+}
+
+div.ideas::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E90F";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.ideas {
+    background-color: #54d2a0;
+}
+
+div.development::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E86F";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.development {
+    background-color: #000;
+}
+
+div.bug-hunting::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E868";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.bug-hunting {
+    background-color: #d9534f;
+}
+
+div.translations::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E8E2";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.translations {
+    background-color: #ffce3d;
+}
+
+div.graphics::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E069";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.graphics {
+    background-color: #f6a623;
+}
+
+div.analysis::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E248";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.analysis {
+    background-color: #164265;
+}
+
+div.social::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E80D";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.social {
+    background-color: #7ec2f3;
+}
+
+div.documentation::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E85D";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.documentation {
+    background-color: #b1b1b1;
+}
+
+div.tutorials::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E8FD";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.tutorials {
+    background-color: #782c51;
+}
+
+div.video-tutorials::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E63A";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.video-tutorials {
+    background-color: #ec3324;
+}
+
+div.copywriting::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E90C";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.copywriting {
+    background-color: teal;
+}
+
+div.blog::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E85D";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.blog {
+    background-color: #0275d8;
+}

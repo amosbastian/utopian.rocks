@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-    <h1>overview for {{supervisor}}'s team</h1>
+    <div class="supervisor overview">{{supervisor}}'s team</div>
     <table class="table table-bordered table-sm">
         <thead>
             <tr>
@@ -32,7 +32,7 @@
     </table>
     
     {% for category in category_performance["moderators"] %}
-        <h1>{{category}}</h1>
+        <div class="supervisor {{category}}">{{category}}</div>
         <table class="table table-bordered table-sm">
             <thead>
                 <tr>
