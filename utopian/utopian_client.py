@@ -3,11 +3,15 @@ import json
 import math
 import requests
 from dateutil.parser import parse
+from pymongo import MongoClient
 
 try:
     from urllib import urlencode
 except ImportError:
     from urllib.parse import urlencode
+
+client = MongoClient()
+db = client.utopian
 
 UTOPIAN_API = "https://api.utopian.io/api/"
 
@@ -44,6 +48,7 @@ def get_posts(status, update=True):
     limit = 1000
     skip = 0
     action = "posts"
+    posts = db.posts
 
     # Get total amount of posts submitted to Utopian.io
     r = requests.get(generate_url(action, {"status": status, "limit": 1}))
@@ -64,13 +69,13 @@ def get_posts(status, update=True):
             r = requests.get(url)
             if r.status_code == 200:
                 post_list = [create_post(post) for post in r.json()["results"]]
-                posts.extend(post_list)
+                for post in post_list:
+                    posts.replace_one({"_id": post["_id"]}, post, True)
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
                 return
             skip += 1000
-        return posts
     # Get posts submitted to Utopian.io within the last week
     else:
         week = datetime.datetime.now() - datetime.timedelta(days=7)
@@ -81,14 +86,14 @@ def get_posts(status, update=True):
             r = requests.get(url)
             if r.status_code == 200:
                 post_list = [create_post(post) for post in r.json()["results"]]
-                posts.extend(post_list)
+                for post in post_list:
+                    posts.replace_one({"_id": post["_id"]}, post, True)
+                    if post["created"] < week:
+                        return posts
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
                 return
-            
-            if posts[-1]["created"] < week:
-                return posts
             
             skip += 1000
 

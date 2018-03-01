@@ -157,9 +157,11 @@ def peformance(supervisor):
 
 @app.route("/team/<supervisor>")
 def team(supervisor):
+    today = datetime.date.today()
+    week_ago = today - datetime.timedelta(days=7)
     team_performance, category_performance = peformance(supervisor)
     return  render_template("team.html", supervisor=supervisor,
-        team_performance=team_performance,
+        team_performance=team_performance, today=today, week_ago=week_ago,
         category_performance=category_performance)
 
 
