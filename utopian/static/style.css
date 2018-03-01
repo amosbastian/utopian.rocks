@@ -82,7 +82,7 @@ div.graphics::before {
 div.analysis::before {
     font-size: 1.5em;
     font-family: "Material Icons";
-    content: "\E248";
+    content: "\E24B";
     font-weight: 400;
     padding-right: 5px;
 }
@@ -154,7 +154,7 @@ div.copywriting::before {
 div.blog::before {
     font-size: 1.5em;
     font-family: "Material Icons";
-    content: "\E85D";
+    content: "\E312";
     font-weight: 400;
     padding-right: 5px;
 }
