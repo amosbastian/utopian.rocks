@@ -42,7 +42,7 @@ def status_parameter(status):
 
 
 def update_posts(status, force_complete=False):
-    posts = db.posts    
+    posts = db.posts
     post_status = status_converter(status)
     count = posts.find(status_parameter(status)).count()
     time = datetime.datetime.now()
@@ -50,23 +50,15 @@ def update_posts(status, force_complete=False):
     time = datetime.datetime.now()
     print(f"{time} - {count} {post_status} posts in the database.")
     if count == 0 or force_complete:
-        posts_list = utopian_client.get_posts(status, update=False)
+        utopian_client.get_posts(status, update=False)
     else:
-        posts_list = utopian_client.get_posts(status, update=True)
-
-    if not posts_list:
-        time = datetime.datetime.now()
-        print(f"{time} - No {post_status} posts to be added.")
-        return
-    else:
-        for post in posts_list:
-            posts.replace_one({"_id": post["_id"]}, post, True)
+        utopian_client.get_posts(status, update=True)
 
     added = posts.find(status_parameter(status)).count() - count
     last_week = datetime.datetime.now() - datetime.timedelta(days=7)
-    updated = sum([1 for post in posts_list if post["created"] > last_week])
+    # updated = sum([1 for post in posts_list if post["created"] > last_week])
     time = datetime.datetime.now()
-    print(f"{time} - {added} posts were added & {updated} posts were updated.")
+    print(f"{time} - {added} posts were added.")
 
 
 def main():
