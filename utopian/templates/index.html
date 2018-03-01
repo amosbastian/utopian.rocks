@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+            <th scope="col">Supervisor</th>
+            <th scope="col">Team</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for supervisor in supervisors %}
+            <tr>
+                <td>{{supervisor}}</td>
+                <td><a href="{{ url_for('team', supervisor=supervisor) }}"><p>Show Team</p></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

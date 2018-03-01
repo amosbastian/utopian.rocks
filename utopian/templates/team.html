@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block body %}
+    <h1>overview for {{supervisor}}'s team</h1>
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+            <th scope="col">Category</th>
+            <th scope="col">Moderated</th>
+            <th scope="col">Accepted</th>
+            <th scope="col">Rejected</th>
+            <th scope="col">%</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in team_performance["categories"] %}
+            <tr>
+                <td>{{category}}</td>
+                <td>{{team_performance["categories"][category]["moderated"]}}</td>
+                <td>{{team_performance["categories"][category]["accepted"]}}</td>
+                <td>{{team_performance["categories"][category]["rejected"]}}</td>
+                <td>{{team_performance["categories"][category]["percentage"]}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><b>Overall</b></td>
+                <td><b>{{team_performance["overall"]["moderated"]}}</b></td>
+                <td><b>{{team_performance["overall"]["accepted"]}}</b></td>
+                <td><b>{{team_performance["overall"]["rejected"]}}</b></td>
+                <td><b>{{team_performance["overall"]["percentage"]}}</b></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    {% for category in category_performance["moderators"] %}
+        <h1>{{category}}</h1>
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                <th scope="col">Moderator</th>
+                <th scope="col">Moderated</th>
+                <th scope="col">Accepted</th>
+                <th scope="col">Rejected</th>
+                <th scope="col">%</th>
+                </tr>
+            </thead>
+            {% for moderator in category_performance["moderators"][category]%}
+            <tr>
+                <td>{{moderator}}</td>
+                <td>{{category_performance["moderators"][category][moderator]["moderated"]}}</td>
+                <td>{{category_performance["moderators"][category][moderator]["accepted"]}}</td>
+                <td>{{category_performance["moderators"][category][moderator]["rejected"]}}</td>
+                <td>{{category_performance["moderators"][category][moderator]["percentage"]}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><b>Overall</b></td>
+                <td><b>{{category_performance["overall"][category]["moderated"]}}</b></td>
+                <td><b>{{category_performance["overall"][category]["accepted"]}}</b></td>
+                <td><b>{{category_performance["overall"][category]["rejected"]}}</b></td>
+                <td><b>{{category_performance["overall"][category]["percentage"]}}</b></td>
+            </tr>
+        </table>
+    {% endfor %}
+{% endblock %}
