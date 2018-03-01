@@ -17,8 +17,14 @@ def generate_url(action, parameters):
 
 
 def create_post(post):
+    moderator = post["json_metadata"]["moderator"]
+    try:
+        moderator["time"] = parse(moderator.get("time"))
+    except TypeError:
+        moderator["time"] = datetime.datetime(2010, 10, 10, 10, 10)
+
     new_post = {
-        "moderator": post["json_metadata"]["moderator"],
+        "moderator": moderator,
         "author": post["author"],
         "permlink": post["permlink"],
         "title": post["title"],
@@ -45,7 +51,8 @@ def get_posts(status, update=True):
         total = r.json()["total"]
         total = math.ceil(total / 1000)
     else:
-        print("Something went wrong, please try again later...")
+        time = datetime.datetime.now()
+        print(f"{time} - Something went wrong, please try again later.")
         return
 
     # Get ALL posts submitted to Utopian.io
@@ -53,13 +60,14 @@ def get_posts(status, update=True):
         for _ in range(total):
             parameters = {"status": status, "limit": limit, "skip": skip}
             url = generate_url(action, parameters)
-            print(f"Fetching from {url}")
+            print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
                 post_list = [create_post(post) for post in r.json()["results"]]
                 posts.extend(post_list)
             else:
-                print("Something went wrong, please try again later...")
+                time = datetime.datetime.now()
+                print(f"{time} - Something went wrong, please try again later.")
                 return
             skip += 1000
         return posts
@@ -69,13 +77,14 @@ def get_posts(status, update=True):
         for _ in range(total):
             parameters = {"status": status, "limit": limit, "skip": skip}
             url = generate_url(action, parameters)
-            print(f"Fetching from {url}")
+            print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
                 post_list = [create_post(post) for post in r.json()["results"]]
                 posts.extend(post_list)
             else:
-                print("Something went wrong, please try again later...")
+                time = datetime.datetime.now()
+                print(f"{time} - Something went wrong, please try again later.")
                 return
             
             if posts[-1]["created"] < week:
@@ -91,5 +100,6 @@ def get_moderators():
     if r.status_code == 200:
         return r.json()["results"]
     else:
-        print("Something went wrong, please try again later...")
+        time = datetime.datetime.now()
+        print(f"{time} - Something went wrong, please try again later.")
         return

@@ -9,12 +9,13 @@ db = client.utopian
 
 
 def update_moderators():
-    print("Updating moderators...")
+    print(f"{datetime.datetime.now()} - Updating moderators.")
     moderators = db.moderators
     moderator_list = utopian_client.get_moderators()
 
     if not moderator_list:
-        print("Something went wrong, please try again.")
+        time = datetime.datetime.now()
+        print(f"{time} - Could not update moderators.")
         return
 
     if moderators.count() == 0:
@@ -40,19 +41,22 @@ def status_parameter(status):
         return {"moderator.pending": True}
 
 
-def update_posts(status):
+def update_posts(status, force_complete=False):
     posts = db.posts    
     post_status = status_converter(status)
     count = posts.find(status_parameter(status)).count()
-    print(f"Updating {post_status} posts...")
-    print(f"{count} {post_status} posts in the database...")
-    if count == 0:
+    time = datetime.datetime.now()
+    print(f"{time} - Updating {post_status} posts.")
+    time = datetime.datetime.now()
+    print(f"{time} - {count} {post_status} posts in the database.")
+    if count == 0 or force_complete:
         posts_list = utopian_client.get_posts(status, update=False)
     else:
         posts_list = utopian_client.get_posts(status, update=True)
 
     if not posts_list:
-        print(f"There currently aren't any {post_status} posts to be added...")
+        time = datetime.datetime.now()
+        print(f"{time} - No {post_status} posts to be added.")
         return
     else:
         for post in posts_list:
@@ -61,7 +65,8 @@ def update_posts(status):
     added = posts.find(status_parameter(status)).count() - count
     last_week = datetime.datetime.now() - datetime.timedelta(days=7)
     updated = sum([1 for post in posts_list if post["created"] > last_week])
-    print(f"{added} posts were added and {updated} posts were updated...")
+    time = datetime.datetime.now()
+    print(f"{time} - {added} posts were added & {updated} posts were updated.")
 
 
 def main():
@@ -70,15 +75,30 @@ def main():
     update_posts("flagged")
     update_posts("pending")
 
+
+def converter(object_):
+    if isinstance(object_, datetime.datetime):
+        return object_.__str__()
+
+
 if __name__ == '__main__':
     main()
-    posts = db.posts
-    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
-    reviewed_posts = posts.aggregate([
-        {"$match": {
-            "$and": [{
-                "moderator.account": "amosbastian"
-            },{
-                "created": {"$gt": week_ago}
-            }]
-        }}])
+    # moderators = db.moderators
+    # posts = db.posts
+    # mod_list = [moderator["account"] for moderator in 
+    #     moderators.find({"referrer": "jestemkioskiem"})]
+    # week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    # pipeline = [{
+    #     "$match": {
+    #         "$and": [{
+    #             "moderator.account": {"$in": mod_list}
+    #         },{
+    #             "moderator.time": {"$gt": week_ago}
+    #         }]
+    #     }
+    # }]
+    # import json
+    # post_list = [post for post in posts.aggregate(pipeline)]
+    # for post in post_list:
+    #     print(json.dumps(post, default=converter))
+    #     break
