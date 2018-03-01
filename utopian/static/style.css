@@ -1,10 +1,13 @@
 .supervisor {
-    padding-left: 5px;
-    padding-bottom: 2px;
-    padding-top: 2px;
+    display: inline-flex;
+    vertical-align: middle;
+    align-items: center;
+    width: 100%;
+    padding-left: 10px;
     color: white;
     font-size: 18px;
     font-weight: 900;
+    cursor: pointer;
 }
 
 div.overview::before {
@@ -118,7 +121,7 @@ div.documentation::before {
 div.tutorials::before {
     font-size: 1.5em;
     font-family: "Material Icons";
-    content: "\E8FD";
+    content: "\E0C6";
     font-weight: 400;
     padding-right: 5px;
 }
@@ -142,7 +145,7 @@ div.video-tutorials::before {
 div.copywriting::before {
     font-size: 1.5em;
     font-family: "Material Icons";
-    content: "\E90C";
+    content: "\E0D8";
     font-weight: 400;
     padding-right: 5px;
 }
@@ -154,7 +157,7 @@ div.copywriting::before {
 div.blog::before {
     font-size: 1.5em;
     font-family: "Material Icons";
-    content: "\E312";
+    content: "\E02F";
     font-weight: 400;
     padding-right: 5px;
 }
@@ -162,3 +165,14 @@ div.blog::before {
 .blog {
     background-color: #0275d8;
 }
+
+.outer { 
+    border:3px solid black; 
+    height:300px;
+    
+    /* Just set up the container element to use flexbox */
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.inner { border:3px dashed green; height:100px; width:100px; }

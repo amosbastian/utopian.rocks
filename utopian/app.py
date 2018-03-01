@@ -65,23 +65,30 @@ def overall_performance(posts):
             performance["categories"][category]["accepted"] += 1
         performance["categories"][category]["moderated"] += 1
 
-    total_moderated = 0
-    total_accepted = 0
-    for category in performance["categories"]:
-        moderated = performance["categories"][category]["moderated"]
-        accepted = performance["categories"][category]["accepted"]
-        total_moderated += moderated
-        total_accepted += accepted
-        performance["categories"][category]["percentage"] = percentage(moderated, accepted)
-
+    categories = []
+    for key, value in performance["categories"].items():
+        category = {
+            "category": key,
+            "moderated": value["moderated"],
+            "accepted": value["accepted"],
+            "rejected": value["rejected"],
+            "percentage": percentage(value["moderated"], value["accepted"])
+        }
+        categories.append(category)
+    categories = sorted(categories, key=lambda x: x["moderated"], reverse=True)
+    performance["categories"] = categories
+    total_moderated = sum([category["moderated"] for category in categories])
+    total_accepted = sum([category["accepted"] for category in categories])
     total_rejected = total_moderated - total_accepted
     total_percentage = percentage(total_moderated, total_accepted)
+
     performance["overall"] = {
-        "moderated": total_accepted,
+        "moderated": total_moderated,
         "accepted": total_accepted,
         "rejected": total_rejected,
         "percentage": total_percentage
     }
+
     return performance
 
 
@@ -104,24 +111,31 @@ def individual_performance(posts):
         performance["moderators"][category][moderator]["moderated"] += 1
 
     for category in performance["moderators"]:
-        total_moderated = 0
-        total_accepted = 0
-        for moderator in performance["moderators"][category]:
-            moderated = performance["moderators"][category][moderator]["moderated"]
-            accepted = performance["moderators"][category][moderator]["accepted"]
-            total_moderated += moderated
-            total_accepted += accepted
-            performance["moderators"][category][moderator]["percentage"] = percentage(
-                moderated, accepted)
-        
+        moderators = []
+        for key, value in performance["moderators"][category].items():
+            moderator = {
+                "moderator": key,
+                "moderated": value["moderated"],
+                "accepted": value["accepted"],
+                "rejected": value["rejected"],
+                "percentage": percentage(value["moderated"], value["accepted"])
+            }
+            moderators.append(moderator)
+        moderators = sorted(moderators, key=lambda x: x["moderated"], reverse=True)
+        performance["moderators"][category] = moderators
+
+        total_moderated = sum([m["moderated"] for m in moderators])
+        total_accepted = sum([m["accepted"] for m in moderators])
         total_rejected = total_moderated - total_accepted
         total_percentage = percentage(total_moderated, total_accepted)
-        performance["overall"].setdefault(category, {
-            "moderated": total_accepted,
+
+        performance["overall"][category] = {
+            "moderated": total_moderated,
             "accepted": total_accepted,
             "rejected": total_rejected,
             "percentage": total_percentage
-        })
+        }
+    
     return performance
 
 def peformance(supervisor):
@@ -147,6 +161,11 @@ def team(supervisor):
     return  render_template("team.html", supervisor=supervisor,
         team_performance=team_performance,
         category_performance=category_performance)
+
+
+@app.route("/test")
+def test():
+    return render_template("test.html")
 
 
 def main():
