@@ -177,7 +177,7 @@ def last_updated():
     posts = db.posts
     for post in posts.find().sort([("$natural", -1)]).limit(1):
         updated = post["moderator"]["time"]
-    return updated
+    return updated.strftime("%Y-%m-%d %H:%M:%S")
 
 
 @app.context_processor
