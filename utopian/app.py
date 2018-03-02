@@ -31,7 +31,7 @@ def get_supervisors():
     supervisors = [(supervisor, len(moderation_team(supervisor)))
         for supervisor in supervisors]
 
-    return supervisors
+    return sorted(supervisors, key=lambda x: x[1], reverse=True)
 
 
 @app.route("/")
