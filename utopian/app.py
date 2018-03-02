@@ -8,6 +8,13 @@ db = client.utopian
 app = Flask(__name__)
 
 
+def moderation_team(supervisor):
+    moderators = db.moderators
+    team = [moderator["account"] for moderator in
+        moderators.find({"referrer": supervisor})]
+    return team
+
+
 def get_supervisors():
     """
     Get a list of all the names of all current supervisors, with the exception
@@ -21,6 +28,9 @@ def get_supervisors():
     except Exception as error:
         print(repr(error))
     
+    supervisors = [(supervisor, len(moderation_team(supervisor)))
+        for supervisor in supervisors]
+
     return supervisors
 
 
@@ -28,13 +38,6 @@ def get_supervisors():
 def index():
     supervisors = get_supervisors()
     return render_template("index.html", supervisors=supervisors)
-
-
-def moderation_team(supervisor):
-    moderators = db.moderators
-    team = [moderator["account"] for moderator in
-        moderators.find({"referrer": supervisor})]
-    return team
 
 
 def percentage(moderated, accepted):
@@ -171,7 +174,7 @@ def test():
 
 
 def main():
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug=True)
 
 
 if __name__ == '__main__':

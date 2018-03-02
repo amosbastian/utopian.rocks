@@ -1,19 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
-    <table class="table table-bordered table-sm">
-        <thead>
-            <tr>
-            <th scope="col">Supervisor</th>
-            <th scope="col">Team</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for supervisor in supervisors %}
-            <tr>
-                <td>{{supervisor}}</td>
-                <td><a href="{{ url_for('team', supervisor=supervisor) }}"><p>Show Team</p></a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<section class="team-section pb-5">
+    <div class="row text-center">
+        {% for supervisor in supervisors %}
+        <div class="col-md-4 mb-4">
+            <div>
+                <img src="https://api.utopian.io/api/users/{{supervisor[0]}}/avatar/?size=100" class="rounded img-fluid z-depth-1-half" alt="Third sample avatar image">
+            </div>
+            <h4>
+                <strong>{{supervisor[0]}}</strong>
+            </h4>
+            <h6>Supervisor</h6>
+
+            <a type="button" class="btn btn-outline-primary d-flex justify-content-between align-items-center" href="{{ url_for('team', supervisor=supervisor) }}">
+                <i class="material-icons">supervisor_account</i>Show team<span class="badge badge-primary badge-pill">{{supervisor[1]}}</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}
