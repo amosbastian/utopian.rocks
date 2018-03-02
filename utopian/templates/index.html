@@ -12,7 +12,7 @@
             </h4>
             <h6>Supervisor</h6>
 
-            <a type="button" class="btn btn-outline-primary d-flex justify-content-between align-items-center" href="{{ url_for('team', supervisor=supervisor) }}">
+            <a type="button" class="btn btn-outline-primary d-flex justify-content-between align-items-center" href="{{ url_for('team', supervisor=supervisor[0]) }}">
                 <i class="material-icons">supervisor_account</i>Show team<span class="badge badge-primary badge-pill">{{supervisor[1]}}</span>
             </a>
         </div>
