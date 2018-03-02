@@ -166,13 +166,20 @@ div.blog::before {
     background-color: #0275d8;
 }
 
-.outer { 
-    border:3px solid black; 
-    height:300px;
-    
-    /* Just set up the container element to use flexbox */
-    display:flex;
-    justify-content:center;
-    align-items:center;
+html {
+    position: relative;
+    min-height: 100%;
 }
-.inner { border:3px dashed green; height:100px; width:100px; }
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 30px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+}
