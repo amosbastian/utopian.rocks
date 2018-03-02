@@ -173,6 +173,18 @@ def test():
     return render_template("test.html")
 
 
+def last_updated():
+    posts = db.posts
+    for post in posts.find().sort([("$natural", -1)]).limit(1):
+        updated = post["moderator"]["time"]
+    return updated
+
+
+@app.context_processor
+def inject_updated():
+    return dict(updated=last_updated())
+
+
 def main():
     app.run(host="0.0.0.0", debug=True)
 

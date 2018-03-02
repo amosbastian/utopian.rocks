@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
-<section class="team-section pb-5">
+<section class="supervisors">
     <div class="row text-center">
         {% for supervisor in supervisors %}
-        <div class="col-md-4 mb-4">
+        <div class="col-md-3 mb-3">
             <div>
-                <img src="https://api.utopian.io/api/users/{{supervisor[0]}}/avatar/?size=100" class="rounded img-fluid z-depth-1-half" alt="Third sample avatar image">
+                <img src="{{ url_for('static', filename=(supervisor[0] + '.png'))}}" alt="Supervisor Image">
             </div>
             <h4>
                 <strong>{{supervisor[0]}}</strong>

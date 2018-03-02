@@ -75,22 +75,3 @@ def converter(object_):
 
 if __name__ == '__main__':
     main()
-    # moderators = db.moderators
-    # posts = db.posts
-    # mod_list = [moderator["account"] for moderator in 
-    #     moderators.find({"referrer": "jestemkioskiem"})]
-    # week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
-    # pipeline = [{
-    #     "$match": {
-    #         "$and": [{
-    #             "moderator.account": {"$in": mod_list}
-    #         },{
-    #             "moderator.time": {"$gt": week_ago}
-    #         }]
-    #     }
-    # }]
-    # import json
-    # post_list = [post for post in posts.aggregate(pipeline)]
-    # for post in post_list:
-    #     print(json.dumps(post, default=converter))
-    #     break
