@@ -87,6 +87,11 @@ def get_posts(status, update=True):
             if r.status_code == 200:
                 post_list = [create_post(post) for post in r.json()["results"]]
                 for post in post_list:
+                    database_post = posts.find_one({"_id": post["_id"]})
+                    if database_post and "flagged" in database_post:
+                        if (not database_post["flagged"] == post["flagged"]
+                            or database_post["modified"]):
+                            post["modified"] = True
                     posts.replace_one({"_id": post["_id"]}, post, True)
                     if post["created"] < week:
                         return posts
