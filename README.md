@@ -41,3 +41,14 @@ Features
 --------
 
 Currently the homepage shows all of Utopian.io's supervisors with a link to a page that shows their team's overall performance, and the performance of each moderator per category.
+
+Roadmap
+-------
+
+Currently I have the following plans, but this could all change in the future
+
+* Add a way to change the static time period of 7 days to e.g. 1 day, 12 hours etc.
+* Add a page for each moderator showing their individual performance, a feed of their most recently reviewed posts, other statistics (e.g. who they have reviewed the most) etc.
+* Add a page for projects that show statistics about contributions made to it (e.g. best contributor, overall acceptance rate etc.)
+* Add a page for contributors to see their individual performance (e.g acceptance rate, who has reviewed their posts the most etc.)
+
