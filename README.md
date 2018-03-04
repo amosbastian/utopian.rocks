@@ -1,7 +1,7 @@
 Utopian
 -------
 
-A web application created using Flask and MongoDB.
+A web application showing additional information about Utopian.io. It was created using Flask and MongoDB.
 
 Usage
 -----
