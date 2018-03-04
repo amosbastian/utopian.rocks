@@ -14,7 +14,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for category in category_performance["overall"] %}
+                {% for category in team_performance["overall"] %}
                     {% if category["category"] == "overall" %}
                     <tr>
                         <td><b>Total</b></td>
@@ -45,7 +45,7 @@
         </table>
     </div>
 
-    {% for category in category_performance["categories"] %}
+    {% for category in team_performance["categories"] %}
         {% if category["category"] == "overall" %}
         <div class="supervisor total" data-toggle="collapse" data-target="#collapse-total" aria-expanded="false"><span>Moderator overview</span></div>
         <div class="collapse" id="collapse-total">
