@@ -54,21 +54,23 @@ def percentage(moderated, accepted):
 
 def moderator_points(category, reviewed):
     if category == "ideas":
-        return reviewed * 0.5
+        return reviewed * 0.75
     elif category == "development":
-        return reviewed * 1.25
+        return reviewed * 2.0
     elif category == "translations":
-        return reviewed * 1.0
+        return reviewed * 1.25
     elif category == "graphics":
+        return reviewed * 1.0
+    elif category == "documentation":
         return reviewed * 0.75
     elif category == "copywriting":
-        return reviewed * 0.5
+        return reviewed * 0.75
     elif category == "tutorials":
-        return reviewed * 0.75
+        return reviewed * 1.0
     elif category == "analysis":
-        return reviewed * 0.75
+        return reviewed * 1.25
     elif category == "social":
-        return reviewed * 0.5
+        return reviewed * 1.0
     elif category == "blog":
         return reviewed * 0.75
     elif category == "video-tutorials":
