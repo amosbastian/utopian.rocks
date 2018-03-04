@@ -128,7 +128,10 @@ def individual_performance(posts, team):
         moderators = []
         for key, value in performance["categories"][category].items():
             points = moderator_points(category, value["moderated"])
-            points_dictionary[key] += points
+            try:
+                points_dictionary[key] += points
+            except TypeError:
+                continue
             moderator = {
                 "moderator": key,
                 "moderated": value["moderated"],
