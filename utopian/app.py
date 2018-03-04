@@ -9,6 +9,9 @@ app = Flask(__name__)
 
 
 def moderation_team(supervisor):
+    """
+    Returns a list containing the names of moderators in a supervisor's team.
+    """
     moderators = db.moderators
     team = [moderator["account"] for moderator in
         moderators.find({"referrer": supervisor})]
@@ -216,19 +219,124 @@ def team(supervisor):
 
 @app.route("/test")
 def test():
+    """
+    Route used for testing.
+    """
     return render_template("test.html")
 
 
 def last_updated():
+    """
+    Returns the moderation time of the most recently moderated post in the 
+    database.
+    """
     posts = db.posts
     for post in posts.find().sort([("$natural", -1)]).limit(1):
-        updated = post["moderator"]["time"]
+        updated = post["updated"]
     return updated.strftime("%Y-%m-%d %H:%M:%S")
 
 
 @app.context_processor
 def inject_updated():
     return dict(updated=last_updated())
+
+
+def categories_information(posts):
+    post_dictionary = {"total": {"moderated": 0, "accepted": 0,
+        "rejected": 0, "moderators": []}}
+    for post in posts:
+        category = post["category"]
+        moderator = post["moderator"]["account"]
+        post_dictionary.setdefault(category, {
+            "moderated": 0,
+            "accepted": 0,
+            "rejected": 0,
+            "moderators": []
+        })
+
+        if post["moderator"]["flagged"]:
+            post_dictionary[category]["rejected"] += 1
+            post_dictionary["total"]["rejected"] += 1
+        else:
+            post_dictionary[category]["accepted"] += 1
+            post_dictionary["total"]["accepted"] += 1
+        post_dictionary[category]["moderated"] += 1
+        post_dictionary["total"]["moderated"] += 1
+        post_dictionary[category]["moderators"].append(moderator)
+        post_dictionary["total"]["moderators"].append(moderator)
+
+    post_list = []
+
+    # Create list with average amount of contributions per category
+    for key, value in post_dictionary.items():
+        value["moderators"] = list(set(value["moderators"]))
+        value["average"] = float(value["moderated"]) / len(value["moderators"])
+        value["percentage"] = percentage(value["moderated"], value["accepted"])
+        post_list.append({"category": key, "statistics": value})
+
+    # Sort alphabetically and move "total" to the end of the list
+    post_list = sorted(post_list, key=lambda x: x["category"])
+    for category in post_list:
+        if category["category"] == "total":
+            post_list.append(category)
+            post_list.remove(category)
+    return post_list
+
+
+def category_ratio(posts):
+    categories = {"total": {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0}}
+    for post in posts:
+        category = post["category"]
+        if "task" in category:
+            continue
+        categories.setdefault(category, {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0})
+
+        if post["status"] == "pending":
+            categories[category]["pending"] += 1
+            categories["total"]["pending"] += 1
+        else:
+            if post["moderator"]["flagged"]:
+                categories[category]["rejected"] += 1
+                categories["total"]["rejected"] += 1
+            else:
+                categories[category]["accepted"] += 1
+                categories["total"]["accepted"] += 1
+            categories[category]["moderated"] += 1
+            categories["total"]["moderated"] += 1
+
+    category_list = []
+    for key, value in categories.items():
+        value["total"] = value["pending"] + value["moderated"]
+        value["total_percentage"] = percentage(value["total"], value["moderated"])
+        value["accepted_percentage"] = percentage(value["total"], value["accepted"])
+        value["rejected_percentage"] = percentage(value["total"], value["rejected"])
+        category_list.append({"category": key, "statistics": value})
+
+    category_list = sorted(category_list, key=lambda x: x["statistics"]["total_percentage"])
+    for category in category_list:
+        if category["category"] == "total":
+            category_list.append(category)
+            category_list.remove(category)
+    
+    return category_list
+
+
+@app.route("/categories")
+def categories():
+    posts = db.posts
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    pipeline = [{
+        "$match": {
+            "$or": [{
+                "status": "pending"
+            },{
+                "moderator.time": {"$gt": week_ago}
+            }]
+        }
+    }]
+    post_list = [post for post in posts.aggregate(pipeline)]
+    information = category_ratio(post_list)
+    return render_template("categories.html", information=information)
 
 
 def main():

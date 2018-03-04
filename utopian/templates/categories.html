@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+
+{% for category in information %}
+    {{category["category"]}} ({{category["statistics"]["total"]}})
+
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{category['statistics']['accepted_percentage']}}%" aria-valuenow="{{category['statistics']['accepted']}}" aria-valuemin="0" aria-valuemax="{{category['statistics']['total']}}">
+            {{"{:.2f}".format(category['statistics']['accepted_percentage'])}}%
+        </div>
+        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: {{category['statistics']['rejected_percentage']}}%" aria-valuenow="{{category['statistics']['rejected']}}" aria-valuemin="0" aria-valuemax="{{category['statistics']['total']}}">
+            {{"{:.2f}".format(category['statistics']['rejected_percentage'])}}%
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}
