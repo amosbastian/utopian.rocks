@@ -6,14 +6,31 @@
         <table class="table table-bordered table-sm table-hover table-striped">
             <thead>
                 <tr>
-                <th scope="col" style="width: 23.75%">Category</th>
-                <th scope="col" style="width: 23.75%">Moderated</th>
-                <th scope="col" style="width: 23.75%">Accepted</th>
-                <th scope="col" style="width: 23.75%">Rejected</th>
+                <th scope="col" style="width: 22.5%">Category</th>
+                <th scope="col" style="width: 22.5%">Moderated</th>
+                <th scope="col" style="width: 22.5%">Accepted</th>
+                <th scope="col" style="width: 22.5%">Rejected</th>
                 <th scope="col" style="width: 5%">%</th>
+                <th scope="col" style="width: 5%">Points</th>
                 </tr>
             </thead>
             <tbody>
+                {% for category in team_performance["overall"] %}
+                    {% if not category["category"] == "overall" %}
+                    <tr>
+                        <td><a href="#">{{category["category"].replace("-", " ").title()}}</a></td>
+                        <td>{{category["moderated"]}}</td>
+                        <td>{{category["accepted"]}}</td>
+                        <td>{{category["rejected"]}}</td>
+                        {% if category["percentage"] < 50 %}
+                        <td><span style="color: red;">{{category["percentage"]}}</span></td>
+                        {% else %}
+                        <td><span style="color: green;">{{category["percentage"]}}</span></td>
+                        {% endif %}
+                        <td>{{category["points"]}}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
                 {% for category in team_performance["overall"] %}
                     {% if category["category"] == "overall" %}
                     <tr>
@@ -26,18 +43,7 @@
                         {% else %}
                         <td><span style="color: green;"><b>{{category["percentage"]}}</b></span></td>
                         {% endif %}
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td><a href="#">{{category["category"].replace("-", " ").title()}}</a></td>
-                        <td>{{category["moderated"]}}</td>
-                        <td>{{category["accepted"]}}</td>
-                        <td>{{category["rejected"]}}</td>
-                        {% if category["percentage"] < 50 %}
-                        <td><span style="color: red;">{{category["percentage"]}}</span></td>
-                        {% else %}
-                        <td><span style="color: green;">{{category["percentage"]}}</span></td>
-                        {% endif %}
+                        <td><b>{{category["points"]}}</b></td>
                     </tr>
                     {% endif %}
                 {% endfor %}
@@ -56,11 +62,12 @@
         <table class="table table-bordered table-sm table-hover table-striped">
             <thead>
                 <tr>
-                <th scope="col" style="width: 23.75%">Moderator</th>
-                <th scope="col" style="width: 23.75%">Moderated</th>
-                <th scope="col" style="width: 23.75%">Accepted</th>
-                <th scope="col" style="width: 23.75%">Rejected</th>
+                <th scope="col" style="width: 22.5%">Moderator</th>
+                <th scope="col" style="width: 22.5%">Moderated</th>
+                <th scope="col" style="width: 22.5%">Accepted</th>
+                <th scope="col" style="width: 22.5%">Rejected</th>
                 <th scope="col" style="width: 5%">%</th>
+                <th scope="col" style="width: 5%">Points</th>
                 </tr>
             </thead>
             {% for moderator in category["moderators"]%}
@@ -75,6 +82,24 @@
                 {% else %}
                 <td><span style="color: green;">{{moderator["percentage"]}}</span></td>
                 {% endif %}
+                <td>{{moderator["points"]}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+
+            {% for overall in team_performance["overall"] %}
+            {% if overall["category"] == category["category"] %}
+            <tr>
+                <td><b>Total</b></td>
+                <td><b>{{overall["moderated"]}}</b></td>
+                <td><b>{{overall["accepted"]}}</b></td>
+                <td><b>{{overall["rejected"]}}</b></td>
+                {% if overall["percentage"] < 50 %}
+                <td><span style="color: red;"><b>{{overall["percentage"]}}</b></span></td>
+                {% else %}
+                <td><span style="color: green;"><b>{{overall["percentage"]}}</b></span></td>
+                {% endif %}
+                <td><b>{{overall["points"]}}</b></td>
             </tr>
             {% endif %}
             {% endfor %}

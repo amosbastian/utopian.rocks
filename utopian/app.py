@@ -52,6 +52,48 @@ def percentage(moderated, accepted):
         return round(float(accepted) / moderated * 100)
 
 
+def moderator_points(category, reviewed):
+    if category == "ideas":
+        return reviewed * 0.5
+    elif category == "development":
+        return reviewed * 1.25
+    elif category == "translations":
+        return reviewed * 1.0
+    elif category == "graphics":
+        return reviewed * 0.75
+    elif category == "copywriting":
+        return reviewed * 0.5
+    elif category == "tutorials":
+        return reviewed * 0.75
+    elif category == "analysis":
+        return reviewed * 0.75
+    elif category == "social":
+        return reviewed * 0.5
+    elif category == "blog":
+        return reviewed * 0.75
+    elif category == "video-tutorials":
+        return reviewed * 1.25
+    elif category == "bug-hunting":
+        return reviewed * 1.0
+    elif category == "task-ideas":
+        return reviewed * 0.5
+    elif category == "task-development":
+        return reviewed * 0.5
+    elif category == "task-bug-huntung":
+        return reviewed * 0.5
+    elif category == "task-translations":
+        return reviewed * 0.5
+    elif category == "task-graphics":
+        return reviewed * 0.5
+    elif category == "task-documentation":
+        return reviewed * 0.5
+    elif category == "task-analysis":
+        return reviewed * 0.5
+    elif category == "task-social":
+        return reviewed * 0.5
+    elif category == "overall":
+        return 0
+
 def individual_performance(posts, team):
     performance = {"categories": {"overall": {}}, "overall": []}
     for post in posts:
@@ -79,22 +121,31 @@ def individual_performance(posts, team):
         performance["categories"]["overall"][moderator]["moderated"] += 1
 
     categories = []
+    points_dictionary = {}
+    for moderator in team:
+        points_dictionary[moderator] = 0
     for category in performance["categories"]:
         moderators = []
         for key, value in performance["categories"][category].items():
+            points = moderator_points(category, value["moderated"])
+            points_dictionary[key] += points
             moderator = {
                 "moderator": key,
                 "moderated": value["moderated"],
                 "accepted": value["accepted"],
                 "rejected": value["rejected"],
-                "percentage": percentage(value["moderated"], value["accepted"])
+                "percentage": percentage(value["moderated"], value["accepted"]),
+                "points": points
             }
             moderators.append(moderator)
+
         moderator_list = [moderator["moderator"] for moderator in moderators]
+
+        # Add performance for each moderator, even if they didn't review
         for moderator in team:
             if not moderator in moderator_list:
                 new_moderator = {"moderated": 0, "accepted": 0, "rejected": 0, 
-                    "moderator": moderator, "percentage": 0}
+                    "moderator": moderator, "percentage": 0, "points": 0}
                 moderators.append(new_moderator)
         moderators = sorted(moderators, key=lambda x: x["moderator"])
         categories.append({"category": category, "moderators": moderators})
@@ -103,26 +154,35 @@ def individual_performance(posts, team):
         total_accepted = sum([m["accepted"] for m in moderators])
         total_rejected = total_moderated - total_accepted
         total_percentage = percentage(total_moderated, total_accepted)
+        total_points = sum([m["points"] for m in moderators])
 
         performance["overall"].append({
             "category": category,
             "moderated": total_moderated,
             "accepted": total_accepted,
             "rejected": total_rejected,
-            "percentage": total_percentage
+            "percentage": total_percentage,
+            "points": total_points
         })
 
     categories = sorted(categories, key=lambda x: x["category"])
     overall = sorted(performance["overall"], key=lambda x: x["category"])
+    
     for category in categories:
         if category["category"] == "overall":
+            for moderator in category["moderators"]:
+                moderator["points"] += points_dictionary[moderator["moderator"]]
             categories.insert(0, categories.pop(categories.index(category)))
-
+            
+    total_points = sum([c["points"] for c in overall])
+    
     for category in overall:
         if category["category"] == "overall":
+            category["points"] += total_points
             overall.insert(0, overall.pop(overall.index(category)))
     performance["categories"] = categories
     performance["overall"] = overall
+
     return performance
 
 def peformance(supervisor):
