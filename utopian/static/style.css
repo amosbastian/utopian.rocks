@@ -27,6 +27,18 @@ body {
     cursor: pointer;
 }
 
+div.total::before {
+    font-size: 1.5em;
+    font-family: "Material Icons";
+    content: "\E7FC";
+    font-weight: 400;
+    padding-right: 5px;
+}
+
+.total {
+    background-color: #7954A7;
+}
+
 div.overview::before {
     font-size: 1.5em;
     font-family: "Material Icons";
