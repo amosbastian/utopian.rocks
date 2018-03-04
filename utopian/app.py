@@ -52,49 +52,6 @@ def percentage(moderated, accepted):
         return round(float(accepted) / moderated * 100)
 
 
-def overall_performance(posts):
-    performance = {"categories": {}, "overall": {}}
-    for post in posts:
-        category = post["category"]
-        performance["categories"].setdefault(category, {
-            "moderated": 0,
-            "accepted": 0,
-            "rejected": 0
-        })
-
-        if post["moderator"]["flagged"]:
-            performance["categories"][category]["rejected"] += 1
-        else:
-            performance["categories"][category]["accepted"] += 1
-        performance["categories"][category]["moderated"] += 1
-
-    categories = []
-    for key, value in performance["categories"].items():
-        category = {
-            "category": key,
-            "moderated": value["moderated"],
-            "accepted": value["accepted"],
-            "rejected": value["rejected"],
-            "percentage": percentage(value["moderated"], value["accepted"])
-        }
-        categories.append(category)
-    categories = sorted(categories, key=lambda x: x["category"])
-    performance["categories"] = categories
-    total_moderated = sum([category["moderated"] for category in categories])
-    total_accepted = sum([category["accepted"] for category in categories])
-    total_rejected = total_moderated - total_accepted
-    total_percentage = percentage(total_moderated, total_accepted)
-
-    performance["overall"] = {
-        "moderated": total_moderated,
-        "accepted": total_accepted,
-        "rejected": total_rejected,
-        "percentage": total_percentage
-    }
-
-    return performance
-
-
 def individual_performance(posts, team):
     performance = {"categories": {"overall": {}}, "overall": []}
     for post in posts:
@@ -182,18 +139,16 @@ def peformance(supervisor):
         }
     }]
     team_posts = [post for post in posts.aggregate(pipeline)]
-    return overall_performance(team_posts), individual_performance(team_posts, team)
+    return individual_performance(team_posts, team)
 
 
 @app.route("/team/<supervisor>")
 def team(supervisor):
     today = datetime.date.today()
     week_ago = today - datetime.timedelta(days=7)
-    team = sorted(moderation_team(supervisor))
-    team_performance, category_performance = peformance(supervisor)
-    return render_template("team.html", supervisor=supervisor,
-        team_performance=team_performance, today=today, week_ago=week_ago,
-        category_performance=category_performance, team=team)
+    team_performance = peformance(supervisor)
+    return render_template("team.html", supervisor=supervisor, today=today,
+        week_ago=week_ago, team_performance=team_performance)
 
 
 @app.route("/test")
