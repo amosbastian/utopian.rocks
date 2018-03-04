@@ -38,7 +38,7 @@ def status_parameter(status):
     elif status == "flagged":
         return {"moderator.flagged": True}
     elif status == "pending":
-        return {"moderator.pending": True}
+        return {"moderator": None}
 
 
 def update_posts(status, force_complete=False):
@@ -55,8 +55,6 @@ def update_posts(status, force_complete=False):
         utopian_client.get_posts(status, update=True)
 
     added = posts.find(status_parameter(status)).count() - count
-    last_week = datetime.datetime.now() - datetime.timedelta(days=7)
-    # updated = sum([1 for post in posts_list if post["created"] > last_week])
     time = datetime.datetime.now()
     print(f"{time} - {added} posts were added.")
 
