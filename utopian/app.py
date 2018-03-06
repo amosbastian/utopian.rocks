@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from pymongo import MongoClient
 import datetime
+import json
 
 client = MongoClient()
 db = client.utopian
@@ -47,12 +48,12 @@ def percentage(moderated, accepted):
     """
     Helper function used to calculate the accepted / rejected percentage.
     """
-    if moderated == accepted:
-        return 100
-    elif accepted == 0:
+    if accepted == 0:
         return 0
+    elif moderated == accepted:
+        return 100
     else:
-        return round(float(accepted) / moderated * 100)
+        return float(accepted) / moderated * 100
 
 
 def moderator_points(category, reviewed):
@@ -282,27 +283,80 @@ def categories_information(posts):
             post_list.remove(category)
     return post_list
 
+from collections import Counter
 
 def category_ratio(posts):
     categories = {"total": {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0}}
+    authors = {"total": {}}
+    moderators = {"total": {}}
     for post in posts:
         category = post["category"]
         if "task" in category:
             continue
-        categories.setdefault(category, {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0})
-
         if post["status"] == "pending":
             categories[category]["pending"] += 1
             categories["total"]["pending"] += 1
+            continue
+        author = post["author"]
+        moderator = post["moderator"]["account"]
+        categories.setdefault(category, {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0})
+        
+        authors.setdefault(category, {})
+        authors["total"].setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
+        authors[category].setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
+
+        moderators.setdefault(category, {})
+        moderators["total"].setdefault(moderator, {"total": 0, "accepted": 0, "rejected": 0})
+        moderators[category].setdefault(moderator, {"total": 0, "accepted": 0, "rejected": 0})
+        if post["moderator"]["flagged"]:
+            moderators[category][moderator]["rejected"] += 1
+            moderators["total"][moderator]["rejected"] += 1
+            authors[category][author]["rejected"] += 1
+            authors["total"][author]["rejected"] += 1
+            categories[category]["rejected"] += 1
+            categories["total"]["rejected"] += 1
         else:
-            if post["moderator"]["flagged"]:
-                categories[category]["rejected"] += 1
-                categories["total"]["rejected"] += 1
-            else:
-                categories[category]["accepted"] += 1
-                categories["total"]["accepted"] += 1
-            categories[category]["moderated"] += 1
-            categories["total"]["moderated"] += 1
+            moderators[category][moderator]["accepted"] += 1
+            moderators["total"][moderator]["accepted"] += 1
+            authors[category][author]["accepted"] += 1
+            authors["total"][author]["accepted"] += 1
+            categories[category]["accepted"] += 1
+            categories["total"]["accepted"] += 1
+
+        moderators["total"][moderator]["total"] += 1
+        moderators[category][moderator]["total"] += 1
+        authors["total"][author]["total"] += 1
+        authors[category][author]["total"] += 1
+        categories[category]["moderated"] += 1
+        categories["total"]["moderated"] += 1
+
+    for category in moderators:
+        moderator_list = []
+        for key, value in moderators[category].items():
+            total = value["total"]
+            value["accepted_percentage"] = percentage(total, value["accepted"])
+            value["rejected_percentage"] = percentage(total, value["rejected"])
+            value["moderator"] = key
+            moderator_list.append(value)
+        most_active = sorted(moderator_list, key=lambda x: x["total"], reverse=True)[:5]
+        moderators[category].clear()
+        moderators[category] = most_active
+
+    for category in authors:
+        author_list = []
+        for key, value in authors[category].items():
+            total = value["total"]
+            contributed = value["accepted"] + value["rejected"]
+            value["total_percentage"] = percentage(total, contributed)
+            value["accepted_percentage"] = percentage(total, value["accepted"])
+            value["rejected_percentage"] = percentage(total, value["rejected"])
+            value["author"] = key
+            author_list.append(value)
+        best = sorted(author_list, key=lambda x: x["accepted"], reverse=True)[:5]
+        worst = sorted(author_list, key=lambda x: x["rejected"], reverse=True)[:5]
+        authors[category].clear()
+        authors[category]["best"] = best
+        authors[category]["worst"] = worst
 
     category_list = []
     for key, value in categories.items():
@@ -310,15 +364,16 @@ def category_ratio(posts):
         value["total_percentage"] = percentage(value["total"], value["moderated"])
         value["accepted_percentage"] = percentage(value["total"], value["accepted"])
         value["rejected_percentage"] = percentage(value["total"], value["rejected"])
+        value["pending_percentage"] = percentage(value["total"], value["pending"])
         category_list.append({"category": key, "statistics": value})
 
-    category_list = sorted(category_list, key=lambda x: x["statistics"]["total_percentage"])
-    for category in category_list:
+    categories = sorted(category_list, key=lambda x: x["statistics"]["total_percentage"])
+    for category in categories:
         if category["category"] == "total":
-            category_list.append(category)
-            category_list.remove(category)
+            categories.append(category)
+            categories.remove(category)
     
-    return category_list
+    return categories, authors, moderators
 
 
 @app.route("/categories")
@@ -335,8 +390,9 @@ def categories():
         }
     }]
     post_list = [post for post in posts.aggregate(pipeline)]
-    information = category_ratio(post_list)
-    return render_template("categories.html", information=information)
+    information, authors, moderators = category_ratio(post_list)
+    return render_template("categories.html", information=information,
+        authors=authors, moderators=moderators)
 
 
 def main():

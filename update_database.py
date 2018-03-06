@@ -63,7 +63,7 @@ def main():
     update_moderators()
     update_posts("any")
     update_posts("flagged")
-    update_posts("pending")
+    update_posts("pending", True)
 
 
 def converter(object_):
