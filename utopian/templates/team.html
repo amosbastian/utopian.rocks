@@ -23,9 +23,9 @@
                         <td>{{category["accepted"]}}</td>
                         <td>{{category["rejected"]}}</td>
                         {% if category["percentage"] < 50 %}
-                        <td><span style="color: red;">{{category["percentage"]}}</span></td>
+                        <td><span style="color: red;">{{category["percentage"]|round}}</span></td>
                         {% else %}
-                        <td><span style="color: green;">{{category["percentage"]}}</span></td>
+                        <td><span style="color: green;">{{category["percentage"]|round}}</span></td>
                         {% endif %}
                         <td>{{category["points"]}}</td>
                     </tr>
@@ -39,9 +39,9 @@
                         <td><b>{{category["accepted"]}}</b></td>
                         <td><b>{{category["rejected"]}}</b></td>
                         {% if category["percentage"] < 50 %}
-                        <td><span style="color: red;"><b>{{category["percentage"]}}</b></span></td>
+                        <td><span style="color: red;"><b>{{category["percentage"]|round}}</b></span></td>
                         {% else %}
-                        <td><span style="color: green;"><b>{{category["percentage"]}}</b></span></td>
+                        <td><span style="color: green;"><b>{{category["percentage"]|round}}</b></span></td>
                         {% endif %}
                         <td><b>{{category["points"]}}</b></td>
                     </tr>
@@ -78,9 +78,9 @@
                 <td>{{moderator["accepted"]}}</td>
                 <td>{{moderator["rejected"]}}</td>
                 {% if moderator["percentage"] < 50 %}
-                <td><span style="color: red;">{{moderator["percentage"]}}</span></td>
+                <td><span style="color: red;">{{moderator["percentage"]|round}}</span></td>
                 {% else %}
-                <td><span style="color: green;">{{moderator["percentage"]}}</span></td>
+                <td><span style="color: green;">{{moderator["percentage"]|round}}</span></td>
                 {% endif %}
                 <td>{{moderator["points"]}}</td>
             </tr>
@@ -95,9 +95,9 @@
                 <td><b>{{overall["accepted"]}}</b></td>
                 <td><b>{{overall["rejected"]}}</b></td>
                 {% if overall["percentage"] < 50 %}
-                <td><span style="color: red;"><b>{{overall["percentage"]}}</b></span></td>
+                <td><span style="color: red;"><b>{{overall["percentage"]|round}}</b></span></td>
                 {% else %}
-                <td><span style="color: green;"><b>{{overall["percentage"]}}</b></span></td>
+                <td><span style="color: green;"><b>{{overall["percentage"]|round}}</b></span></td>
                 {% endif %}
                 <td><b>{{overall["points"]}}</b></td>
             </tr>
