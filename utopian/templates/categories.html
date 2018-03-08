@@ -2,108 +2,13 @@
 {% block body %}
 <div class="row">
     <div class="col-2">
-        <ul class="list-group">
-            {% for category in information %}
-            <li class="list-group-item">
-                {{category["category"]}}
-            </li>
-            {% endfor %}
-        </ul>
+        {% for c in categories %}
+        <div><a href="{{ url_for('categories', category=c) }}">{{c}}</a></div>
+        {% endfor %}
     </div>
     <div class="col-10">
-        BLOG
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 63.07053941908713%" aria-valuenow="152" aria-valuemin="0" aria-valuemax="241">
-                152.00
-            </div>
-            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 9.12863070539419%" aria-valuenow="22" aria-valuemin="0" aria-valuemax="241">
-                22.00
-            </div>
-            <div class="progress-bar progress-bar-striped bg-inverted" role="progressbar" style="width: 27.800829875518673%" aria-valuenow="67" aria-valuemin="0" aria-valuemax="241">
-                67.00
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>MOST ACTIVE MODERATORS</p>
-                <ul class="list-group">
-                    <li class="list-group-item">zonguin (92)</li>
-                    <li class="list-group-item">manishmike10 (32)</li>
-                    <li class="list-group-item">arie.steem (15)</li>
-                    <li class="list-group-item">yairdd (11)</li>
-                    <li class="list-group-item">thegoldenphoenix (9)</li>
-                </ul>
-            </div>
-            <div class="col-6">
-                <p>SOME ADDITIONAL STATS</p>
-                <ul class="list-group">
-                    bla bla bla
-                    maybe a pie chart showing overall
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>BEST CONTRIBUTORS</p>
-                <ul class="list-group">
-                    <li class="list-group-item">zafaralise 28 93.33333333333333</li>
-                    <li class="list-group-item">faad 16 88.88888888888889</li>
-                    <li class="list-group-item">wisataacehid 12 100</li>
-                    <li class="list-group-item">aderemi01 10 90.9090909090909</li>
-                    <li class="list-group-item">yhaulez 8 88.88888888888889</li>
-                </ul>
-            </div>
-            <div class="col-6">
-                <p>WORST CONTRIBUTORS</p>
-                <sup>could be replaced with most "valued" contributors since it's less mean</sup>
-                <ul class="list-group">
-                    <li class="list-group-item">zafaralise 28 93.33333333333333</li>
-                    <li class="list-group-item">faad 16 88.88888888888889</li>
-                    <li class="list-group-item">wisataacehid 12 100</li>
-                    <li class="list-group-item">aderemi01 10 90.9090909090909</li>
-                    <li class="list-group-item">yhaulez 8 88.88888888888889</li>
-                </ul>
-            </div>
-        </div>
+        {% block content %}
+        {% endblock %}
     </div>
 </div>
-
-{% for category in information %}
-    {{category["category"]}} ({{category["statistics"]["total"]}})
-    <p>MOST ACTIVE MODERATORS</p>
-    <ul class="list-group">
-        {% for moderator in moderators[category["category"]] %}
-            <li class="list-group-item">{{moderator["moderator"]}} ({{moderator["total"]}})</li>
-        {% endfor %}
-    </ul>
-
-    <p>BEST CONTRIBUTORS</p>
-    <ul class="list-group">
-    {% for author in authors[category["category"]]["best"] %}
-        {% if not author["accepted"] == 0 %}
-        <li class="list-group-item">{{author["author"]}} {{author["accepted"]}} {{author["accepted_percentage"]}}</li>
-        {% endif %}
-    {% endfor %}
-    </ul>
-    <p>WORST CONTRIBUTORS</p>
-    <ul class="list-group">
-    {% for author in authors[category["category"]]["worst"] %}
-        {% if not author["rejected"] == 0 %}
-        <li class="list-group-item">{{author["author"]}} {{author["rejected"]}} {{author["rejected_percentage"]}}</li>
-        {% endif %}
-    {% endfor %}
-    </ul>   
-    <div class="progress">
-        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{category['statistics']['accepted_percentage']}}%" aria-valuenow="{{category['statistics']['accepted']}}" aria-valuemin="0" aria-valuemax="{{category['statistics']['total']}}">
-            {{"{:.2f}".format(category['statistics']['accepted'])}}
-        </div>
-        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: {{category['statistics']['rejected_percentage']}}%" aria-valuenow="{{category['statistics']['rejected']}}" aria-valuemin="0" aria-valuemax="{{category['statistics']['total']}}">
-            {{"{:.2f}".format(category['statistics']['rejected'])}}
-        </div>
-        <div class="progress-bar progress-bar-striped bg-inverted" role="progressbar" style="width: {{category['statistics']['pending_percentage']}}%" aria-valuenow="{{category['statistics']['pending']}}" aria-valuemin="0" aria-valuemax="{{category['statistics']['total']}}">
-            {{"{:.2f}".format(category['statistics']['pending'])}}
-        </div>
-    </div>
-{% endfor %}
-
 {% endblock %}

@@ -1,0 +1,49 @@
+{% extends "categories.html" %}
+{% block content %}
+<div class="col-10">
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{information['accepted_percentage']}}%" aria-valuenow="{{information['accepted']}}" aria-valuemin="0" aria-valuemax="{{information['total']}}">
+            {{information["accepted"]}}
+        </div>
+        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: {{information['rejected_percentage']}}%" aria-valuenow="{{information['rejected']}}" aria-valuemin="0" aria-valuemax="{{information['total']}}">
+            {{information["rejected"]}}
+        </div>
+        <div class="progress-bar progress-bar-striped bg-inverted" role="progressbar" style="width: {{information['pending_percentage']}}%" aria-valuenow="{{information['pending']}}" aria-valuemin="0" aria-valuemax="{{information['total']}}">
+            {{information["pending"]}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <p>MOST ACTIVE MODERATORS</p>
+            <ul class="list-group">
+                {% for moderator in information["moderators"] %}
+                <li class="list-group-item">{{moderator["moderator"]}} ({{moderator["total"]}})</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-6">
+            {{information["plot"]|safe}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <p>BEST CONTRIBUTORS</p>
+            <ul class="list-group">
+                {% for author in information["best_authors"] %}
+                <li class="list-group-item">{{author["author"]}} ({{author["accepted"]}})</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-6">
+            <p>WORST CONTRIBUTORS</p>
+            <ul class="list-group">
+                {% for author in information["worst_authors"] %}
+                <li class="list-group-item">{{author["author"]}} ({{author["rejected"]}})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{{information["script"]|safe}}
+{% endblock %}
