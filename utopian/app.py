@@ -2,6 +2,11 @@ from flask import Flask, render_template
 from pymongo import MongoClient
 import datetime
 import json
+from bokeh.core.properties import value
+from bokeh.io import show, output_file
+from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure
+from bokeh.embed import components
 
 client = MongoClient()
 db = client.utopian
@@ -239,145 +244,135 @@ def last_updated():
 
 @app.context_processor
 def inject_updated():
-    return dict(updated=last_updated())
+    categories = sorted(["copywriting", "social", "blog", "graphics", "ideas",
+        "development", "bug-hunting", "translations", "tutorials",
+        "video-tutorials", "analysis", "documentation", "all"])
+    return dict(updated=last_updated(), categories=categories)
 
 
-def categories_information(posts):
-    post_dictionary = {"total": {"moderated": 0, "accepted": 0,
-        "rejected": 0, "moderators": []}}
-    for post in posts:
-        category = post["category"]
-        moderator = post["moderator"]["account"]
-        post_dictionary.setdefault(category, {
-            "moderated": 0,
-            "accepted": 0,
-            "rejected": 0,
-            "moderators": []
-        })
+def category_plot(dates, accepted, rejected):
+    dates = dates
+    status = ["Accepted", "Rejected"]
+    colours = ["#99CC99", "#FF9999"]
 
-        if post["moderator"]["flagged"]:
-            post_dictionary[category]["rejected"] += 1
-            post_dictionary["total"]["rejected"] += 1
-        else:
-            post_dictionary[category]["accepted"] += 1
-            post_dictionary["total"]["accepted"] += 1
-        post_dictionary[category]["moderated"] += 1
-        post_dictionary["total"]["moderated"] += 1
-        post_dictionary[category]["moderators"].append(moderator)
-        post_dictionary["total"]["moderators"].append(moderator)
+    data = {"dates": dates, "Accepted": accepted, "Rejected": rejected}
 
-    post_list = []
+    source = ColumnDataSource(data=data)
 
-    # Create list with average amount of contributions per category
-    for key, value in post_dictionary.items():
-        value["moderators"] = list(set(value["moderators"]))
-        value["average"] = float(value["moderated"]) / len(value["moderators"])
-        value["percentage"] = percentage(value["moderated"], value["accepted"])
-        post_list.append({"category": key, "statistics": value})
+    p = figure(x_range=dates, plot_height=250, toolbar_location=None,
+        tools="",sizing_mode="stretch_both")
 
-    # Sort alphabetically and move "total" to the end of the list
-    post_list = sorted(post_list, key=lambda x: x["category"])
-    for category in post_list:
-        if category["category"] == "total":
-            post_list.append(category)
-            post_list.remove(category)
-    return post_list
+    p.vbar_stack(status, x="dates", width=0.9, color=colours, source=source,
+        legend=[value(x) for x in status])
 
-from collections import Counter
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xgrid.grid_line_color = None
+    p.axis.minor_tick_line_color = None
+    p.outline_line_color = None
+    p.legend.location = "top_left"
+    p.legend.orientation = "horizontal"
 
-def category_ratio(posts):
-    categories = {"total": {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0}}
-    authors = {"total": {}}
-    moderators = {"total": {}}
-    for post in posts:
-        category = post["category"]
-        if "task" in category:
-            continue
-        if post["status"] == "pending":
-            categories[category]["pending"] += 1
-            categories["total"]["pending"] += 1
-            continue
-        author = post["author"]
-        moderator = post["moderator"]["account"]
-        categories.setdefault(category, {"moderated": 0, "pending": 0, "total": 0, "accepted": 0, "rejected": 0})
-        
-        authors.setdefault(category, {})
-        authors["total"].setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
-        authors[category].setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
-
-        moderators.setdefault(category, {})
-        moderators["total"].setdefault(moderator, {"total": 0, "accepted": 0, "rejected": 0})
-        moderators[category].setdefault(moderator, {"total": 0, "accepted": 0, "rejected": 0})
-        if post["moderator"]["flagged"]:
-            moderators[category][moderator]["rejected"] += 1
-            moderators["total"][moderator]["rejected"] += 1
-            authors[category][author]["rejected"] += 1
-            authors["total"][author]["rejected"] += 1
-            categories[category]["rejected"] += 1
-            categories["total"]["rejected"] += 1
-        else:
-            moderators[category][moderator]["accepted"] += 1
-            moderators["total"][moderator]["accepted"] += 1
-            authors[category][author]["accepted"] += 1
-            authors["total"][author]["accepted"] += 1
-            categories[category]["accepted"] += 1
-            categories["total"]["accepted"] += 1
-
-        moderators["total"][moderator]["total"] += 1
-        moderators[category][moderator]["total"] += 1
-        authors["total"][author]["total"] += 1
-        authors[category][author]["total"] += 1
-        categories[category]["moderated"] += 1
-        categories["total"]["moderated"] += 1
-
-    for category in moderators:
-        moderator_list = []
-        for key, value in moderators[category].items():
-            total = value["total"]
-            value["accepted_percentage"] = percentage(total, value["accepted"])
-            value["rejected_percentage"] = percentage(total, value["rejected"])
-            value["moderator"] = key
-            moderator_list.append(value)
-        most_active = sorted(moderator_list, key=lambda x: x["total"], reverse=True)[:5]
-        moderators[category].clear()
-        moderators[category] = most_active
-
-    for category in authors:
-        author_list = []
-        for key, value in authors[category].items():
-            total = value["total"]
-            contributed = value["accepted"] + value["rejected"]
-            value["total_percentage"] = percentage(total, contributed)
-            value["accepted_percentage"] = percentage(total, value["accepted"])
-            value["rejected_percentage"] = percentage(total, value["rejected"])
-            value["author"] = key
-            author_list.append(value)
-        best = sorted(author_list, key=lambda x: x["accepted"], reverse=True)[:5]
-        worst = sorted(author_list, key=lambda x: x["rejected"], reverse=True)[:5]
-        authors[category].clear()
-        authors[category]["best"] = best
-        authors[category]["worst"] = worst
-
-    category_list = []
-    for key, value in categories.items():
-        value["total"] = value["pending"] + value["moderated"]
-        value["total_percentage"] = percentage(value["total"], value["moderated"])
-        value["accepted_percentage"] = percentage(value["total"], value["accepted"])
-        value["rejected_percentage"] = percentage(value["total"], value["rejected"])
-        value["pending_percentage"] = percentage(value["total"], value["pending"])
-        category_list.append({"category": key, "statistics": value})
-
-    categories = sorted(category_list, key=lambda x: x["statistics"]["total_percentage"])
-    for category in categories:
-        if category["category"] == "total":
-            categories.append(category)
-            categories.remove(category)
+    script, div = components(p)
+    return script, div
     
-    return categories, authors, moderators
+
+def moderator_leaderboard(moderators, N):
+    """
+    Return a list of the N most active moderators.
+    """
+    moderator_list = []
+    for key, value in moderators.items():
+        value["moderator"] = key
+        value["percentage"] = percentage(value["total"], value["accepted"])
+        moderator_list.append(value)
+    return sorted(moderator_list, key=lambda x: x["total"], reverse=True)[:N]
 
 
-@app.route("/categories")
-def categories():
+def author_leaderboard(authors, N):
+    """
+    Return a list containing the best authors and a list containing the
+    worst authors.
+    """
+    author_list = []
+    for key, value in authors.items():
+        value["author"] = key
+        value["percentage"] = percentage(value["total"], value["accepted"])
+        author_list.append(value)
+    best = sorted(author_list, key=lambda x: x["accepted"], reverse=True)[:N]
+    worst = sorted(author_list, key=lambda x: x["rejected"], reverse=True)[:N]
+    return best, worst
+
+
+def category_information(posts):
+    """
+    One big function for collecting all relevant information about the given
+    category. Could probably be done better...
+    """
+    today = datetime.date.today()
+    date = today - datetime.timedelta(days=7)
+    category = {"pending": 0, "total": 0, "accepted": 0, "rejected": 0}
+    authors = {}
+    moderators = {}
+    dates = {}
+    while date <= today:
+        dates[str(date)] = {"accepted": 0, "rejected": 0}
+        date += datetime.timedelta(days=1)
+
+    for post in posts:
+        if post["status"] == "pending":
+            category["pending"] += 1
+            category["total"] += 1
+            continue
+
+        # Get author and moderator and set default is applicable
+        author = post["author"]
+        authors.setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
+        moderator = post["moderator"]["account"]
+        moderators.setdefault(moderator, {"total": 0, "accepted": 0,
+            "rejected": 0})
+        
+        # Post was rejected
+        if post["moderator"]["flagged"]:
+            category["rejected"] += 1
+            moderators[moderator]["rejected"] += 1
+            authors[author]["rejected"] += 1
+            dates[str(post["moderator"]["time"].date())]["rejected"] += 1
+        # Post was accepted
+        else:
+            category["accepted"] += 1
+            moderators[moderator]["accepted"] += 1
+            authors[author]["accepted"] += 1
+            dates[str(post["moderator"]["time"].date())]["accepted"] += 1
+
+        # Add to total
+        category["total"] += 1
+        moderators[moderator]["total"] += 1
+        authors[author]["total"] += 1
+        
+    # Add moderator leaderboard
+    category["moderators"] = moderator_leaderboard(moderators, 5)
+    best, worst = author_leaderboard(authors, 5)
+    # Add author leaderboard
+    category["best_authors"] = best
+    category["worst_authors"] = worst
+    # Create plot and script
+    accepted = [date["accepted"] for date in dates.values()][1:]
+    rejected = [date["rejected"] for date in dates.values()][1:]
+    dates = list(dates.keys())[1:]
+    script, plot = category_plot(dates, accepted, rejected)
+    category["plot"] = plot
+    category["script"] = script
+    # Calculate percentages for progress bar
+    total = category["total"]
+    category["accepted_percentage"] = percentage(total, category["accepted"])
+    category["rejected_percentage"] = percentage(total, category["rejected"])
+    category["pending_percentage"] = percentage(total, category["pending"])
+    return category
+
+
+@app.route("/category/<category>")
+def categories(category):
     posts = db.posts
     week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
     pipeline = [{
@@ -386,13 +381,14 @@ def categories():
                 "status": "pending"
             },{
                 "moderator.time": {"$gt": week_ago}
-            }]
+            }],
+            "category": category
         }
     }]
     post_list = [post for post in posts.aggregate(pipeline)]
-    information, authors, moderators = category_ratio(post_list)
-    return render_template("categories.html", information=information,
-        authors=authors, moderators=moderators)
+    information = category_information(post_list)
+    return render_template("category.html", category=category,
+        information=information)
 
 
 def main():
