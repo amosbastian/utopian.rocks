@@ -374,16 +374,13 @@ def category_information(posts):
 def categories(category):
     posts = db.posts
     week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
-    pipeline = [{
-        "$match": {
-            "$or": [{
-                "status": "pending"
-            },{
-                "moderator.time": {"$gt": week_ago}
-            }],
-            "category": category
-        }
-    }]
+    if not category == "all":
+        pipeline = [{"$match": {"$or": [{"status": "pending"},{
+            "moderator.time": {"$gt": week_ago}}], "category": category}}]
+    else:
+        pipeline = [{"$match": {"$or": [{"status": "pending"},{
+            "moderator.time": {"$gt": week_ago}}]}}]
+            
     post_list = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_list)
     return render_template("category.html", category=category,
