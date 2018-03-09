@@ -18,7 +18,7 @@
     <div class="row category">
         <div class="col-4">
             <div class="leaderboard">
-            <h1><i class="material-icons">mood</i>Top contributors</h1>
+            <h1><i class="material-icons">mood</i>Most accepted contributors</h1>
             <ol class="list-group">
                 {% for author in information["best_authors"] %}
                 <li class="list-group-item">
@@ -31,7 +31,7 @@
         </div>
         <div class="col-4">
             <div class="leaderboard">
-            <h1><i class="material-icons">mood_bad</i>Worst contributors</h1>
+            <h1><i class="material-icons">mood_bad</i>Most rejected contributors</h1>
             <ol class="list-group">
                 {% for author in information["worst_authors"] %}
                 <li class="list-group-item">
@@ -44,7 +44,7 @@
         </div>
         <div class="col-4">
             <div class="leaderboard">
-            <h1><i class="material-icons">star_rate</i>Moderators</h1>
+            <h1><i class="material-icons">star_rate</i>Most active moderators</h1>
             <ol class="list-group">
                 {% for moderator in information["moderators"] %}
                 <li class="list-group-item">

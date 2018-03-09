@@ -258,7 +258,7 @@ def inject_updated():
 def category_plot(dates, accepted, rejected):
     dates = dates
     status = ["Accepted", "Rejected"]
-    colours = ["#551a8b", "#9975b9"]
+    colours = ["#9975b9", "#3a404d"]
 
     data = {"dates": dates, "Accepted": accepted, "Rejected": rejected}
 
