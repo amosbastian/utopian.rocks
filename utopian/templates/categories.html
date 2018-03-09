@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="row">
+    <div class="col-2">
+        {% for c in categories %}
+        {% if c == category %}
+        <div class="category {{c}}"><a class="category active" href="{{ url_for('categories', category=c) }}">{{c.replace("-", " ").title()}}</a></div>
+        {% else %}
+        <div class="category {{c}}"><a class="category" href="{{ url_for('categories', category=c) }}">{{c.replace("-", " ").title()}}</a></div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="col-10">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
