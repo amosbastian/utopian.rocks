@@ -346,3 +346,14 @@ a.category {
 a.category.active {
     color: #551a8b;
 }
+
+a.moderator {
+    text-decoration: none;
+    color: #3a404d;
+}
+
+a.supervisor {
+    text-decoration: none;
+    color: #551a8b;
+    font-weight: 900;
+}

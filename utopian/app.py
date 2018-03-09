@@ -21,6 +21,7 @@ def moderation_team(supervisor):
     moderators = db.moderators
     team = [moderator["account"] for moderator in
         moderators.find({"referrer": supervisor})]
+    team.append(supervisor)
     return team
 
 
@@ -107,6 +108,8 @@ def individual_performance(posts, team):
     performance = {"categories": {"overall": {}}, "overall": []}
     for post in posts:
         category = post["category"]
+        if "task" in category:
+            continue
         moderator = post["moderator"]["account"]
         performance["categories"].setdefault(category, {})
         performance["categories"][category].setdefault(moderator, {
@@ -380,7 +383,7 @@ def categories(category):
     else:
         pipeline = [{"$match": {"$or": [{"status": "pending"},{
             "moderator.time": {"$gt": week_ago}}]}}]
-            
+
     post_list = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_list)
     return render_template("category.html", category=category,

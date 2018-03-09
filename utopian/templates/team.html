@@ -18,7 +18,7 @@
                 {% for category in team_performance["overall"] %}
                     {% if not category["category"] == "overall" %}
                     <tr>
-                        <td><a href="#">{{category["category"].replace("-", " ").title()}}</a></td>
+                        <td><a class="moderator" href="{{ url_for('categories', category=category['category']) }}">{{category["category"].replace("-", " ").title()}}</a></td>
                         <td>{{category["moderated"]}}</td>
                         <td>{{category["accepted"]}}</td>
                         <td>{{category["rejected"]}}</td>
@@ -73,7 +73,11 @@
             {% for moderator in category["moderators"]%}
             {% if not moderator["moderated"] == 0 or category["category"] == "overall" %}
             <tr>
-                <td><a href="#">{{moderator["moderator"]}}</a></td>
+                {% if moderator["moderator"] == supervisor %}
+                <td><a href="#" class="supervisor">{{moderator["moderator"]}}</a></td>
+                {% else %}
+                <td><a href="#" class="moderator">{{moderator["moderator"]}}</a></td>
+                {% endif %}
                 <td>{{moderator["moderated"]}}</td>
                 <td>{{moderator["accepted"]}}</td>
                 <td>{{moderator["rejected"]}}</td>
