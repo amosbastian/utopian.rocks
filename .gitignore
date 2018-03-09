@@ -19,3 +19,5 @@ docs/_templates/
 
 test.py
 test.html
+
+.vscode/
