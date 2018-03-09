@@ -253,14 +253,13 @@ def inject_updated():
 def category_plot(dates, accepted, rejected):
     dates = dates
     status = ["Accepted", "Rejected"]
-    colours = ["#99CC99", "#FF9999"]
+    colours = ["#551a8b", "#9975b9"]
 
     data = {"dates": dates, "Accepted": accepted, "Rejected": rejected}
 
     source = ColumnDataSource(data=data)
 
-    p = figure(x_range=dates, plot_height=250, toolbar_location=None,
-        tools="",sizing_mode="stretch_both")
+    p = figure(x_range=dates, plot_height=250, sizing_mode="stretch_both")
 
     p.vbar_stack(status, x="dates", width=0.9, color=colours, source=source,
         legend=[value(x) for x in status])
@@ -270,7 +269,7 @@ def category_plot(dates, accepted, rejected):
     p.xgrid.grid_line_color = None
     p.axis.minor_tick_line_color = None
     p.outline_line_color = None
-    p.legend.location = "top_left"
+    p.legend.location = "top_right"
     p.legend.orientation = "horizontal"
 
     script, div = components(p)

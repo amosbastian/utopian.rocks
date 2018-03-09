@@ -16,9 +16,13 @@
     <link
         href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.14.min.css"
         rel="stylesheet" type="text/css">
-
     <script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.14.min.js"></script>
     <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.14.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 </head>
 <body>
     {% include "navbar.html" %}
