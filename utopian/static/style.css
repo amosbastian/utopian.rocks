@@ -225,6 +225,20 @@ div.row.category {
     padding-top: 150px;
 }
 
+div.category {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+div.category.active {
+    background: #ddd1e7;
+}
+
+div.category:hover {
+    background: #ddd1e7;
+}
+
 .leaderboard {
     color: #fff;
     font-family: 'Open Sans', sans-serif;
@@ -235,16 +249,17 @@ div.row.category {
             transform: translate(-50%, -50%);
     width: 220px;
     height: 300px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     background: -webkit-gradient(linear, left top, left bottom, from(#3a404d), to(#181c26));
     background: linear-gradient(to bottom, #3a404d, #181c26);
     -webkit-box-shadow: 0 7px 30px rgba(62, 9, 11, 0.3);
             box-shadow: 0 7px 30px rgba(62, 9, 11, 0.3);
   }
 .leaderboard h1 {
-    font-size: 18px;
+    font-size: 14px;
     color: #e1e1e1;
     padding-left: 5px;
-    padding-top: 5px;
 }
 .leaderboard i {
     width: 25px;
@@ -325,17 +340,18 @@ div.row.category {
 
 .progress-accepted {
     cursor: pointer;
-    background-color: #551a8b;
+    background-color: #9975b9;
 }
 
 .progress-rejected {
     cursor: pointer;
-    background-color: #9975b9;
+    background-color: #3a404d;
 }
 
 .progress-pending {
     cursor: pointer;
-    background-color: #3a404d;
+    background-color: #babcc2;
+    color: black;
 }
 
 a.category {
@@ -345,6 +361,7 @@ a.category {
 
 a.category.active {
     color: #551a8b;
+    background: 
 }
 
 a.moderator {
