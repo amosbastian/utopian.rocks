@@ -225,17 +225,17 @@ div.row.category {
     padding-top: 150px;
 }
 
-div.category {
+div.categories {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
 }
 
-div.category.active {
+div.categories.active {
     background: #ddd1e7;
 }
 
-div.category:hover {
+div.categories:hover {
     background: #ddd1e7;
 }
 
