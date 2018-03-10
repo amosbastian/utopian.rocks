@@ -4,7 +4,7 @@ import datetime
 import json
 from bokeh.core.properties import value
 from bokeh.io import show, output_file
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.plotting import figure
 from bokeh.embed import components
 
@@ -260,11 +260,15 @@ def category_plot(dates, accepted, rejected):
     status = ["Accepted", "Rejected"]
     colours = ["#9975b9", "#3a404d"]
 
-    data = {"dates": dates, "Accepted": accepted, "Rejected": rejected}
+    percentages = ["{:.1f}".format(percentage(x[0] + x[1], x[0]))
+        for x in zip(accepted, rejected)]
+    data = {"dates": dates, "Accepted": accepted, "Rejected": rejected,
+        "percentages": percentages}
 
     source = ColumnDataSource(data=data)
 
-    p = figure(x_range=dates, plot_height=250, sizing_mode="stretch_both")
+    p = figure(x_range=dates, plot_height=250, sizing_mode="stretch_both",
+        toolbar_location=None, tools="")
 
     p.vbar_stack(status, x="dates", width=0.9, color=colours, source=source,
         legend=[value(x) for x in status])
@@ -276,6 +280,8 @@ def category_plot(dates, accepted, rejected):
     p.outline_line_color = None
     p.legend.location = "top_right"
     p.legend.orientation = "horizontal"
+    p.add_tools(HoverTool(tooltips=[("Accepted", "@Accepted"),
+        ("Rejected", "@Rejected"), ("%", "@percentages")]))
 
     script, div = components(p)
     return script, div
