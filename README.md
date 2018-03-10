@@ -40,7 +40,7 @@ $ gunicorn wsgi:app
 Features
 --------
 
-Currently the homepage shows all of Utopian.io's supervisors with a link to a page that shows their team's overall performance, and the performance of each moderator per category.
+Currently the homepage shows all of Utopian.io's supervisors with a link to a page that shows their team's overall performance, and the performance of each moderator per category. Each category also has an overview, where information can be found about contributions in the last week, the most active moderators per category etc.
 
 Roadmap
 -------
