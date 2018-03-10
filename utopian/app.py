@@ -320,7 +320,7 @@ def category_information(posts):
     category. Could probably be done better...
     """
     today = datetime.date.today()
-    date = today - datetime.timedelta(days=7)
+    date = today - datetime.timedelta(days=6)
     category = {"pending": 0, "total": 0, "accepted": 0, "rejected": 0}
     authors = {}
     moderators = {}
@@ -367,9 +367,9 @@ def category_information(posts):
     category["best_authors"] = best
     category["worst_authors"] = worst
     # Create plot and script
-    accepted = [date["accepted"] for date in dates.values()][1:]
-    rejected = [date["rejected"] for date in dates.values()][1:]
-    dates = list(dates.keys())[1:]
+    accepted = [date["accepted"] for date in dates.values()]
+    rejected = [date["rejected"] for date in dates.values()]
+    dates = list(dates.keys())
     script, plot = category_plot(dates, accepted, rejected)
     category["plot"] = plot
     category["script"] = script
@@ -384,7 +384,9 @@ def category_information(posts):
 @app.route("/category/<category>")
 def categories(category):
     posts = db.posts
-    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
+    week_ago = datetime.datetime.combine(week_ago, datetime.datetime.min.time())
+    print(week_ago)
     if not category == "all":
         pipeline = [{"$match": {"$or": [{"status": "pending"},{
             "moderator.time": {"$gt": week_ago}}], "category": category}}]
