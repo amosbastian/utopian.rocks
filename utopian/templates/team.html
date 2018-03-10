@@ -34,7 +34,7 @@
                 {% for category in team_performance["overall"] %}
                     {% if category["category"] == "overall" %}
                     <tr>
-                        <td><b>Total</b></td>
+                        <td><b><a class="moderator" href="{{ url_for('categories', category='all') }}">All</a></b></td>
                         <td><b>{{category["moderated"]}}</b></td>
                         <td><b>{{category["accepted"]}}</b></td>
                         <td><b>{{category["rejected"]}}</b></td>
