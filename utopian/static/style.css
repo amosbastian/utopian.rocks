@@ -360,13 +360,18 @@ a.category {
 }
 
 a.category.active {
-    color: #551a8b;
-    background: 
+    color: 
 }
 
 a.moderator {
     text-decoration: none;
     color: #3a404d;
+    display: block;
+    width:100%;
+}
+
+a.moderator:hover {
+    color: #551a8b;
 }
 
 a.supervisor {
