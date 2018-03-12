@@ -359,10 +359,6 @@ a.category {
     color: #3a404d;
 }
 
-a.category.active {
-    color: 
-}
-
 a.moderator {
     text-decoration: none;
     color: #3a404d;
@@ -378,4 +374,207 @@ a.supervisor {
     text-decoration: none;
     color: #551a8b;
     font-weight: 900;
+}
+
+/* MODERATOR OVERVIEW */
+
+span.time {
+    position: relative;
+    float: right;
+}
+
+div.moderator-feed-block {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 0 0 0;
+}
+
+span.category.blog::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E02F";
+    font-weight: 400;
+}
+
+span.category.blog {
+    background-color: #0275d8;
+    color: white;
+    color: white;
+}
+
+span.category.ideas::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E90F";
+    font-weight: 400;
+}
+
+span.category.ideas {
+    background-color: #54d2a0;
+    color: white;
+}
+
+span.category.development::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E86F";
+    font-weight: 400;
+}
+
+span.category.development {
+    background-color: #000;
+    color: white;
+}
+
+span.category.bug-hunting::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E868";
+    font-weight: 400;
+}
+
+span.category.bug-hunting {
+    background-color: #d9534f;
+    color: white;
+}
+
+span.category.translations::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E8E2";
+    font-weight: 400;
+}
+
+span.category.translations {
+    background-color: #ffce3d;
+    color: white;
+}
+
+span.category.graphics::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E069";
+    font-weight: 400;
+}
+
+span.category.graphics {
+    background-color: #f6a623;
+    color: white;
+}
+
+span.category.analysis::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E24B";
+    font-weight: 400;
+}
+
+span.category.analysis {
+    background-color: #164265;
+    color: white;
+}
+
+span.category.social::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E80D";
+    font-weight: 400;
+}
+
+span.category.social {
+    background-color: #7ec2f3;
+    color: white;
+}
+
+span.category.documentation::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E85D";
+    font-weight: 400;
+}
+
+span.category.documentation {
+    background-color: #b1b1b1;
+    color: white;
+}
+
+span.category.tutorials::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E0C6";
+    font-weight: 400;
+}
+
+span.category.tutorials {
+    background-color: #782c51;
+    color: white;
+}
+
+span.category.video-tutorials::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E63A";
+    font-weight: 400;
+}
+
+span.category.video-tutorials {
+    background-color: #ec3324;
+    color: white;
+}
+
+span.category.copywriting::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E0D8";
+    font-weight: 400;
+}
+
+span.category.copywriting {
+    background-color: teal;
+}
+
+span.category {
+    padding: .5rem .75rem;
+    background-color: #eceeef;
+    border: 1px solid rgba(0, 0, 0, .15);
+    vertical-align: middle;
+}
+
+span.category.rejected {
+    border-left: none;
+    background-color: #FF4136;
+    width: 90px;
+}
+
+span.category.accepted {
+    border-left: none;
+    background-color: #2ECC40;
+    width: 90px;
+}
+
+span.project {
+    padding: .5rem .75rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    text-align: center;
+    width: 300px;
+}
+
+div.moderator-feed {
+    background-color: #eceeef;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-left: none;
+    display: inline-block;
+    padding: .5rem .75rem;
+    align-items: stretch;
+    flex-grow: 1;
+}
+
+span.contribution-title {
+    display: inline-block;
+    width: 280px;
+}
+
+div.category-dropdown {
+    padding-right: 10px;
 }

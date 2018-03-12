@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block body %}
+<img src="https://steemitimages.com/u/{{username}}/avatar"></img>
+{{username}}
+
+<div class="container">
+{% include "moderator_reviews.html" %}
+</div>
+{% endblock %}

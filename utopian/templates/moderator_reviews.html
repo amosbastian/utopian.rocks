@@ -1,0 +1,27 @@
+{% block body %}
+{% for post in post_list|sort(True, attribute='moderator.time') %}
+    <div class="moderator-feed-block">
+        <span class="category {{post.category}}"></span>
+        {% if post.status == "any" %}
+        <span class="category accepted">Accepted</span>
+        {% else %}
+        <span class="category rejected">Rejected</span>
+        {% endif %}
+        <span class="project"><small><a href="https:github.com/{{post.repository.owner.login}}/{{post.repository.name}}">{{post.repository.owner.login}}/{{post.repository.name}}</a></small></span>
+        <div class="moderator-feed">
+            <span class="contribution-title"><a href="{{post.permlink}}">{{post.title|truncate(30)}}</a></span>
+            posted by <a href="#">{{post.author}}</a>
+            <span class="time"><small>{{post.moderator.time|timeago}}</small></span>
+        </div>
+    </div>
+{% endfor %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+</nav>
+{% endblock %}

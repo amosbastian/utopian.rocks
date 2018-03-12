@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from pymongo import MongoClient
 import datetime
 import json
+import timeago
 from bokeh.core.properties import value
 from bokeh.io import show, output_file
 from bokeh.models import ColumnDataSource, HoverTool
@@ -386,7 +387,6 @@ def categories(category):
     posts = db.posts
     week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
     week_ago = datetime.datetime.combine(week_ago, datetime.datetime.min.time())
-    print(week_ago)
     if not category == "all":
         pipeline = [{"$match": {"$or": [{"status": "pending"},{
             "moderator.time": {"$gt": week_ago}}], "category": category}}]
@@ -398,6 +398,23 @@ def categories(category):
     information = category_information(post_list)
     return render_template("category.html", category=category,
         information=information)
+
+
+def moderator_profile(post_list):
+    pass
+
+
+@app.template_filter("timeago")
+def time_ago(date):
+    return timeago.format(date)
+
+
+@app.route("/moderator/<username>")
+def user(username):
+    posts = db.posts
+    post_list = [post for post in posts.find({"moderator.account": username})]
+    return render_template("moderator.html", username=username, 
+        post_list=post_list)
 
 
 def main():
