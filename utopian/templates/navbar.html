@@ -1,4 +1,14 @@
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white box-shadow">
     <h5 class="my-0 mr-md-auto font-weight-normal"><a href="/"><img src="https://utopian.io/img/utopian-sole.png"></a></h5>
+    <div class="dropdown category-dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categories" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+        </button>
+        <div class="dropdown-menu" aria-labelledby="categories">
+            {% for category in categories %}
+            <a class="dropdown-item" href="{{ url_for('categories', category=category) }}">{{category.replace("-", " ").title()}}</a>
+            {% endfor %}
+        </div>
+    </div>
     <a class="btn btn-outline-primary" href="https://github.com/amosbastian/utopian"><span class="github">View on GitHub</span></a>
 </div>
