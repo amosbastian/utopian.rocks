@@ -41,7 +41,7 @@ def create_post(post, status):
         try:
             moderator["time"] = parse(moderator.get("time"))
         except TypeError:
-            moderator["time"] = datetime.datetime(2010, 10, 10, 10, 10)
+            moderator["time"] = new_post["created"]
         new_post["moderator"] = moderator
         
     return new_post
