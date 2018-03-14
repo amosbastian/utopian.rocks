@@ -409,12 +409,46 @@ def time_ago(date):
     return timeago.format(date)
 
 
+def categories_moderated(posts):
+    categories = []
+    accepted = 0
+    rejected = 0
+    for post in posts:
+        if post["moderator"]["flagged"]:
+            rejected += 1
+        else:
+            accepted += 1
+        categories.append(post["category"])
+    return list(set(categories)), accepted, rejected
+
+
+def converter(object_):
+    if isinstance(object_, datetime.datetime):
+        return object_.__str__()
+
+
 @app.route("/moderator/<username>")
 def user(username):
     posts = db.posts
     post_list = [post for post in posts.find({"moderator.account": username})]
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
+
+    for post in post_list:
+        if post["repository"] == None:
+            post["repository"] = {"owner": {"login": "None"}}
+
+    moderating_since = post_list[0]["moderator"]["time"].date()
+    if moderating_since == datetime.date(2010, 10, 10):
+        moderating_since = post_list[0]["created"].date()
+    categories, accepted, rejected = categories_moderated(post_list)
+    categories_formatted = [c.replace("-", " ").title() for c in categories]
+    if len(categories_formatted) > 10:
+        categories_formatted = ["All"]
     return render_template("moderator.html", username=username, 
-        post_list=post_list)
+        post_list=post_list, moderating_since=moderating_since,
+        category_list=sorted(categories), accepted=accepted, rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted),
+        categories_formatted=sorted(categories_formatted))
 
 
 def main():

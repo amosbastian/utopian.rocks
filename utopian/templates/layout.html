@@ -42,6 +42,66 @@
         if (window.location.host === "utopian.rocks") {
             window.location.href = window.location.href.replace("utopian.rocks","utopian.info");
         }
+        var reviewed = $("#reviews .moderator-feed-block").length;
+        var limit = 10;
+        $("#reviews .moderator-feed-block:gt(" + (limit - 1) + ")").hide();
+        var pages = Math.ceil(reviewed / limit);
+        $(".pagination").append("<li class='page-item current-page active'><a class='page-link' href='javascript:void(0)'>" + 1 + "</a></li>");
+
+        for (var i = 2; i <= pages; i++) {
+            $(".pagination").append("<li class='page-item current-page'><a class='page-link' href='javascript:void(0)'>" + i + "</a></li>");
+        }
+
+        $(".pagination").append("<li class='page-item next-page'><a class='page-link' href='javascript:void(0)'>Next</a></li>");
+    
+        $(".pagination li.current-page").on("click", function() {
+            if($(this).hasClass("active")) {
+                return false;
+            } else {
+                var current = $(this).index();
+                $(".pagination li").removeClass("active");
+                $(this).addClass("active");
+
+                $("#reviews .moderator-feed-block").hide();
+
+                var total = limit * current;
+                for (var i = total - limit; i < total; i++) {
+                    $("#reviews .moderator-feed-block:eq(" + i + ")").show();
+                }
+            }
+        });
+
+        $(".next-page").on("click", function () {
+            var current = $(".pagination li.active").index();
+            if (current === pages) {
+                return false;
+            } else {
+                current++;
+                $(".pagination li").removeClass("active");
+                $("#reviews .moderator-feed-block").hide();
+                var total = limit * current;
+                for (var i = total - limit; i < total; i++) {
+                    $("#reviews .moderator-feed-block:eq(" + i + ")").show();
+                }
+                $(".pagination li.current-page:eq(" + (current - 1) + ")").addClass("active");
+            }
+        });
+
+        $(".previous-page").on("click", function () {
+            var current = $(".pagination li.active").index();
+            if (current === 1) {
+                return false;
+            } else {
+                current--;
+                $(".pagination li").removeClass("active");
+                $("#reviews .moderator-feed-block").hide();
+                var total = limit * current;
+                for (var i = total - limit; i < total; i++) {
+                    $("#reviews .moderator-feed-block:eq(" + i + ")").show();
+                }
+                $(".pagination li.current-page:eq(" + (current - 1) + ")").addClass("active");
+            }
+        });
     </script>
 </body>
 </html>
