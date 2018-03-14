@@ -533,6 +533,17 @@ span.category.copywriting {
     background-color: teal;
 }
 
+span.category.task::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\EB41";
+    font-weight: 400;
+}
+
+span.category.task {
+    background-color: pink;
+}
+
 span.category {
     padding: .5rem .75rem;
     background-color: #eceeef;
@@ -577,4 +588,62 @@ span.contribution-title {
 
 div.category-dropdown {
     padding-right: 10px;
+}
+
+/* Moderator profile */
+div.moderator-profile {
+    padding: 15px;
+}
+
+div.moderator-profile img {
+    border-radius: 50%;
+    height: 125px;
+    width: 125px;
+}
+
+div.moderator-profile div.moderator-image {
+    height: 100%;
+    float: left;
+    width: 175px;
+}
+
+div.moderator-profile div.moderator-image div {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+div.name {
+    padding-top: 8px;
+}
+
+div.moderator-profile div.stat-row {
+    height: 50%;
+}
+
+div.stat-container {
+    display: inline-block;
+    margin: 20px;
+}
+
+span.label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: lighter;
+}
+
+span.stat-details {
+    font-size: 18px;
+    font-weight: bold;
+    color: #001f3f;
+}
+
+.utopian-button {
+    margin: 20px;
+    float: right;
+}
+
+div.moderator-pagination {
+    padding-top: 15px;
 }

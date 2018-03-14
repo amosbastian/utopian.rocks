@@ -1,9 +1,61 @@
 {% extends "layout.html" %}
 {% block body %}
-<img src="https://steemitimages.com/u/{{username}}/avatar"></img>
-{{username}}
-
+<div class="moderator-profile">
+<div class="moderator-image">
+    <div class="image"><img src="https://steemitimages.com/u/{{username}}/avatar"></img></div>
+    <div class="name"><h4>@{{username}}</h4></div>
+</div>
+<div class="stat-row">
+    <div class="stat-container">
+        <span class="label">Moderating since</span>
+        <span class="stat-details">{{moderating_since}}</span>
+    </div>
+    <div class="stat-container">
+        <span class="label">Moderated</span>
+        <span class="stat-details">{{post_list|length}}</span>
+    </div>
+    <div class="stat-container">
+        <span class="label">Accepted</span>
+        <span class="stat-details">{{accepted}}</span>
+    </div>
+    <div class="stat-container">
+        <span class="label">Rejected</span>
+        <span class="stat-details">{{rejected}}</span>
+    </div>
+    <div class="stat-container">
+        <span class="label">%</span>
+        <span class="stat-details">{{"{:.1f}".format(percentage)}}</span>
+    </div>
+    <div class="utopian-button">
+        <button class="btn btn-outline-primary">View on Utopian.io</button>
+    </div>
+</div>
+<div class="stat-row">
+    <div class="stat-container">
+        <span class="label">Moderating in categories</span>
+        <span class="stat-details">
+            {{", ".join(categories_formatted)}}
+        </span>
+    </div>
+</div>
+</div>
 <div class="container">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Reviews</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Activity</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Other</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Shit</a>
+        </li>
+    </ul>
+</div>
+<div class="container" id="reviews">
 {% include "moderator_reviews.html" %}
 </div>
 {% endblock %}

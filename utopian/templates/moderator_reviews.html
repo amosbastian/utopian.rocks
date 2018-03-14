@@ -1,13 +1,17 @@
 {% block body %}
 {% for post in post_list|sort(True, attribute='moderator.time') %}
     <div class="moderator-feed-block">
+        {% if "task" in post.category %}
+        <span class="category task"></span>
+        {% else %}
         <span class="category {{post.category}}"></span>
+        {% endif %}
         {% if post.status == "any" %}
         <span class="category accepted">Accepted</span>
         {% else %}
         <span class="category rejected">Rejected</span>
         {% endif %}
-        <span class="project"><small><a href="https:github.com/{{post.repository.owner.login}}/{{post.repository.name}}">{{post.repository.owner.login}}/{{post.repository.name}}</a></small></span>
+        <span class="project"><small><a href="https:github.com/{{post.repository.owner.login}}/{{post.repository.name}}">{{post.repository.owner.login}}/{{post.repository.name|truncate(20)}}</a></small></span>
         <div class="moderator-feed">
             <span class="contribution-title"><a href="{{post.permlink}}">{{post.title|truncate(30)}}</a></span>
             posted by <a href="#">{{post.author}}</a>
@@ -15,13 +19,11 @@
         </div>
     </div>
 {% endfor %}
+<div class="moderator-pagination">
 <nav aria-label="Page navigation example">
     <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        <li class="page-item"><a class="page-link previous-page" href="javascript:void(0)">Previous</a></li>
     </ul>
 </nav>
+</div>
 {% endblock %}
