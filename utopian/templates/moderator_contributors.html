@@ -1,0 +1,22 @@
+{% block body %}
+<div style="float: left;">
+    {% for contributor in best %}
+        <div>
+        {{contributor.author}}
+        {{contributor.accepted}}
+        {{contributor.rejected}}
+        {{contributor.percentage}}
+        </div>
+    {% endfor %}
+</div>
+<div style="float: right;">
+    {% for contributor in worst %}
+        <div>
+        {{contributor.author}}
+        {{contributor.accepted}}
+        {{contributor.rejected}}
+        {{contributor.percentage}}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
