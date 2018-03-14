@@ -1,12 +1,13 @@
 from flask import Flask, render_template
 from pymongo import MongoClient
+from dateutil.parser import parse
 import datetime
 import json
 import timeago
 from bokeh.core.properties import value
 from bokeh.io import show, output_file
-from bokeh.models import ColumnDataSource, HoverTool
-from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource, HoverTool, Legend
+from bokeh.plotting import figure, output_file, show
 from bokeh.embed import components
 
 client = MongoClient()
@@ -400,10 +401,6 @@ def categories(category):
         information=information)
 
 
-def moderator_profile(post_list):
-    pass
-
-
 @app.template_filter("timeago")
 def time_ago(date):
     return timeago.format(date)
@@ -422,33 +419,119 @@ def categories_moderated(posts):
     return list(set(categories)), accepted, rejected
 
 
-def converter(object_):
-    if isinstance(object_, datetime.datetime):
-        return object_.__str__()
+def moderator_activity(posts, moderating_since):
+    authors = {}
+    delta = datetime.datetime.now() - moderating_since
+    dates = [str((moderating_since + datetime.timedelta(days=i)).date())
+        for i in range(delta.days + 1)]
+    
+    data = {"all": [0] * len(dates)}
+    for post in posts:
+        category = post["category"]
+        author = post["author"]
+        if "task" in category or "sub" in category:
+            continue
+        authors.setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
+        date = str(post["moderator"]["time"].date())
+        data.setdefault(category, [0] * len(dates))
+        index = dates.index(date)
+
+        if post["moderator"]["flagged"]:
+            authors[author]["rejected"] += 1
+        else:
+            authors[author]["accepted"] += 1
+
+        authors[author]["total"] += 1
+        data[category][index] += 1
+        data["all"][index] += 1
+
+    data["dates"] = [parse(date) for date in dates]
+    best, worst = author_leaderboard(authors, 10)
+    return data, best, worst
+    
+
+def category_colour(category):
+    if category == "ideas":
+        return "#54d2a0"
+    elif category == "development":
+        return "#000000"
+    elif category == "translations":
+        return "#ffce3d"
+    elif category == "graphics":
+        return "#f6a623"
+    elif category == "documentation":
+        return "#b1b1b1"
+    elif category == "copywriting":
+        return "#008080"
+    elif category == "tutorials":
+        return "#782c51"
+    elif category == "analysis":
+        return "#164265"
+    elif category == "social":
+        return "#7ec2f3"
+    elif category == "blog":
+        return "#0275d8"
+    elif category == "video-tutorials":
+        return "#ec3324"
+    elif category == "bug-hunting":
+        return "#d9534f"
+    elif category == "all":
+        return "#7954A7"
+
+
+def activity_plot(activity):
+    x = activity["dates"]
+    p = figure(plot_width=1100, plot_height=500, x_axis_type="datetime")
+
+    legend = []
+    for category, y in activity.items():
+        if not category == "dates":
+            colour = category_colour(category)
+            line = p.line(x, y, line_width=2, color=colour, alpha=0.8,
+                muted_color=colour, muted_alpha=0.2)
+            legend.append((category.replace("-", " ").title(), [line]))
+    legend = Legend(items=legend, location=(0, 0))
+
+    p.add_layout(legend, "right")
+    p.legend.click_policy="mute"
+    script, div = components(p)
+    return script, div
 
 
 @app.route("/moderator/<username>")
 def user(username):
     posts = db.posts
+    moderators = db.moderators
+    moderator = moderators.find_one({"account": username})
+
     post_list = [post for post in posts.find({"moderator.account": username})]
     post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
 
+    # Add empty repository if it doesn't exist
     for post in post_list:
         if post["repository"] == None:
             post["repository"] = {"owner": {"login": "None"}}
 
-    moderating_since = post_list[0]["moderator"]["time"].date()
-    if moderating_since == datetime.date(2010, 10, 10):
-        moderating_since = post_list[0]["created"].date()
+    moderating_since = post_list[0]["moderator"]["time"]
     categories, accepted, rejected = categories_moderated(post_list)
+
+    # Format categories for showing them in template
     categories_formatted = [c.replace("-", " ").title() for c in categories]
+
+    # If too many categories just replace with "All"...
     if len(categories_formatted) > 10:
         categories_formatted = ["All"]
+    
+    # Calculate moderator's activity and create plot
+    activity, best, worst = moderator_activity(post_list, moderating_since)
+    script, div = activity_plot(activity)
+
     return render_template("moderator.html", username=username, 
-        post_list=post_list, moderating_since=moderating_since,
+        post_list=post_list, moderating_since=moderating_since.date(),
         category_list=sorted(categories), accepted=accepted, rejected=rejected,
         percentage=percentage(accepted + rejected, accepted),
-        categories_formatted=sorted(categories_formatted))
+        categories_formatted=sorted(categories_formatted), moderator=moderator,
+        script=script, div=div, best=best, worst=worst)
 
 
 def main():

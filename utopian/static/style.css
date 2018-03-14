@@ -639,6 +639,11 @@ span.stat-details {
     color: #001f3f;
 }
 
+span.stat-details a {
+    color: #001f3f;
+    text-decoration: none;
+}
+
 .utopian-button {
     margin: 20px;
     float: right;
@@ -646,4 +651,7 @@ span.stat-details {
 
 div.moderator-pagination {
     padding-top: 15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }

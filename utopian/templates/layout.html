@@ -42,65 +42,108 @@
         if (window.location.host === "utopian.rocks") {
             window.location.href = window.location.href.replace("utopian.rocks","utopian.info");
         }
-        var reviewed = $("#reviews .moderator-feed-block").length;
-        var limit = 10;
-        $("#reviews .moderator-feed-block:gt(" + (limit - 1) + ")").hide();
-        var pages = Math.ceil(reviewed / limit);
-        $(".pagination").append("<li class='page-item current-page active'><a class='page-link' href='javascript:void(0)'>" + 1 + "</a></li>");
+        
+        // Returns an array of maxLength (or less) page numbers
+        // where a 0 in the returned array denotes a gap in the series.
+        // Parameters:
+        //   totalPages:     total number of pages
+        //   page:           current page
+        //   maxLength:      maximum size of returned array
+        function getPageList(totalPages, page, maxLength) {
+            if (maxLength < 5) throw "maxLength must be at least 5";
 
-        for (var i = 2; i <= pages; i++) {
-            $(".pagination").append("<li class='page-item current-page'><a class='page-link' href='javascript:void(0)'>" + i + "</a></li>");
+            function range(start, end) {
+                return Array.from(Array(end - start + 1), (_, i) => i + start); 
+            }
+
+            var sideWidth = maxLength < 9 ? 1 : 2;
+            var leftWidth = (maxLength - sideWidth*2 - 3) >> 1;
+            var rightWidth = (maxLength - sideWidth*2 - 2) >> 1;
+            if (totalPages <= maxLength) {
+                // no breaks in list
+                return range(1, totalPages);
+            }
+            if (page <= maxLength - sideWidth - 1 - rightWidth) {
+                // no break on left of page
+                return range(1, maxLength-sideWidth-1)
+                    .concat([0])
+                    .concat(range(totalPages-sideWidth+1, totalPages));
+            }
+            if (page >= totalPages - sideWidth - 1 - rightWidth) {
+                // no break on right of page
+                return range(1, sideWidth)
+                    .concat([0])
+                    .concat(range(totalPages - sideWidth - 1 - rightWidth - leftWidth, totalPages));
+            }
+            // Breaks on both sides
+            return range(1, sideWidth)
+                .concat([0])
+                .concat(range(page - leftWidth, page + rightWidth)) 
+                .concat([0])
+                .concat(range(totalPages-sideWidth+1, totalPages));
         }
 
-        $(".pagination").append("<li class='page-item next-page'><a class='page-link' href='javascript:void(0)'>Next</a></li>");
-    
-        $(".pagination li.current-page").on("click", function() {
-            if($(this).hasClass("active")) {
-                return false;
-            } else {
-                var current = $(this).index();
-                $(".pagination li").removeClass("active");
-                $(this).addClass("active");
+        $(function () {
+            // Number of items and limits the number of items per page
+            var numberOfItems = $("#reviews .moderator-feed-block").length;
+            console.log(numberOfItems);
+            var limitPerPage = 10;
+            // Total pages rounded upwards
+            var totalPages = Math.ceil(numberOfItems / limitPerPage);
+            // Number of buttons at the top, not counting prev/next,
+            // but including the dotted buttons.
+            // Must be at least 5:
+            var paginationSize = 7; 
+            var currentPage;
 
-                $("#reviews .moderator-feed-block").hide();
-
-                var total = limit * current;
-                for (var i = total - limit; i < total; i++) {
-                    $("#reviews .moderator-feed-block:eq(" + i + ")").show();
-                }
+            function showPage(whichPage) {
+                if (whichPage < 1 || whichPage > totalPages) return false;
+                currentPage = whichPage;
+                $("#reviews .moderator-feed-block").hide()
+                    .slice((currentPage-1) * limitPerPage, 
+                            currentPage * limitPerPage).show();
+                // Replace the navigation items (not prev/next):            
+                $(".pagination li").slice(1, -1).remove();
+                getPageList(totalPages, currentPage, paginationSize).forEach( item => {
+                    $("<li>").addClass("page-item")
+                            .addClass(item ? "current-page" : "disabled")
+                            .toggleClass("active", item === currentPage).append(
+                        $("<a>").addClass("page-link").attr({
+                            href: "javascript:void(0)"}).text(item || "...")
+                    ).insertBefore("#next-page");
+                });
+                // Disable prev/next when at first/last page:
+                $("#previous-page").toggleClass("disabled", currentPage === 1);
+                $("#next-page").toggleClass("disabled", currentPage === totalPages);
+                return true;
             }
-        });
 
-        $(".next-page").on("click", function () {
-            var current = $(".pagination li.active").index();
-            if (current === pages) {
-                return false;
-            } else {
-                current++;
-                $(".pagination li").removeClass("active");
-                $("#reviews .moderator-feed-block").hide();
-                var total = limit * current;
-                for (var i = total - limit; i < total; i++) {
-                    $("#reviews .moderator-feed-block:eq(" + i + ")").show();
-                }
-                $(".pagination li.current-page:eq(" + (current - 1) + ")").addClass("active");
-            }
-        });
+            // Include the prev/next buttons:
+            $(".pagination").append(
+                $("<li>").addClass("page-item").attr({ id: "previous-page" }).append(
+                    $("<a>").addClass("page-link").attr({
+                        href: "javascript:void(0)"}).text("Prev")
+                ),
+                $("<li>").addClass("page-item").attr({ id: "next-page" }).append(
+                    $("<a>").addClass("page-link").attr({
+                        href: "javascript:void(0)"}).text("Next")
+                )
+            );
+            // Show the page links
+            $("#reviews").show();
+            showPage(1);
 
-        $(".previous-page").on("click", function () {
-            var current = $(".pagination li.active").index();
-            if (current === 1) {
-                return false;
-            } else {
-                current--;
-                $(".pagination li").removeClass("active");
-                $("#reviews .moderator-feed-block").hide();
-                var total = limit * current;
-                for (var i = total - limit; i < total; i++) {
-                    $("#reviews .moderator-feed-block:eq(" + i + ")").show();
-                }
-                $(".pagination li.current-page:eq(" + (current - 1) + ")").addClass("active");
-            }
+            // Use event delegation, as these items are recreated later    
+            $(document).on("click", ".pagination li.current-page:not(.active)", function () {
+                return showPage(+$(this).text());
+            });
+            $("#next-page").on("click", function () {
+                return showPage(currentPage+1);
+            });
+
+            $("#previous-page").on("click", function () {
+                return showPage(currentPage-1);
+            });
         });
     </script>
 </body>

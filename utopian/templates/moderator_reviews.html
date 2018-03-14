@@ -13,17 +13,18 @@
         {% endif %}
         <span class="project"><small><a href="https:github.com/{{post.repository.owner.login}}/{{post.repository.name}}">{{post.repository.owner.login}}/{{post.repository.name|truncate(20)}}</a></small></span>
         <div class="moderator-feed">
-            <span class="contribution-title"><a href="{{post.permlink}}">{{post.title|truncate(30)}}</a></span>
+            {% if post.title.isupper() %}
+            <span class="contribution-title"><a href="{{post.permlink}}">{{post.title|truncate(20)}}</a></span>
+            {% else %}
+            <span class="contribution-title"><a href="{{post.permlink}}">{{post.title|truncate(25)}}</a></span>
+            {% endif %}
             posted by <a href="#">{{post.author}}</a>
             <span class="time"><small>{{post.moderator.time|timeago}}</small></span>
         </div>
     </div>
 {% endfor %}
 <div class="moderator-pagination">
-<nav aria-label="Page navigation example">
-    <ul class="pagination">
-        <li class="page-item"><a class="page-link previous-page" href="javascript:void(0)">Previous</a></li>
-    </ul>
-</nav>
+    <div class="pagination">
+    </div>
 </div>
 {% endblock %}
