@@ -74,9 +74,9 @@
             {% if not moderator["moderated"] == 0 or category["category"] == "overall" %}
             <tr>
                 {% if moderator["moderator"] == supervisor %}
-                <td><a href="https://utopian.io/@{{moderator['moderator']}}" class="supervisor">{{moderator["moderator"]}}</a></td>
+                <td><a href="{{ url_for('user', username=moderator['moderator']) }}" class="supervisor">{{moderator["moderator"]}}</a></td>
                 {% else %}
-                <td><a href="https://utopian.io/@{{moderator['moderator']}}" class="moderator">{{moderator["moderator"]}}</a></td>
+                <td><a href="{{ url_for('user', username=moderator['moderator']) }}" class="moderator">{{moderator["moderator"]}}</a></td>
                 {% endif %}
                 <td>{{moderator["moderated"]}}</td>
                 <td>{{moderator["accepted"]}}</td>

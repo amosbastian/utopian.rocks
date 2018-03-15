@@ -1,0 +1,11 @@
+{% block body %}
+{% for category in category_performance %}
+<div class="moderator-feed-block">
+    <span class="category {{category.category}}"></span>
+    <span class="category total">{{category.total}}</span>
+    <span class="category accepted">{{category.accepted}}</span>
+    <span class="category rejected">{{category.rejected}}</span>
+    <span class="category percentage">{{category.percentage|round|int}}%</span>
+</div>
+{% endfor %}
+{% endblock %}

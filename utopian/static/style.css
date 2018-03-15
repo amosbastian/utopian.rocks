@@ -551,6 +551,19 @@ span.category {
     vertical-align: middle;
 }
 
+span.category.total {
+    border-left: none;
+    background-color: #fff;
+    width: 90px;
+}
+
+span.category.percentage {
+    border-left: none;
+    background-color: #fff;
+    width: 90px;
+    text-align: right;
+}
+
 span.category.rejected {
     border-left: none;
     background-color: #FF4136;
@@ -651,7 +664,79 @@ span.stat-details a {
 
 div.moderator-pagination {
     padding-top: 15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+img.supervisor-image {
+    border-radius: 50%;
+    height: 125px;
+    width: 125px;
+}
+
+div.contributors {
+    display: flex;
+    padding: 15px;
+    width: 100%;
+    padding-top: 0px;
+}
+
+div.moderator-leaderboard {
+    width: 50%;
+    height: 100%;
+    padding: 15px;
+    padding-top: 5px;
+}
+
+div.moderator-leaderboard h1 {
+    font-size: 16px;
+    color: #001f3f;
+    padding-left: 5px;
+    text-align: center;
+    width: 100%;
+}
+.moderator-leaderboard i {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: 5px;
+    margin-right: 5px;
+    vertical-align: baseline;
+}
+.moderator-leaderboard ol {
+    counter-reset: moderator-leaderboard;
+}
+.moderator-leaderboard ol li {
+    position: relative;
+    counter-increment: moderator-leaderboard;
+}
+.moderator-leaderboard ol li::before {
+    content: counter(moderator-leaderboard);
+    position: absolute;
+    z-index: 2;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    color: #fff;
+    background: #001f3f;
+    border-radius: 20px;
+    text-align: center;
+}
+.moderator-leaderboard ol li mark {
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding-left: 35px;
+    background: none;
+    color: #001f3f;
+}
+
+.moderator-leaderboard ol li mark a {
+    text-decoration: none;
+}
+
+.moderator-leaderboard ol li span {
+    float: right;
 }

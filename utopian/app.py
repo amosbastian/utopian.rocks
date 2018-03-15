@@ -423,7 +423,7 @@ def moderator_activity(posts, moderating_since):
     authors = {}
     delta = datetime.datetime.now() - moderating_since
     dates = [str((moderating_since + datetime.timedelta(days=i)).date())
-        for i in range(delta.days + 1)]
+        for i in range(delta.days + 2)]
     
     data = {"all": [0] * len(dates)}
     for post in posts:
@@ -434,6 +434,7 @@ def moderator_activity(posts, moderating_since):
         authors.setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
         date = str(post["moderator"]["time"].date())
         data.setdefault(category, [0] * len(dates))
+        
         index = dates.index(date)
 
         if post["moderator"]["flagged"]:
@@ -488,14 +489,47 @@ def activity_plot(activity):
         if not category == "dates":
             colour = category_colour(category)
             line = p.line(x, y, line_width=2, color=colour, alpha=0.8,
-                muted_color=colour, muted_alpha=0.2)
+                muted_color=colour, muted_alpha=0.2, name=category)
             legend.append((category.replace("-", " ").title(), [line]))
     legend = Legend(items=legend, location=(0, 0))
+
+    p.add_tools(HoverTool(
+        names=["all"],
+        tooltips=[
+            ( "date", "@x{%F}" ),
+            ( "moderated", "@y")
+        ],
+        formatters={
+            "x": "datetime",
+        },
+        mode="vline"
+    ))
 
     p.add_layout(legend, "right")
     p.legend.click_policy="mute"
     script, div = components(p)
     return script, div
+
+
+def moderator_categories(posts):
+    categories = {}
+    for post in posts:
+        category = post["category"]
+        categories.setdefault(category, {"accepted": 0, "rejected": 0})
+
+        if post["moderator"]["flagged"]:
+            categories[category]["rejected"] += 1
+        else:
+            categories[category]["accepted"] += 1
+    
+    category_list = []
+    for key, value in categories.items():
+        value["category"] = key
+        value["total"] = value["accepted"] + value["rejected"]
+        value["percentage"] = percentage(value["total"], value["accepted"])
+        category_list.append(value)
+
+    return sorted(category_list, key=lambda x: x["category"])
 
 
 @app.route("/moderator/<username>")
@@ -526,12 +560,15 @@ def user(username):
     activity, best, worst = moderator_activity(post_list, moderating_since)
     script, div = activity_plot(activity)
 
+    category_performance = moderator_categories(post_list)
+
     return render_template("moderator.html", username=username, 
         post_list=post_list, moderating_since=moderating_since.date(),
         category_list=sorted(categories), accepted=accepted, rejected=rejected,
         percentage=percentage(accepted + rejected, accepted),
         categories_formatted=sorted(categories_formatted), moderator=moderator,
-        script=script, div=div, best=best, worst=worst)
+        script=script, div=div, best=best, worst=worst,
+        category_performance=category_performance)
 
 
 def main():

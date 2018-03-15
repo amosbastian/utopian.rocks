@@ -3,7 +3,7 @@
 <div class="moderator-profile">
 <div class="moderator-image">
     <div class="image"><img src="https://steemitimages.com/u/{{username}}/avatar"></img></div>
-    <div class="name"><h4>@{{username}}</h4></div>
+    <div class="name"><h4>{{username}}</h4></div>
     {% if moderator.supermoderator %}
     <div><p>Supervisor</p></div>
     {% else %}
@@ -61,6 +61,7 @@
             <a class="nav-item nav-link active" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="true">Reviews</a>
             <a class="nav-item nav-link" id="activity-tab" data-toggle="tab" href="#activity" role="tab" aria-controls="activity" aria-selected="false">Activity</a>
             <a class="nav-item nav-link" id="contributor-tab" data-toggle="tab" href="#contributor" role="tab" aria-controls="contributor" aria-selected="false">Contributors</a>
+            <a class="nav-item nav-link" id="category-tab" data-toggle="tab" href="#category" role="tab" aria-controls="category" aria-selected="false">Categories</a>
         </div>
     </nav>
 </div>
@@ -73,6 +74,9 @@
     </div>
     <div class="tab-pane fade" id="contributor" role="tabpanel" aria-labelledby="contributor-tab">
         {% include "moderator_contributors.html" %}
+    </div>
+    <div class="tab-pane fade" id="category" role="tabpanel" aria-labelledby="category-tab">
+        {% include "moderator_categories.html" %}
     </div>
 </div>
 {{script|safe}}
