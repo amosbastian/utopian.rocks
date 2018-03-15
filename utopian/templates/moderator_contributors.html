@@ -1,22 +1,30 @@
 {% block body %}
-<div style="float: left;">
+<div class="contributors">
+<div class="moderator-leaderboard">
+    <ol class="list-group">
+    <h1><i class="material-icons">star_rate</i>Most accepted contributors</h1>
     {% for contributor in best %}
-        <div>
-        {{contributor.author}}
-        {{contributor.accepted}}
-        {{contributor.rejected}}
-        {{contributor.percentage}}
-        </div>
+        <li class="list-group-item">
+        <mark><a href="https://utopian.io/@{{contributor.author}}">{{contributor.author}}</a></mark>
+        <span class="accepted">{{contributor.accepted}}</span>
+        <!-- <span class="rejected">{{contributor.rejected}}</span> -->
+        <!-- <span class="percentage">{{contributor.percentage|round|int}}%</span> -->
+        </li>
     {% endfor %}
+    </ol>
 </div>
-<div style="float: right;">
+<div class="moderator-leaderboard">
+    <ol class="list-group">
+    <h1><i class="material-icons">delete</i>Most rejected contributors</h1>
     {% for contributor in worst %}
-        <div>
-        {{contributor.author}}
-        {{contributor.accepted}}
-        {{contributor.rejected}}
-        {{contributor.percentage}}
-        </div>
+        <li class="list-group-item">
+        <mark><a href="https://utopian.io/@{{contributor.author}}">{{contributor.author}}</a></mark>
+        <!-- <span class="accepted">{{contributor.accepted}}</span> -->
+        <span class="rejected">{{contributor.rejected}}</span>
+        <!-- <span class="percentage">{{contributor.percentage|round|int}}%</span> -->
+        </li>
     {% endfor %}
+    </ol>
+</div>
 </div>
 {% endblock %}
