@@ -249,12 +249,21 @@ def last_updated():
     return updated.strftime("%Y-%m-%d %H:%M:%S")
 
 
+def moderators_list():
+    moderator_list = []
+    moderators = db.moderators
+    for moderator in moderators.find():
+        moderator_list.append(moderator["account"])
+    return moderator_list
+
 @app.context_processor
 def inject_updated():
+    moderators = moderators_list()
     categories = sorted(["copywriting", "social", "blog", "graphics", "ideas",
         "development", "bug-hunting", "translations", "tutorials",
         "video-tutorials", "analysis", "documentation", "all"])
-    return dict(updated=last_updated(), categories=categories)
+    return dict(updated=last_updated(), categories=categories,
+        moderators=moderators)
 
 
 def category_plot(dates, accepted, rejected):
