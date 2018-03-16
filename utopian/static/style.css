@@ -383,10 +383,21 @@ span.time {
     float: right;
 }
 
+small.timeago {
+    cursor: pointer;
+}
+
 div.moderator-feed-block {
     display: flex;
     flex-direction: row;
     padding: 5px 0 0 0;
+}
+
+div.category-block {
+    display: flex;
+    padding: 5px 0 0 0;
+    justify-content: center;
+    text-align: center;
 }
 
 span.category.blog::before {
@@ -549,6 +560,7 @@ span.category {
     background-color: #eceeef;
     border: 1px solid rgba(0, 0, 0, .15);
     vertical-align: middle;
+    cursor: pointer;
 }
 
 span.category.total {
@@ -731,6 +743,10 @@ div.moderator-leaderboard h1 {
     padding-left: 35px;
     background: none;
     color: #001f3f;
+}
+
+.moderator-leaderboard ol li mark.moderator a {
+    color: #551a8b;
 }
 
 .moderator-leaderboard ol li mark a {

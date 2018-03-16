@@ -5,7 +5,11 @@
     <h1><i class="material-icons">star_rate</i>Most accepted contributors</h1>
     {% for contributor in best %}
         <li class="list-group-item">
+        {% if contributor.author in moderators %}
+        <mark class="moderator"><a href="{{ url_for('user', username=contributor.author) }}">(M) {{contributor.author}}</a></mark>
+        {% else %}
         <mark><a href="https://utopian.io/@{{contributor.author}}">{{contributor.author}}</a></mark>
+        {% endif %}
         <span class="accepted">{{contributor.accepted}}</span>
         <!-- <span class="rejected">{{contributor.rejected}}</span> -->
         <!-- <span class="percentage">{{contributor.percentage|round|int}}%</span> -->
@@ -18,7 +22,11 @@
     <h1><i class="material-icons">delete</i>Most rejected contributors</h1>
     {% for contributor in worst %}
         <li class="list-group-item">
+        {% if contributor.author in moderators %}
+        <mark class="moderator"><a href="{{ url_for('user', username=contributor.author) }}">(M) {{contributor.author}}</a></mark>
+        {% else %}
         <mark><a href="https://utopian.io/@{{contributor.author}}">{{contributor.author}}</a></mark>
+        {% endif %}
         <!-- <span class="accepted">{{contributor.accepted}}</span> -->
         <span class="rejected">{{contributor.rejected}}</span>
         <!-- <span class="percentage">{{contributor.percentage|round|int}}%</span> -->
