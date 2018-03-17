@@ -11,7 +11,7 @@
         {% else %}
         <span class="category rejected">Rejected</span>
         {% endif %}
-        <span class="project"><small><a href="https:github.com/{{post.repository.owner.login}}/{{post.repository.name}}">{{post.repository.owner.login}}/{{post.repository.name|truncate(20)}}</a></small></span>
+        <span class="project"><small><a href="https://github.com/{{post.repository.owner.login}}/{{post.repository.name}}">{{post.repository.owner.login}}/{{post.repository.name|truncate(20)}}</a></small></span>
         <div class="moderator-feed">
             {% if post.title.isupper() %}
             <span class="contribution-title"><a href="https://utopian.io/utopian-io/@{{post.author}}/{{post.permlink}}">{{post.title|truncate(20)}}</a></span>
