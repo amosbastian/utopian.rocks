@@ -21,7 +21,14 @@ def update_moderators():
     if moderators.count() == 0:
         moderators.insert_many(moderator_list)
     else:
-        for moderator in moderator_list:
+        account_list = [moderator["account"] for moderator in moderator_list]
+        for moderator in moderators.find():
+            account = moderator["account"]
+            if not account in account_list:
+                time = datetime.datetime.now()
+                print(f"{time} - Removing moderator: {account}")
+                moderators.delete_one(moderator)
+                continue
             moderators.replace_one({"_id": moderator["_id"]}, moderator, True)
 
 
