@@ -37,10 +37,17 @@
         <span class="stat-details"><a href="{{ url_for('team', supervisor=moderator.referrer) }}">{{moderator.referrer}}</a></span>
     </div>
     {% else %}
-    <div class="stat-container">
-        <span class="label">Team</span>
-        <span class="stat-details"><a href="{{ url_for('team', supervisor=username) }}">{{username}}</a></span>
-    </div>
+        {% if moderator.supermoderator %}
+        <div class="stat-container">
+            <span class="label">Team</span>
+            <span class="stat-details"><a href="{{ url_for('team', supervisor=username) }}">{{username}}</a></span>
+        </div>
+        {% else %}
+        <div class="stat-container">
+            <span class="label">Team</span>
+            <span class="stat-details" style="color: red;">None</span>
+        </div>
+        {% endif %}
     {% endif %}
     <div class="utopian-button">
         <a class="btn btn-outline-primary" href="https://utopian.io/@{{username}}">Utopian.io</a>
