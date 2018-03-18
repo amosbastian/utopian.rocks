@@ -8,7 +8,7 @@ body {
 }
 
 .footer {
-    position: absolute;
+    margin-top: 170px;
     bottom: 0;
     width: 100%;
     height: 60px;
