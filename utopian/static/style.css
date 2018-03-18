@@ -596,6 +596,15 @@ span.project {
     width: 300px;
 }
 
+span.score {
+    width: 70px;
+    padding: .5rem .75rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-left: none;
+    text-align: center;
+}
+
 div.moderator-feed {
     background-color: #eceeef;
     border: 1px solid rgba(0, 0, 0, .15);

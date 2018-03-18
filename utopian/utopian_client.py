@@ -2,8 +2,10 @@ import datetime
 import json
 import math
 import requests
+import threading
 from dateutil.parser import parse
 from pymongo import MongoClient
+from steem.post import Post
 
 try:
     from urllib import urlencode
@@ -21,6 +23,7 @@ def generate_url(action, parameters):
 
 
 def create_post(post, status):
+    posts = db.posts
     new_post = {
         "moderator": None,
         "author": post["author"],
@@ -37,22 +40,45 @@ def create_post(post, status):
         "updated": datetime.datetime.now()
     }
     if not status == "pending":
+        # Add moderator to post
         moderator = post["json_metadata"]["moderator"]
         try:
             moderator["time"] = parse(moderator.get("time"))
         except TypeError:
             moderator["time"] = new_post["created"]
         new_post["moderator"] = moderator
-        
-    return new_post
 
+        # Add post's score
+        try:
+            new_post["score"] = post["json_metadata"]["score"]
+        except KeyError:
+            new_post["score"] = 100
+
+        # Add moderator's comment to post
+        # author = new_post["author"]
+        # permlink = new_post["permlink"]
+        # steemit_post = Post(f"@{author}/{permlink}")
+        # print(f"@{author}/{permlink}")
+        # for post in Post.get_all_replies(steemit_post):
+        #     if post["author"] == moderator["account"]:
+        #         if "[[utopian-moderator]]" in post["body"]:
+        #             new_post["comment"] = post["body"]
+        #         else:
+        #             new_post["comment"] = None
+        #         break
+
+        database_post = posts.find_one({"_id": new_post["_id"]})
+        if database_post and "flagged" in database_post:
+            if (not database_post["flagged"] == new_post["flagged"]
+                or database_post["modified"]):
+                new_post["modified"] = True
+    posts.replace_one({"_id": new_post["_id"]}, new_post, True)
 
 def get_posts(status, update=True):
-    posts = []
     limit = 1000
     skip = 0
     action = "posts"
-    posts = db.posts
+    number_threads = 5
 
     # Get total amount of posts submitted to Utopian.io
     if not status == "pending":
@@ -78,9 +104,19 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                post_list = [create_post(post, status) for post in r.json()["results"]]
-                for post in post_list:
-                    posts.replace_one({"_id": post["_id"]}, post, True)
+                posts =  r.json()["results"]
+                for i in range(0, len(posts), number_threads):
+                    threads = []
+                    for j in range(number_threads):
+                        try:
+                            t = threading.Thread(target=create_post,
+                                name=j, args=(posts[i + j], status))
+                            threads.append(t)
+                            t.start()
+                        except IndexError:
+                            pass
+                    for t in threads:
+                        t.join()
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
@@ -95,16 +131,19 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                post_list = [create_post(post, status) for post in r.json()["results"]]
-                for post in post_list:
-                    database_post = posts.find_one({"_id": post["_id"]})
-                    if database_post and "flagged" in database_post:
-                        if (not database_post["flagged"] == post["flagged"]
-                            or database_post["modified"]):
-                            post["modified"] = True
-                    posts.replace_one({"_id": post["_id"]}, post, True)
-                    if post["created"] < week:
-                        return posts
+                posts = r.json()["results"]
+                for i in range(0, len(posts), number_threads):
+                    threads = []
+                    for j in range(number_threads):
+                        t = threading.Thread(target=create_post,
+                            name=j, args=(posts[i + j], status))
+                        threads.append(t)
+                        t.start()
+                    for t in threads:
+                        t.join()
+                    
+                    if parse(posts[i]["created"]) < week:
+                        return
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
