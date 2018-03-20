@@ -605,6 +605,14 @@ span.score {
     text-align: center;
 }
 
+span.comment {
+    padding: .5rem .75rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-left: none;
+    text-align: center;
+}
+
 div.moderator-feed {
     background-color: #eceeef;
     border: 1px solid rgba(0, 0, 0, .15);
