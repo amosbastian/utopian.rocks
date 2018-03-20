@@ -2,8 +2,12 @@ import datetime
 import json
 import math
 import requests
+import threading
+from multiprocessing import Pool
+from functools import partial
 from dateutil.parser import parse
 from pymongo import MongoClient
+from steem.post import Post
 
 try:
     from urllib import urlencode
@@ -21,6 +25,10 @@ def generate_url(action, parameters):
 
 
 def create_post(post, status):
+    week = datetime.datetime.now() - datetime.timedelta(days=7)
+    if parse(post["created"]) < week:
+        return None
+    
     new_post = {
         "moderator": None,
         "author": post["author"],
@@ -37,15 +45,40 @@ def create_post(post, status):
         "updated": datetime.datetime.now()
     }
     if not status == "pending":
+        # print(post["permlink"])
+        # Add moderator to post
         moderator = post["json_metadata"]["moderator"]
         try:
             moderator["time"] = parse(moderator.get("time"))
         except TypeError:
             moderator["time"] = new_post["created"]
         new_post["moderator"] = moderator
-        
-    return new_post
 
+        # Add post's score
+        try:
+            new_post["score"] = post["json_metadata"]["score"]
+        except KeyError:
+            new_post["score"] = 100
+
+        # Add questionaire's questions
+        try:
+            new_post["questions"] = post["json_metadata"]["questions"]
+        except KeyError:
+            new_post["questions"] = "N/A"
+
+        # Add moderator's comment to post
+    #     author = new_post["author"]
+    #     permlink = new_post["permlink"]
+    #     new_post["comment"] = "N/A"
+    #     steemit_post = Post(f"@{author}/{permlink}")
+    #     for post in Post.get_all_replies(steemit_post):
+    #         if post["author"] == moderator["account"]:
+    #             if "[[utopian-moderator]]" in post["body"]:
+    #                 new_post["comment"] = post["body"]
+    #                 print(new_post["comment"])
+    #                 return new_post
+    # print(new_post["comment"])
+    return new_post
 
 def get_posts(status, update=True):
     posts = []
@@ -78,9 +111,14 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                post_list = [create_post(post, status) for post in r.json()["results"]]
+                pool = Pool()
+                x = partial(create_post, status=status)
+                post_list = pool.map(x, r.json()["results"])
+                pool.close()
+                pool.join()
                 for post in post_list:
-                    posts.replace_one({"_id": post["_id"]}, post, True)
+                    if not post == None:
+                        posts.replace_one({"_id": post["_id"]}, post, True)
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
@@ -95,8 +133,14 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                post_list = [create_post(post, status) for post in r.json()["results"]]
+                pool = Pool()
+                x = partial(create_post, status=status)
+                post_list = pool.map(x, r.json()["results"])
+                pool.close()
+                pool.join()
                 for post in post_list:
+                    if post == None:
+                        return
                     database_post = posts.find_one({"_id": post["_id"]})
                     if database_post and "flagged" in database_post:
                         if (not database_post["flagged"] == post["flagged"]
@@ -104,14 +148,13 @@ def get_posts(status, update=True):
                             post["modified"] = True
                     posts.replace_one({"_id": post["_id"]}, post, True)
                     if post["created"] < week:
-                        return posts
+                        return
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
                 return
             
             skip += 1000
-
 
 def get_moderators():
     action = "moderators"
