@@ -68,8 +68,8 @@ def update_posts(status, force_complete=False):
 
 def main():
     update_moderators()
-    update_posts("any")
-    update_posts("flagged")
+    update_posts("any", True)
+    update_posts("flagged", True)
     update_posts("pending", True)
 
 
@@ -80,4 +80,3 @@ def converter(object_):
 
 if __name__ == '__main__':
     main()
-    
