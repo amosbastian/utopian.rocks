@@ -21,6 +21,12 @@
             posted by <a href="#">{{post.author}}</a>
             <span class="time"><small class="timeago" title="{{post.moderator.time}}">{{post.moderator.time|timeago}}</small></span>
         </div>
+        {% if not post.score %}
+            <span class="score">0</span>
+        {% else %}
+            <span class="score">{{post.score}}</span>
+        {% endif %}
+        <!-- <span class="comment">{{post.comment}}</span> -->
     </div>
 {% endfor %}
 <div class="moderator-pagination">
