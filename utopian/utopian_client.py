@@ -24,9 +24,9 @@ def generate_url(action, parameters):
     return f"{UTOPIAN_API}{action}/?{urlencode(parameters)}"
 
 
-def create_post(post, status):
+def create_post(post, status, update=True):
     week = datetime.datetime.now() - datetime.timedelta(days=7)
-    if parse(post["created"]) < week:
+    if update and parse(post["created"]) < week:
         return None
     
     new_post = {
@@ -55,29 +55,27 @@ def create_post(post, status):
         new_post["moderator"] = moderator
 
         # Add post's score
-        try:
+        if "score" in post["json_metadata"].keys():
             new_post["score"] = post["json_metadata"]["score"]
-        except KeyError:
+        else:
             new_post["score"] = 100
 
         # Add questionaire's questions
-        try:
+        if "questions" in post["json_metadata"].keys():
             new_post["questions"] = post["json_metadata"]["questions"]
-        except KeyError:
+        else:
             new_post["questions"] = "N/A"
 
         # Add moderator's comment to post
-    #     author = new_post["author"]
-    #     permlink = new_post["permlink"]
-    #     new_post["comment"] = "N/A"
-    #     steemit_post = Post(f"@{author}/{permlink}")
-    #     for post in Post.get_all_replies(steemit_post):
-    #         if post["author"] == moderator["account"]:
-    #             if "[[utopian-moderator]]" in post["body"]:
-    #                 new_post["comment"] = post["body"]
-    #                 print(new_post["comment"])
-    #                 return new_post
-    # print(new_post["comment"])
+        # author = new_post["author"]
+        # permlink = new_post["permlink"]
+        # new_post["comment"] = "N/A"
+        # steemit_post = Post(f"@{author}/{permlink}")
+        # for post in Post.get_all_replies(steemit_post):
+        #     if post["author"] == moderator["account"]:
+        #         if "[[utopian-moderator]]" in post["body"]:
+        #             new_post["comment"] = post["body"]
+        #             return new_post
     return new_post
 
 def get_posts(status, update=True):
@@ -111,11 +109,12 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                pool = Pool()
-                x = partial(create_post, status=status)
+                pool = Pool(50)
+                x = partial(create_post, status=status, update=False)
                 post_list = pool.map(x, r.json()["results"])
                 pool.close()
                 pool.join()
+                # post_list = [create_post(post, status) for post in r.json()["results"]]
                 for post in post_list:
                     if not post == None:
                         posts.replace_one({"_id": post["_id"]}, post, True)
@@ -134,7 +133,7 @@ def get_posts(status, update=True):
             r = requests.get(url)
             if r.status_code == 200:
                 pool = Pool()
-                x = partial(create_post, status=status)
+                x = partial(create_post, status=status, update=True)
                 post_list = pool.map(x, r.json()["results"])
                 pool.close()
                 pool.join()
