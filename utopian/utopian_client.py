@@ -71,11 +71,12 @@ def create_post(post, status, update=True):
         # permlink = new_post["permlink"]
         # new_post["comment"] = "N/A"
         # steemit_post = Post(f"@{author}/{permlink}")
+    
         # for post in Post.get_all_replies(steemit_post):
-        #     if post["author"] == moderator["account"]:
-        #         if "[[utopian-moderator]]" in post["body"]:
-        #             new_post["comment"] = post["body"]
-        #             return new_post
+        #     if (post["author"] == moderator["account"] and
+        #         "[[utopian-moderator]]" in post["body"]):
+        #         new_post["comment"] = post["body"]
+        #         return new_post
     return new_post
 
 def get_posts(status, update=True):
@@ -109,12 +110,11 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                pool = Pool(50)
+                pool = Pool()
                 x = partial(create_post, status=status, update=False)
                 post_list = pool.map(x, r.json()["results"])
                 pool.close()
                 pool.join()
-                # post_list = [create_post(post, status) for post in r.json()["results"]]
                 for post in post_list:
                     if not post == None:
                         posts.replace_one({"_id": post["_id"]}, post, True)
