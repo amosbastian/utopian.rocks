@@ -603,6 +603,14 @@ span.score {
     border: 1px solid rgba(0, 0, 0, .15);
     border-left: none;
     text-align: center;
+    cursor: pointer;
+}
+
+span.comment::before {
+    font-size: 1em;
+    font-family: "Material Icons";
+    content: "\E0B7";
+    font-weight: 400;
 }
 
 span.comment {
@@ -611,6 +619,7 @@ span.comment {
     border: 1px solid rgba(0, 0, 0, .15);
     border-left: none;
     text-align: center;
+    cursor: pointer;
 }
 
 div.moderator-feed {
@@ -773,3 +782,41 @@ div.moderator-leaderboard h1 {
 .moderator-leaderboard ol li span {
     float: right;
 }
+
+div.question-header {
+    padding: 5px;
+    background-color: #eceeef;
+    border: 1px #DCDCDC solid;
+}
+
+div.question-answer {
+    /* background-color: #F5F5F5; */
+    border: 1px #DCDCDC solid;
+    border-top: none;
+    border-bottom: none;
+    display: flex;
+    flex-direction: row;
+}
+
+
+/* QUESTIONNAIRE MODAL */
+div.modal-dialog {
+    width: 750px;
+    margin: auto
+}
+
+div.question-answer span.answer {
+    background-color: #F5F5F5;
+    padding: .5rem .75rem;
+    width: 90%;
+}
+
+div.question-answer span.score {
+    background-color: #F5F5F5;
+    border: none;
+    width: 20%;
+    text-align: right;
+    cursor: none;
+}
+
+/* MODERATOR COMMENT */
