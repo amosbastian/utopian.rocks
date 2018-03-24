@@ -24,9 +24,61 @@
         {% if not post.score %}
             <span class="score">0</span>
         {% else %}
-            <span class="score">{{post.score}}</span>
+            <span class="score" data-toggle="modal" data-target="#{{post.permlink}}">{{post.score}}</span>
+            <div class="modal fade" id="{{post.permlink}}" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">{{post.title}}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                    {% for question in post.questions %}
+                        <div class="question-header">
+                            <b>{{question.question}}</b>
+                        </div>
+                        <div class="question-answer">
+                            {% for answer in question.answers %}
+                                {% if answer.selected %}
+                                    <span class="answer">{{answer.value}}</span>
+                                    <span class="score">
+                                        {% if answer.score == 0 %}
+                                        <span style="color: red;">{{answer.score}}</span>
+                                        {% elif answer.score < question["answers"][0]["score"] %}
+                                        <span style="color: orange;">{{answer.score}}</span>
+                                        {% else %}
+                                        <span style="color: green;">{{answer.score}}</span>
+                                        {% endif %}
+                                         / 
+                                        <b>{{question["answers"][0]["score"]}}</b>
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    </div>
+                  </div>
+                </div>
+            </div>
         {% endif %}
-        <!-- <span class="comment">{{post.comment}}</span> -->
+        <span class="comment" data-toggle="modal" data-target="#{{post.comment_permlink}}"></span>
+        <div class="modal fade" id="{{post.comment_permlink}}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{post.title}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{post.comment|safe}}
+                </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endfor %}
 <div class="moderator-pagination">
