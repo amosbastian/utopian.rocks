@@ -1,10 +1,8 @@
 import datetime
-import json
 import math
 import requests
 import threading
-from multiprocessing import Pool
-from functools import partial
+from concurrent import futures
 from dateutil.parser import parse
 from pymongo import MongoClient
 from steem.post import Post
@@ -67,17 +65,18 @@ def create_post(post, status, update=True):
             new_post["questions"] = "N/A"
 
         # Add moderator's comment to post
-        # author = new_post["author"]
-        # permlink = new_post["permlink"]
-        # new_post["comment"] = "N/A"
-        # steemit_post = Post(f"@{author}/{permlink}")
-    
-        # for post in Post.get_all_replies(steemit_post):
-        #     if (post["author"] == moderator["account"] and
-        #         "[[utopian-moderator]]" in post["body"]):
-        #         new_post["comment"] = post["body"]
-        #         return new_post
+        author = new_post["author"]
+        permlink = new_post["permlink"]
+        new_post["comment"] = "N/A"
+        steemit_post = Post(f"@{author}/{permlink}")
+
+        for post in steemit_post.get_replies():
+            if post["author"] == moderator["account"] and "[[utopian-moderator]]" in post["body"]:
+                new_post["comment"] = post["body"]
+                return new_post
+
     return new_post
+
 
 def get_posts(status, update=True):
     posts = []
@@ -110,14 +109,17 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                pool = Pool()
-                x = partial(create_post, status=status, update=False)
-                post_list = pool.map(x, r.json()["results"])
-                pool.close()
-                pool.join()
-                for post in post_list:
-                    if not post == None:
-                        posts.replace_one({"_id": post["_id"]}, post, True)
+
+                with futures.ThreadPoolExecutor(100) as executor:
+                    futures_posts = [executor.submit(create_post, i, status=status, update=False)
+                                     for i in r.json()['results']]  # executor.map(x, r.json()['results'])
+
+                    for f in futures.as_completed(futures_posts):
+                        post = f.result()
+                        if post:
+                            print("update post id")
+                            posts.replace_one({"_id": post["_id"]}, post, True)
+
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
@@ -132,28 +134,27 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                pool = Pool()
-                x = partial(create_post, status=status, update=True)
-                post_list = pool.map(x, r.json()["results"])
-                pool.close()
-                pool.join()
-                for post in post_list:
-                    if post == None:
-                        return
-                    database_post = posts.find_one({"_id": post["_id"]})
-                    if database_post and "flagged" in database_post:
-                        if (not database_post["flagged"] == post["flagged"]
-                            or database_post["modified"]):
-                            post["modified"] = True
-                    posts.replace_one({"_id": post["_id"]}, post, True)
-                    if post["created"] < week:
-                        return
+                with futures.ThreadPoolExecutor(100) as executor:
+                    futures_posts = [executor.submit(create_post, i, status=status, update=False)
+                                     for i in r.json()['results']]  # executor.map(x, r.json()['results'])
+
+                    for f in futures.as_completed(futures_posts):
+                        post = f.result()
+                        if post:
+                            database_post = posts.find_one({"_id": post["_id"]})
+                            if database_post and "flagged" in database_post:
+                                if not database_post["flagged"] == post["flagged"] or database_post["modified"]:
+                                    post["modified"] = True
+                            posts.replace_one({"_id": post["_id"]}, post, True)
+                            if post["created"] < week:
+                                return
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
                 return
             
             skip += 1000
+
 
 def get_moderators():
     action = "moderators"
