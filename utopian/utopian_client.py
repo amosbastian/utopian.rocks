@@ -1,11 +1,10 @@
 import datetime
 import math
 import requests
-import threading
 from concurrent import futures
 from dateutil.parser import parse
 from pymongo import MongoClient
-from steem.post import Post
+from steem import Steem
 
 try:
     from urllib import urlencode
@@ -14,8 +13,10 @@ except ImportError:
 
 client = MongoClient()
 db = client.utopian
+steem_instance = Steem()
 
 UTOPIAN_API = "https://api.utopian.io/api/"
+num_workers = 20
 
 
 def generate_url(action, parameters):
@@ -68,12 +69,14 @@ def create_post(post, status, update=True):
         author = new_post["author"]
         permlink = new_post["permlink"]
         new_post["comment"] = "N/A"
-        steemit_post = Post(f"@{author}/{permlink}")
 
-        for post in steemit_post.get_replies():
-            if post["author"] == moderator["account"] and "[[utopian-moderator]]" in post["body"]:
-                new_post["comment"] = post["body"]
-                return new_post
+        post_replies = steem_instance.get_content_replies(author, permlink)
+
+        if post_replies:
+            for reply in post_replies:
+                if reply["author"] == moderator["account"] and "[[utopian-moderator]]" in reply["body"]:
+                    new_post["comment"] = reply["body"]
+                    return new_post
 
     return new_post
 
@@ -110,7 +113,7 @@ def get_posts(status, update=True):
             r = requests.get(url)
             if r.status_code == 200:
 
-                with futures.ThreadPoolExecutor(100) as executor:
+                with futures.ThreadPoolExecutor(num_workers) as executor:
                     futures_posts = [executor.submit(create_post, i, status=status, update=False)
                                      for i in r.json()['results']]  # executor.map(x, r.json()['results'])
 
@@ -134,7 +137,7 @@ def get_posts(status, update=True):
             print(f"{datetime.datetime.now()} - Fetching from {url}")
             r = requests.get(url)
             if r.status_code == 200:
-                with futures.ThreadPoolExecutor(100) as executor:
+                with futures.ThreadPoolExecutor(num_workers) as executor:
                     futures_posts = [executor.submit(create_post, i, status=status, update=False)
                                      for i in r.json()['results']]  # executor.map(x, r.json()['results'])
 
