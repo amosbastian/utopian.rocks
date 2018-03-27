@@ -11,26 +11,15 @@ db = client.utopian
 def update_moderators():
     print(f"{datetime.datetime.now()} - Updating moderators.")
     moderators = db.moderators
-    moderator_list = utopian_client.get_moderators()
+    current_moderators = utopian_client.get_moderators()
 
-    if not moderator_list:
+    if not current_moderators:
         time = datetime.datetime.now()
         print(f"{time} - Could not update moderators.")
         return
 
-    if moderators.count() == 0:
-        moderators.insert_many(moderator_list)
-    else:
-        account_list = [moderator["account"] for moderator in moderator_list]
-        for moderator in moderators.find():
-            account = moderator["account"]
-            if not account in account_list:
-                time = datetime.datetime.now()
-                print(f"{time} - Removing moderator: {account}")
-                moderators.delete_one(moderator)
-                continue
-            moderators.replace_one({"_id": moderator["_id"]}, moderator, True)
-
+    db.moderators.drop()
+    moderators.insert_many(current_moderators)
 
 def status_converter(status):
     if status == "any":
