@@ -7,7 +7,9 @@ from multiprocessing import Pool
 from functools import partial
 from dateutil.parser import parse
 from pymongo import MongoClient
-from steem.post import Post
+from steem import Steem
+
+steem = Steem()
 
 try:
     from urllib import urlencode
@@ -71,12 +73,15 @@ def create_post(post, status, update=True):
         # permlink = new_post["permlink"]
         # new_post["comment"] = "N/A"
         # steemit_post = Post(f"@{author}/{permlink}")
-    
-        # for post in Post.get_all_replies(steemit_post):
-        #     if (post["author"] == moderator["account"] and
-        #         "[[utopian-moderator]]" in post["body"]):
-        #         new_post["comment"] = post["body"]
-        #         return new_post
+        # replies = steem.get_content_replies(author, permlink)
+        # if replies:
+        #     for post in replies:
+        #         if (post["author"] == moderator["account"] and
+        #             "[[utopian-moderator]]" in post["body"]):
+        #             new_post["comment"] = post["body"]
+        #             return new_post
+        # else:
+        #     return new_post
     return new_post
 
 def get_posts(status, update=True):
