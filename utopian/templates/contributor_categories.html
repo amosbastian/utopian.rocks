@@ -1,0 +1,15 @@
+{% block body %}
+{% for category in category_performance %}
+<div class="category-block">
+    {% if "task" in category.category or "sub" in category.category %}
+    <span class="category task" title="{{category.category.replace("-", " ").title()}}"></span>
+    {% else %}
+    <span class="category {{category.category}}" title="{{category.category.replace("-", " ").title()}}"></span>
+    {% endif %}
+    <span class="category total">{{category.total}}</span>
+    <span class="category accepted">{{category.accepted}}</span>
+    <span class="category rejected">{{category.rejected}}</span>
+    <span class="category percentage">{{category.percentage|round|int}}%</span>
+</div>
+{% endfor %}
+{% endblock %}
