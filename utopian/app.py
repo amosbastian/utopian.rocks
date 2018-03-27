@@ -310,18 +310,18 @@ def moderator_leaderboard(moderators, N):
     return sorted(moderator_list, key=lambda x: x["total"], reverse=True)[:N]
 
 
-def author_leaderboard(authors, N):
+def leaderboard(users, N, user):
     """
-    Return a list containing the best authors and a list containing the
-    worst authors.
+    Return a list containing the best users and a list containing the
+    worst users.
     """
-    author_list = []
-    for key, value in authors.items():
-        value["author"] = key
+    user_list = []
+    for key, value in users.items():
+        value[user] = key
         value["percentage"] = percentage(value["total"], value["accepted"])
-        author_list.append(value)
-    best = sorted(author_list, key=lambda x: x["accepted"], reverse=True)[:N]
-    worst = sorted(author_list, key=lambda x: x["rejected"], reverse=True)[:N]
+        user_list.append(value)
+    best = sorted(user_list, key=lambda x: x["accepted"], reverse=True)[:N]
+    worst = sorted(user_list, key=lambda x: x["rejected"], reverse=True)[:N]
     return best, worst
 
 
@@ -373,7 +373,7 @@ def category_information(posts):
         
     # Add moderator leaderboard
     category["moderators"] = moderator_leaderboard(moderators, 5)
-    best, worst = author_leaderboard(authors, 5)
+    best, worst = leaderboard(authors, 5, "author")
     # Add author leaderboard
     category["best_authors"] = best
     category["worst_authors"] = worst
@@ -420,6 +420,8 @@ def categories_moderated(posts):
     accepted = 0
     rejected = 0
     for post in posts:
+        if post["status"] == "pending":
+            continue
         if post["moderator"]["flagged"]:
             rejected += 1
         else:
@@ -456,7 +458,7 @@ def moderator_activity(posts, moderating_since):
         data["all"][index] += 1
 
     data["dates"] = [parse(date) for date in dates]
-    best, worst = author_leaderboard(authors, 10)
+    best, worst = leaderboard(authors, 10, "author")
     return data, best, worst
     
 
@@ -562,7 +564,7 @@ def user(username):
     categories_formatted = [c.replace("-", " ").title() for c in categories]
 
     # If too many categories just replace with "All"...
-    if len(categories_formatted) > 10:
+    if len(categories_formatted) > 7:
         categories_formatted = ["All"]
     
     # Calculate moderator's activity and create plot
@@ -578,6 +580,54 @@ def user(username):
         categories_formatted=sorted(categories_formatted), moderator=moderator,
         script=script, div=div, best=best, worst=worst,
         category_performance=category_performance)
+
+
+def contributor_activity(posts):
+    moderators = {}
+
+    for post in posts:
+        moderator = post["moderator"]["account"]
+        moderators.setdefault(moderator,
+            {"total": 0, "accepted": 0, "rejected": 0})
+
+        if post["moderator"]["flagged"]:
+            moderators[moderator]["rejected"] += 1
+        else:
+            moderators[moderator]["accepted"] += 1
+
+        moderators[moderator]["total"] += 1
+
+    best, worst = leaderboard(moderators, 10, "moderator")
+    return best, worst
+
+
+
+@app.route("/contributor/<username>")
+def contributor(username):
+    posts = db.posts
+    post_list = [post for post in posts.find({"author": username}) if 
+        not post["status"] == "pending"]
+    post_list = sorted(post_list, key=lambda x: x["created"])
+
+    categories, accepted, rejected = categories_moderated(post_list)
+    # Format categories for showing them in template
+    categories_formatted = [c.replace("-", " ").title() for c in categories]
+
+    # Add empty repository if it doesn't exist
+    for post in post_list:
+        if post["repository"] == None:
+            post["repository"] = {"owner": {"login": "None"}}
+
+    contributing_since = post_list[0]["created"]
+    best, worst = contributor_activity(post_list)
+    category_performance = moderator_categories(post_list)
+
+    return render_template("contributor.html", username=username,
+        post_list=post_list, contributing_since=contributing_since.date(),
+        category_list=sorted(categories), accepted=accepted, rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted),
+        categories_formatted=sorted(categories_formatted),
+        best=best, worst=worst, category_performance=category_performance)
 
 
 def main():
