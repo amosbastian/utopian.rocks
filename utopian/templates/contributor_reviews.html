@@ -1,5 +1,5 @@
 {% block body %}
-{% for post in post_list|sort(True, attribute='moderator.time') %}
+{% for post in post_list|sort(True, attribute="created") %}
     <div class="moderator-feed-block">
         {% if "task" in post.category %}
         <span class="category task" title="{{post.category.replace("-", " ").title()}}"></span>
@@ -42,8 +42,8 @@
             {% else %}
             <span class="contribution-title"><a href="https://utopian.io/utopian-io/@{{post.author}}/{{post.permlink}}">{{post.title}}</a></span>
             {% endif %}
-            posted by <a href="{{url_for('contributor', username=post.author)}}">{{post.author}}</a>
-            <span class="time"><small class="timeago" title="{{post.moderator.time}}">{{post.moderator.time|timeago}}</small></span>
+            moderated by <a href="{{url_for('user', username=post.moderator.account)}}">{{post.moderator.account}}</a>
+            <span class="time"><small class="timeago" title="{{post.created}}">{{post.created|timeago}}</small></span>
         </div>
         {% if not post.score %}
             <span class="score">0</span>
