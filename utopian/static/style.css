@@ -393,6 +393,15 @@ div.moderator-feed-block {
     padding: 5px 0 0 0;
 }
 
+div.moderator-feed-block img {
+    width: 16px;
+    height: 16px;
+}
+
+div.moderator-feed-block small.project {
+    padding: .5rem .75rem;    
+}
+
 div.category-block {
     display: flex;
     padding: 5px 0 0 0;
@@ -592,8 +601,8 @@ span.project {
     padding: .5rem .75rem;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, .15);
-    text-align: center;
-    width: 300px;
+    text-align: left;
+    width: 280px;
 }
 
 span.score {
@@ -619,7 +628,7 @@ span.comment {
     border: 1px solid rgba(0, 0, 0, .15);
     border-left: none;
     text-align: center;
-    cursor: pointer;
+    cursor: not-allowed;
 }
 
 div.moderator-feed {
@@ -634,7 +643,7 @@ div.moderator-feed {
 
 span.contribution-title {
     display: inline-block;
-    width: 240px;
+    width: 250px;
 }
 
 div.category-dropdown {
@@ -816,7 +825,7 @@ div.question-answer span.score {
     border: none;
     width: 20%;
     text-align: right;
-    cursor: none;
+    cursor: default;
 }
 
 /* MODERATOR COMMENT */
