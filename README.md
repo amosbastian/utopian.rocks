@@ -40,9 +40,12 @@ $ gunicorn wsgi:app
 Features
 --------
 
-* Supervisor team overview - Shows a supervisor's team's performance in the last week
-* Moderator overview - Shows a moderator's performance, like recent reviews, activity and more.
-* Contributor overview - Shows a contributor's performance, like recent contributions, who they were moderated by and more.
+### [Supervisor team overview](https://utopian.info/team/amosbastian)
+Shows a supervisor's team's performance in the last week.
+### [Moderator overview](https://utopian.info/moderator/amosbastian)
+Shows a moderator's performance, like recent reviews, activity and more.
+### [Contributor overview](https://utopian.info/moderator/amosbastian)
+Shows a contributor's performance, like recent contributions, who they were moderated by and more.
 
 Roadmap
 -------
