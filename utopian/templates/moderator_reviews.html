@@ -63,7 +63,8 @@
                 </div>
             </div>
         {% endif %}
-        <span class="comment" data-toggle="modal" data-target="#{{post.comment_permlink}}"></span>
+        {% if not post.comment == "N/A" %}
+        <span class="comment" data-toggle="modal" data-target="#{{post.comment_permlink}}">{{post.comment}}</span>
         <div class="modal fade" id="{{post.comment_permlink}}" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -79,6 +80,9 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <span class="comment"></span>
+        {% endif %}
     </div>
 {% endfor %}
 <div class="moderator-pagination">
