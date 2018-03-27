@@ -1,7 +1,7 @@
 Utopian
 -------
 
-A web application showing additional information about Utopian.io. It was created using Flask and MongoDB.
+A web application showing additional information about Utopian.io. It was created using Flask and MongoDB. Visit https://utopian.info/ to see it in action!
 
 Usage
 -----
@@ -40,7 +40,9 @@ $ gunicorn wsgi:app
 Features
 --------
 
-Currently the homepage shows all of Utopian.io's supervisors with a link to a page that shows their team's overall performance, and the performance of each moderator per category. Each category also has an overview, where information can be found about contributions in the last week, the most active moderators per category etc.
+* Supervisor team overview - Shows a supervisor's team's performance in the last week
+* Moderator overview - Shows a moderator's performance, like recent reviews, activity and more.
+* Contributor overview - Shows a contributor's performance, like recent contributions, who they were moderated by and more.
 
 Roadmap
 -------
@@ -48,8 +50,6 @@ Roadmap
 Currently I have the following plans, but this could all change in the future
 
 * Add a way to change the static time frame of 7 days to e.g. 1 day, 12 hours etc.
-* Add a page that shows some statistics about the total number of submitted contributions (overall and per category) for a given time frame
-* Add a page for each moderator showing their individual performance, a feed of their most recently reviewed posts, other statistics (e.g. who they have reviewed the most) etc.
 * Add a page for projects that show statistics about contributions made to it (e.g. best contributor, overall acceptance rate etc.)
-* Add a page for contributors to see their individual performance (e.g acceptance rate, who has reviewed their posts the most etc.)
+* Improve overall look and feel, making everything more consistent.
 
