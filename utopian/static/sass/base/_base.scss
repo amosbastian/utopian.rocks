@@ -1,0 +1,65 @@
+:root {
+  --color-primary: #8e44ad;
+  --color-primary-light: #a562c1;
+  --color-primary-dark: #66317c;
+
+  --color-grey-light-1: #faf9f9;
+  --color-grey-light-2: #f4f2f2;
+  --color-grey-light-3: #f0eeee;
+  --color-grey-light-4: #ccc;
+
+  --color-grey-dark-1: #333;
+  --color-grey-dark-2: #777;
+  --color-grey-dark-3: #999;
+
+  --color-suggestions: #54d2a0;
+  --color-development: #000;
+  --color-bug-hunting: #d9534f;
+  --color-translations: #ffce3d;
+  --color-graphics: #f6a623;
+  --color-analysis: #164265;
+  --color-visibility: #7ec2f3;
+  --color-documentation: #b1b1b1;
+  --color-tutorials: #782c51;
+  --color-video-tutorials: #ec3324;
+  --color-copywriting: teal;
+  --color-blogs: #0275d8;
+
+  --color-accepted: #2ecc71;
+  --color-rejected: #e74c3c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.container {
+  display: grid;
+
+  grid-template-rows: min-content 1fr min-content;
+  grid-template-columns: [sidebar-start] 16rem [sidebar-end full-start]
+    minmax(6rem, 1fr)
+    [center-start]
+    repeat(8, [col-start] minmax(min-content, 14rem) [col-end]) 
+    [center-end]
+    minmax(6rem, 1fr) 
+    [full-end];
+}

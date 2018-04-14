@@ -1,6 +1,7 @@
 import datetime
 import json
 import math
+import os
 import requests
 import threading
 from multiprocessing import Pool
@@ -30,7 +31,7 @@ def create_post(post, status, update=True):
     week = datetime.datetime.now() - datetime.timedelta(days=7)
     if update and parse(post["created"]) < week:
         return None
-    
+
     new_post = {
         "moderator": None,
         "author": post["author"],
@@ -83,6 +84,7 @@ def create_post(post, status, update=True):
         # else:
         #     return new_post
     return new_post
+
 
 def get_posts(status, update=True):
     posts = []
@@ -147,8 +149,7 @@ def get_posts(status, update=True):
                         return
                     database_post = posts.find_one({"_id": post["_id"]})
                     if database_post and "flagged" in database_post:
-                        if (not database_post["flagged"] == post["flagged"]
-                            or database_post["modified"]):
+                        if (not database_post["flagged"] == post["flagged"] or database_post["modified"]):
                             post["modified"] = True
                     posts.replace_one({"_id": post["_id"]}, post, True)
                     if post["created"] < week:
@@ -157,13 +158,25 @@ def get_posts(status, update=True):
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
                 return
-            
+
             skip += 1000
+
 
 def get_moderators():
     action = "moderators"
+    headers = {
+        "Origin": "https://utopian.info",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-GB,en;q=0.9,nl;q=0.8",
+        'X-Requested-With': 'XMLHttpRequest',
+        "User-Agent": "utopian.info",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "x-api-key-id": "ieqsynyaeg",
+        "x-api-key": "qSJdaGUXqo9pBwZwhtOQlfrlpJ0Y6IH9HE0A0kki"
+    }
     url = generate_url(action, {})
-    r = requests.get(url)
+    r = requests.get(url, headers=headers)
     if r.status_code == 200:
         return r.json()["results"]
     else:

@@ -1,0 +1,133 @@
+.review {
+  display: grid;
+  grid-template-columns: min-content 10rem 30rem 4fr .5fr;
+  font-size: 1.4rem;
+  border: 1px solid var(--color-grey-light-3);
+  color: var(--color-grey-light-1);
+
+  &__icon {
+    margin: 1rem;
+    fill: currentColor;
+    width: 2rem;
+    height: 2rem;
+    &--github {
+      fill: var(--color-development);
+    }
+  }
+
+  &__accepted {
+    display: grid;
+    background-color: var(--color-accepted);
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__rejected {
+    display: grid;
+    background-color: var(--color-rejected);
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__project {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-right: 1px solid var(--color-grey-light-3);
+    border-left: 1px solid var(--color-grey-light-3);
+  }
+
+  &__title {
+    width: 20rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__link,
+  &__link:active,
+  &__link:visited {
+    text-decoration: none;
+    color: var(--color-grey-dark-1);
+    transition: all .2s;
+  }
+
+  &__link:hover {
+    color: var(--color-primary);
+    transform: translateY(-.5rem);
+  }
+
+  &__information {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-grey-light-3);
+    padding-left: 1rem;
+    color: var(--color-primary-light);
+  }
+
+  &__text {
+    padding-right: .5rem;
+  }
+
+  &__score {
+    display: grid;
+    align-items: center;
+    justify-content: end;
+    color: var(--color-grey-dark-2);
+    padding-right: 1rem;
+  }
+
+  &__category {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    border-right: 1px solid var(--color-grey-light-3);
+    &--analysis {
+      background-color: var(--color-analysis);
+    }
+
+    &--blogs {
+      background-color: var(--color-blogs);
+    }
+
+    &--bug-hunting {
+      background-color: var(--color-bug-hunting);
+    }
+
+    &--copywriting {
+      background-color: var(--color-copywriting);
+    }
+
+    &--development {
+      background-color: var(--color-development);
+    }
+
+    &--documentation {
+      background-color: var(--color-documentation);
+    }
+
+    &--graphics {
+      background-color: var(--color-graphics);
+    }
+
+    &--ideas {
+      background-color: var(--color-suggestions);
+    }
+
+    &--translations {
+      background-color: var(--color-translations);
+    }
+
+    &--tutorials {
+      background-color: var(--color-tutorials);
+    }
+
+    &--video-tutorials {
+      background-color: var(--color-video-tutorials);
+    }
+
+    &--social {
+      background-color: var(--color-visibility);
+    }
+  }
+}

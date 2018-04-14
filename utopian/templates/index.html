@@ -1,20 +1,18 @@
-{% extends "layout.html" %}
-{% block body %}
+{% extends "base.html" %}
+{% set active_page = "index" %}
+{% block title %}Home{% endblock %}
+{% block content %}
 <section class="supervisors">
-    <div class="row text-center">
-        {% for supervisor in supervisors %}
-        <div class="col-md-3 mb-3">
-            <div>
-                <img class="supervisor-image" src="https://steemitimages.com/u/{{supervisor[0]}}/avatar" alt="Supervisor Image">
-            </div>
-            <h4>
-                <strong>{{supervisor[0]}}</strong>
-            </h4>
-            <a type="button" class="btn btn-outline-primary d-flex justify-content-between align-items-center" href="{{ url_for('team', supervisor=supervisor[0]) }}">
-                <i class="material-icons">supervisor_account</i>Show team<span class="badge badge-primary badge-pill">{{supervisor[1]}}</span>
-            </a>
-        </div>
-        {% endfor %}
+  {% for supervisor in supervisors %}
+  <div class="supervisor">
+    <!-- <div>
+      <img class="supervisor-image" src="https://steemitimages.com/u/{{supervisor[0]}}/avatar" alt="Supervisor Image">
     </div>
+    <h4>
+      <strong>{{supervisor[0]}}</strong>
+    </h4> -->
+    UNDER CONSTRUCTION
+  </div>
+  {% endfor %}
 </section>
 {% endblock %}
