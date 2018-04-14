@@ -1,5 +1,6 @@
 :root {
   --color-primary: #8e44ad;
+  --color-primary-lighter: #d6b7e3;
   --color-primary-light: #a562c1;
   --color-primary-dark: #66317c;
   --color-grey-light-1: #faf9f9;
@@ -53,6 +54,37 @@ body {
   background-color: var(--color-grey-light-2);
   padding: 2rem 3rem; }
 
+.pagination {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(2rem, 1fr));
+  margin-bottom: 1rem; }
+
+li.page-item {
+  list-style: none;
+  display: grid;
+  grid-gap: .5rem; }
+  li.page-item a:link,
+  li.page-item a:visited {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    font-size: 1.4rem;
+    color: var(--color-grey-dark-1);
+    background-color: var(--color-grey-light-1);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-grey-light-3);
+    border-left: 1px solid var(--color-grey-light-3);
+    border-top: 1px solid var(--color-grey-light-3);
+    transition: all .2s; }
+    li.page-item a:link:last-child,
+    li.page-item a:visited:last-child {
+      border-right: 1px solid var(--color-grey-light-3); }
+  li.page-item a:hover {
+    background-color: var(--color-primary-lighter); }
+  li.page-item.active a {
+    background-color: var(--color-primary-lighter); }
+
 .profile {
   grid-column: full-start / full-end;
   display: grid;
@@ -85,24 +117,29 @@ body {
 
 .profile-body {
   display: grid;
-  grid-template-rows: 1fr 8fr;
   grid-gap: 1rem; }
-  .profile-body__navigation {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    justify-content: center;
-    align-items: center;
-    border-bottom: 2px solid var(--color-grey-light-2); }
-  .profile-body__link {
-    display: grid;
-    height: 100%;
-    justify-content: center;
-    align-items: center; }
   .profile-body__content {
     display: grid;
     grid-gap: .5rem;
     padding-left: .5rem;
     padding-right: .5rem; }
+
+.profile-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 2px solid var(--color-grey-light-2);
+  list-style: none; }
+  .profile-nav__item {
+    display: grid; }
+  .profile-nav__link:link, .profile-nav__link:visited {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-grey-dark-1);
+    transition: all .2s; }
+  .profile-nav__link:hover {
+    background-color: var(--color-primary-lighter); }
 
 .review {
   display: grid;
@@ -134,7 +171,7 @@ body {
     border-right: 1px solid var(--color-grey-light-3);
     border-left: 1px solid var(--color-grey-light-3); }
   .review__title {
-    width: 20rem;
+    width: 30rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis; }
