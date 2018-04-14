@@ -1,0 +1,39 @@
+.pagination {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(2rem, 1fr));
+  margin-bottom: 1rem;
+}
+
+li.page-item {
+  list-style: none;
+  display: grid;
+
+  grid-gap: .5rem;
+  a:link,
+  a:visited {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+
+    font-size: 1.4rem;
+    color: var(--color-grey-dark-1);
+    background-color: var(--color-grey-light-1);
+    text-decoration: none;
+
+    border-bottom: 1px solid var(--color-grey-light-3);
+    border-left: 1px solid var(--color-grey-light-3);
+    border-top: 1px solid var(--color-grey-light-3);
+    &:last-child {
+      border-right: 1px solid var(--color-grey-light-3);
+    }
+    transition: all .2s;
+  }
+  a:hover {
+    background-color: var(--color-primary-lighter);
+  }
+
+  &.active a {
+    background-color: var(--color-primary-lighter);
+  }
+}

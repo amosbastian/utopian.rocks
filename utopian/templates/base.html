@@ -89,7 +89,7 @@
 
         $(function () {
             // Number of items and limits the number of items per page
-            var numberOfItems = $("#reviews .moderator-feed-block").length;
+            var numberOfItems = $("#reviews .review").length;
             console.log(numberOfItems);
             var limitPerPage = 10;
             // Total pages rounded upwards
@@ -103,7 +103,7 @@
             function showPage(whichPage) {
                 if (whichPage < 1 || whichPage > totalPages) return false;
                 currentPage = whichPage;
-                $("#reviews .moderator-feed-block").hide()
+                $("#reviews .review").hide()
                     .slice((currentPage-1) * limitPerPage, 
                             currentPage * limitPerPage).show();
                 // Replace the navigation items (not prev/next):            
