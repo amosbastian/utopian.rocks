@@ -57,9 +57,9 @@ def update_posts(status, force_complete=False):
 
 def main():
     update_moderators()
-    update_posts("any")
-    update_posts("flagged")
-    update_posts("pending", True)
+    # update_posts("any")
+    # update_posts("flagged")
+    # update_posts("pending", True)
 
 
 def converter(object_):

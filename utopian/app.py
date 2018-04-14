@@ -22,7 +22,7 @@ def moderation_team(supervisor):
     """
     moderators = db.moderators
     team = [moderator["account"] for moderator in
-        moderators.find({"referrer": supervisor})]
+            moderators.find({"referrer": supervisor})]
     team.append(supervisor)
     return team
 
@@ -34,14 +34,14 @@ def get_supervisors():
     """
     moderators = db.moderators
     supervisors = [moderator["account"] for moderator in 
-        moderators.find({"supermoderator": True})]
+                   moderators.find({"supermoderator": True})]
     try:
         supervisors.remove("elear")
     except Exception as error:
         print(repr(error))
-    
+
     supervisors = [(supervisor, len(moderation_team(supervisor)))
-        for supervisor in supervisors]
+                   for supervisor in supervisors]
 
     return sorted(supervisors, key=lambda x: x[1], reverse=True)
 
@@ -108,6 +108,7 @@ def moderator_points(category, reviewed):
     elif category == "overall":
         return 0
 
+
 def individual_performance(posts, team):
     performance = {"categories": {"overall": {}}, "overall": []}
     for post in posts:
@@ -168,7 +169,7 @@ def individual_performance(posts, team):
                 moderators.append(new_moderator)
         moderators = sorted(moderators, key=lambda x: x["moderator"])
         categories.append({"category": category, "moderators": moderators})
-        
+  
         total_moderated = sum([m["moderated"] for m in moderators])
         total_accepted = sum([m["accepted"] for m in moderators])
         total_rejected = total_moderated - total_accepted
@@ -186,15 +187,15 @@ def individual_performance(posts, team):
 
     categories = sorted(categories, key=lambda x: x["category"])
     overall = sorted(performance["overall"], key=lambda x: x["category"])
-    
+
     for category in categories:
         if category["category"] == "overall":
             for moderator in category["moderators"]:
                 moderator["points"] += points_dictionary[moderator["moderator"]]
             categories.insert(0, categories.pop(categories.index(category)))
-            
+       
     total_points = sum([c["points"] for c in overall])
-    
+
     for category in overall:
         if category["category"] == "overall":
             category["points"] += total_points
@@ -203,31 +204,6 @@ def individual_performance(posts, team):
     performance["overall"] = overall
 
     return performance
-
-def peformance(supervisor):
-    posts = db.posts
-    team = moderation_team(supervisor)
-    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
-    pipeline = [{
-        "$match": {
-            "$and": [{
-                "moderator.account": {"$in": team}
-            },{
-                "moderator.time": {"$gt": week_ago}
-            }]
-        }
-    }]
-    team_posts = [post for post in posts.aggregate(pipeline)]
-    return individual_performance(team_posts, team)
-
-
-@app.route("/team/<supervisor>")
-def team(supervisor):
-    today = datetime.date.today()
-    week_ago = today - datetime.timedelta(days=7)
-    team_performance = peformance(supervisor)
-    return render_template("team.html", supervisor=supervisor, today=today,
-        week_ago=week_ago, team_performance=team_performance)
 
 
 @app.route("/test")
@@ -255,6 +231,7 @@ def moderators_list():
     for moderator in moderators.find():
         moderator_list.append(moderator["account"])
     return moderator_list
+
 
 @app.context_processor
 def inject_updated():
@@ -573,7 +550,7 @@ def user(username):
 
     category_performance = moderator_categories(post_list)
 
-    return render_template("moderator.html", username=username, 
+    return render_template("moderator/index.html", username=username, 
         post_list=post_list, moderating_since=moderating_since.date(),
         category_list=sorted(categories), accepted=accepted, rejected=rejected,
         percentage=percentage(accepted + rejected, accepted),

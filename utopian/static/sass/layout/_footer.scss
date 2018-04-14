@@ -1,0 +1,40 @@
+.footer {
+  font-size: 1.4rem;
+  background-color: var(--color-primary);
+  grid-column: full-start / full-end;
+  padding: 1.5rem;
+}
+
+.nav {
+  font-size: inherit;
+  list-style: none;
+
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1rem;
+  justify-content: center;
+
+  &__link:link,
+  &__link:visited {
+    color: var(--color-grey-light-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    transition: all .2s;
+  }
+
+  &__link:hover,
+  &__link:active {
+    transform: translateY(-.5rem);
+  }
+
+  &__icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: .3rem;
+    fill: currentColor;
+  }
+}

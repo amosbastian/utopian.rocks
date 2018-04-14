@@ -21,3 +21,4 @@ test.py
 test.html
 
 .vscode/
+node_modules/
