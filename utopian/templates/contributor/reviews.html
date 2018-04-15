@@ -1,4 +1,4 @@
-{% extends "moderator/index.html" %}
+{% extends "contributor/index.html" %}
 {% block profile_content %}
 {% for post in post_list %}
 <div class="review">
@@ -87,10 +87,10 @@
         </a>
       </div>
       <p class="review__text">
-        posted by
+        moderated by
       </p>
       <a href="{{url_for('contributor', username=post.author)}}" class="review__link">
-        {{post.author}}
+        {{post.moderator.account}}
       </a>
   </div>
 

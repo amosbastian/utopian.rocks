@@ -1,0 +1,33 @@
+%heading {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+}
+
+.heading-1 {
+  @extend %heading;
+  font-size: 6.5rem;
+  color: var(--color-grey-light-1);
+  line-height: 1;
+}
+
+.heading-2 {
+  @extend %heading;
+  font-size: 4.5rem;
+  color: var(--color-grey-light-1);
+  line-height: 1;
+}
+
+.heading-3 {
+  @extend %heading;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: var(--color-grey-dark-3);
+  line-height: 1;
+}
+
+.heading-4 {
+  @extend %heading;
+  font-size: 1.5rem;
+  color: var(--color-grey-light-1);
+  line-height: 1;
+}

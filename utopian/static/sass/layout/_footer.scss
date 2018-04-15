@@ -1,8 +1,9 @@
 .footer {
   font-size: 1.4rem;
-  background-color: var(--color-primary);
+  background-color: var(--color-grey-light-2);
   grid-column: full-start / full-end;
   padding: 1.5rem;
+  border-top: 1px solid var(--color-grey-dark-3);
 }
 
 .nav {
@@ -16,7 +17,7 @@
 
   &__link:link,
   &__link:visited {
-    color: var(--color-grey-light-1);
+    color: var(--color-grey-dark-1);
     display: flex;
     align-items: center;
     justify-content: center;

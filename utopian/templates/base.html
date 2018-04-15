@@ -19,136 +19,15 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link
-        href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.14.min.css"
-        rel="stylesheet" type="text/css">
-    <link
-        href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.14.min.css"
-        rel="stylesheet" type="text/css">
-    <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.14.min.js"></script>
-    <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.14.min.js"></script>
-    <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.15.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.15.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.15.min.js"></script>
+    <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.15.min.js"></script>
 </head>
 <body class="container">
     {% include "sidebar.html" %}
     {% include "header.html" %}
     {% block content %}{% endblock %}
     {% include "footer.html" %}
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.js" integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script>
-        if (window.location.host === "utopian.rocks") {
-            window.location.href = window.location.href.replace("utopian.rocks","utopian.info");
-        }
-        
-        // Returns an array of maxLength (or less) page numbers
-        // where a 0 in the returned array denotes a gap in the series.
-        // Parameters:
-        //   totalPages:     total number of pages
-        //   page:           current page
-        //   maxLength:      maximum size of returned array
-        function getPageList(totalPages, page, maxLength) {
-            if (maxLength < 5) throw "maxLength must be at least 5";
-
-            function range(start, end) {
-                return Array.from(Array(end - start + 1), (_, i) => i + start); 
-            }
-
-            var sideWidth = maxLength < 9 ? 1 : 2;
-            var leftWidth = (maxLength - sideWidth*2 - 3) >> 1;
-            var rightWidth = (maxLength - sideWidth*2 - 2) >> 1;
-            if (totalPages <= maxLength) {
-                // no breaks in list
-                return range(1, totalPages);
-            }
-            if (page <= maxLength - sideWidth - 1 - rightWidth) {
-                // no break on left of page
-                return range(1, maxLength-sideWidth-1)
-                    .concat([0])
-                    .concat(range(totalPages-sideWidth+1, totalPages));
-            }
-            if (page >= totalPages - sideWidth - 1 - rightWidth) {
-                // no break on right of page
-                return range(1, sideWidth)
-                    .concat([0])
-                    .concat(range(totalPages - sideWidth - 1 - rightWidth - leftWidth, totalPages));
-            }
-            // Breaks on both sides
-            return range(1, sideWidth)
-                .concat([0])
-                .concat(range(page - leftWidth, page + rightWidth)) 
-                .concat([0])
-                .concat(range(totalPages-sideWidth+1, totalPages));
-        }
-
-        $(function () {
-            // Number of items and limits the number of items per page
-            var numberOfItems = $("#reviews .review").length;
-            console.log(numberOfItems);
-            var limitPerPage = 10;
-            // Total pages rounded upwards
-            var totalPages = Math.ceil(numberOfItems / limitPerPage);
-            // Number of buttons at the top, not counting prev/next,
-            // but including the dotted buttons.
-            // Must be at least 5:
-            var paginationSize = 7; 
-            var currentPage;
-
-            function showPage(whichPage) {
-                if (whichPage < 1 || whichPage > totalPages) return false;
-                currentPage = whichPage;
-                $("#reviews .review").hide()
-                    .slice((currentPage-1) * limitPerPage, 
-                            currentPage * limitPerPage).show();
-                // Replace the navigation items (not prev/next):            
-                $(".pagination li").slice(1, -1).remove();
-                getPageList(totalPages, currentPage, paginationSize).forEach( item => {
-                    $("<li>").addClass("page-item")
-                            .addClass(item ? "current-page" : "disabled")
-                            .toggleClass("active", item === currentPage).append(
-                        $("<a>").addClass("page-link").attr({
-                            href: "javascript:void(0)"}).text(item || "...")
-                    ).insertBefore("#next-page");
-                });
-                // Disable prev/next when at first/last page:
-                $("#previous-page").toggleClass("disabled", currentPage === 1);
-                $("#next-page").toggleClass("disabled", currentPage === totalPages);
-                return true;
-            }
-
-            // Include the prev/next buttons:
-            $(".pagination").append(
-                $("<li>").addClass("page-item").attr({ id: "previous-page" }).append(
-                    $("<a>").addClass("page-link").attr({
-                        href: "javascript:void(0)"}).text("Previous")
-                ),
-                $("<li>").addClass("page-item").attr({ id: "next-page" }).append(
-                    $("<a>").addClass("page-link").attr({
-                        href: "javascript:void(0)"}).text("Next")
-                )
-            );
-            // Show the page links
-            $("#reviews").show();
-            showPage(1);
-
-            // Use event delegation, as these items are recreated later    
-            $(document).on("click", ".pagination li.current-page:not(.active)", function () {
-                return showPage(+$(this).text());
-            });
-            $("#next-page").on("click", function () {
-                return showPage(currentPage+1);
-            });
-
-            $("#previous-page").on("click", function () {
-                return showPage(currentPage-1);
-            });
-        });
-    </script>
 </body>
 </html>

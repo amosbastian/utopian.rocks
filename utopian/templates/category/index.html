@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="category">
+  <div class="category-header">
+    <div class="category-header__categories">
+
+    </div>
+    <div class="category-header__charts">
+      <div class="category-header__chart">
+
+      </div>
+      <div class="category-header__chart">
+
+      </div>
+    </div>
+  </div>
+  <div class="category-body">
+    {% block category_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

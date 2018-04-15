@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set active_page = "moderator" %}
+{% set active_page = "contributor" %}
 {% block content %}
 <div class="profile">
   <div class="profile-header">
@@ -37,13 +37,13 @@
       
       <div class="profile-header__bottom">
         <div class="profile-header__header">
-          Moderating since
+          Contributing since
           <h3 class="heading-3">
             {{since}}
           </h3>
         </div>
         <div class="profile-header__header">
-          Moderating categories
+          Contributing in categories
           <h3 class="heading-3">
             {{", ".join(categories)}}
           </h3>
@@ -59,13 +59,8 @@
         </a>
       </li>
       <li class="profile-nav__item">
-        <a href="{{ url_for('m_activity', username=username) }}" class="profile-nav__link">
-          Activity
-        </a>
-      </li>
-      <li class="profile-nav__item">
-        <a href="{{ url_for('moderator_contributors', username=username) }}" class="profile-nav__link">
-          Contributors
+        <a href="{{ url_for('contributor_moderators', username=username) }}" class="profile-nav__link">
+          Moderators
         </a>
       </li>
     </ul>

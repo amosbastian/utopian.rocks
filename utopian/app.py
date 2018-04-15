@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, url_for
 from pymongo import MongoClient
 from dateutil.parser import parse
 import datetime
@@ -9,6 +9,7 @@ from bokeh.io import show, output_file
 from bokeh.models import ColumnDataSource, HoverTool, Legend
 from bokeh.plotting import figure, output_file, show
 from bokeh.embed import components
+from collections import Counter
 
 client = MongoClient()
 db = client.utopian
@@ -394,7 +395,7 @@ def categories(category):
     post_list = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_list)
     return render_template(
-        "category.html", category=category, information=information)
+        "category/category.html", category=category, information=information)
 
 
 @app.template_filter("timeago")
@@ -414,7 +415,7 @@ def categories_moderated(posts):
         else:
             accepted += 1
         categories.append(post["category"])
-    return list(set(categories)), accepted, rejected
+    return Counter(categories).most_common(3), accepted, rejected
 
 
 def moderator_activity(posts, moderating_since):
@@ -531,76 +532,121 @@ def moderator_categories(posts):
     return sorted(category_list, key=lambda x: x["category"])
 
 
+def information(post_list, is_moderator):
+    if is_moderator:
+        since = post_list[-1]["moderator"]["time"]
+    else:
+        since = post_list[-1]["created"]
+    categories, accepted, rejected = categories_moderated(post_list)
+    categories_formatted = [c[0].replace("-", " ").title() for c in categories]
+
+    return since.date(), categories_formatted, accepted, rejected
+
+
 @app.route("/moderator/<username>")
 def moderator(username):
     posts = db.posts
-    moderators = db.moderators
-    moderator = moderators.find_one({"account": username})
+    page = request.args.get("page", 1, type=int)
+    limit = 10 * page
+    skip = limit - 10
 
     post_list = [post for post in posts.find({"moderator.account": username})]
-    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
 
     # Add empty repository if it doesn't exist
     for post in post_list:
         if post["repository"] is None:
             post["repository"] = {"owner": {"login": "None"}}
 
-    moderating_since = post_list[0]["moderator"]["time"]
-    categories, accepted, rejected = categories_moderated(post_list)
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
 
-    # Format categories for showing them in template
-    categories_formatted = [c.replace("-", " ").title() for c in categories]
+    next_url = url_for("moderator", username=username, page=[page + 1])
+    previous_url = url_for("moderator", username=username, page=[page - 1])
 
-    # Calculate moderator's activity and create plot
-    activity, best, worst = moderator_activity(post_list, moderating_since)
-    script, div = activity_plot(activity)
-
-    category_performance = moderator_categories(post_list)
+    since, categories, accepted, rejected = information(post_list, True)
 
     return render_template(
-        "moderator/reviews.html", username=username, post_list=post_list,
-        moderating_since=moderating_since.date(),
-        category_list=sorted(categories), accepted=accepted, rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted),
-        categories_formatted=sorted(categories_formatted), moderator=moderator,
-        script=script, div=div, best=best, worst=worst,
-        category_performance=category_performance)
+        "moderator/reviews.html",
+        username=username,
+        post_list=post_list[skip:limit],
+        page=page,
+        next=next_url,
+        previous=previous_url,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
 
 
 @app.route("/moderator/<username>/activity")
 def m_activity(username):
     posts = db.posts
-    moderators = db.moderators
-    moderator = moderators.find_one({"account": username})
 
     post_list = [post for post in posts.find({"moderator.account": username})]
     post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
 
-    # Add empty repository if it doesn't exist
-    for post in post_list:
-        if post["repository"] is None:
-            post["repository"] = {"owner": {"login": "None"}}
-
     moderating_since = post_list[0]["moderator"]["time"]
-    categories, accepted, rejected = categories_moderated(post_list)
-
-    # Format categories for showing them in template
-    categories_formatted = [c.replace("-", " ").title() for c in categories]
 
     # Calculate moderator's activity and create plot
-    activity, best, worst = moderator_activity(post_list, moderating_since)
+    activity, _, _ = moderator_activity(post_list, moderating_since)
     script, div = activity_plot(activity)
 
-    category_performance = moderator_categories(post_list)
+    since, categories, accepted, rejected = information(post_list, True)
 
     return render_template(
-        "moderator/activity.html", username=username, post_list=post_list,
-        moderating_since=moderating_since.date(),
-        category_list=sorted(categories), accepted=accepted, rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted),
-        categories_formatted=sorted(categories_formatted), moderator=moderator,
-        script=script, div=div, best=best, worst=worst,
-        category_performance=category_performance)
+        "moderator/activity.html",
+        div=div,
+        script=script,
+        username=username,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
+
+
+@app.route("/moderator/<username>/contributors")
+def moderator_contributors(username):
+    posts = db.posts
+
+    post_list = [post for post in posts.find({"moderator.account": username})]
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
+
+    moderating_since = post_list[0]["moderator"]["time"]
+    _, best, worst = moderator_activity(post_list, moderating_since)
+
+    since, categories, accepted, rejected = information(post_list, True)
+
+    return render_template(
+        "moderator/contributors.html",
+        best=best,
+        worst=worst,
+        username=username,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
+
+
+# @app.route("/moderator/<username>/categories")
+# def m_categories(username):
+#     posts = db.posts
+
+#     post_list = [post for post in posts.find({"moderator.account": username})]
+#     post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
+
+#     category_performance = moderator_categories(post_list)
+
+#     return render_template(
+#         "moderator/categories.html",
+#         category_performance=category_performance,
+#         username=username
+#     )
 
 
 def contributor_activity(posts):
@@ -625,30 +671,67 @@ def contributor_activity(posts):
 @app.route("/contributor/<username>")
 def contributor(username):
     posts = db.posts
+    page = request.args.get("page", 1, type=int)
+    limit = 10 * page
+    skip = limit - 10
+
     post_list = [post for post in posts.find({"author": username}) if
                  not post["status"] == "pending"]
-    post_list = sorted(post_list, key=lambda x: x["created"])
-
-    categories, accepted, rejected = categories_moderated(post_list)
-    # Format categories for showing them in template
-    categories_formatted = [c.replace("-", " ").title() for c in categories]
 
     # Add empty repository if it doesn't exist
     for post in post_list:
         if post["repository"] is None:
             post["repository"] = {"owner": {"login": "None"}}
 
-    contributing_since = post_list[0]["created"]
-    best, worst = contributor_activity(post_list)
-    category_performance = moderator_categories(post_list)
+    post_list = sorted(post_list, key=lambda x: x["created"], reverse=True)
+
+    next_url = url_for("contributor", username=username, page=[page + 1])
+    previous_url = url_for("contributor", username=username, page=[page - 1])
+
+    since, categories, accepted, rejected = information(post_list, False)
 
     return render_template(
-        "contributor.html", username=username, post_list=post_list,
-        contributing_since=contributing_since.date(),
-        category_list=sorted(categories), accepted=accepted, rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted),
-        categories_formatted=sorted(categories_formatted),
-        best=best, worst=worst, category_performance=category_performance)
+        "contributor/reviews.html",
+        username=username,
+        post_list=post_list[skip:limit],
+        page=page,
+        next=next_url,
+        previous=previous_url,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
+
+
+@app.route("/contributor/<username>/moderators")
+def contributor_moderators(username):
+    posts = db.posts
+
+    post_list = [post for post in posts.find({"author": username}) if
+                 not post["status"] == "pending"]
+
+    # Add empty repository if it doesn't exist
+    for post in post_list:
+        if post["repository"] is None:
+            post["repository"] = {"owner": {"login": "None"}}
+
+    best, worst = contributor_activity(post_list)
+
+    since, categories, accepted, rejected = information(post_list, False)
+
+    return render_template(
+        "contributor/moderators.html",
+        best=best,
+        worst=worst,
+        username=username,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
 
 
 def main():

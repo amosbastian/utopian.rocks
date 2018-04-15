@@ -22,7 +22,7 @@
     left: 0;
     height: 100%;
     width: .3rem;
-    background-color: var(--color-primary);
+    background-color: var(--color-grey-dark-3);
     transform: scaleY(0);
     transition: transform .2s, 
       width .4s cubic-bezier(1,0,0,1) .2s,
@@ -36,7 +36,7 @@
   }
 
   &__item:active::before {
-    background-color: var(--color-primary-light);
+    background-color: var(--color-grey-dark-2);
   }
 
   &__link:link,

@@ -1,19 +1,35 @@
 <nav class="sidebar">
   <ul class="side-nav">
-    <li class="side-nav__item">
-      <a href="#" class="side-nav__link">
+    <li class="{{ 'side-nav__item side-nav__item--active' if active_page == 'index' else 'side-nav__item' }}">
+      <a href="{{ url_for('index') }}" class="side-nav__link">
         <!-- <svg class="side-nav__icon">
           <use xlink:href="../static/img/sprite.svg#icon-home"></use>
         </svg> -->
         <span>Home</span>
       </a>
     </li>
-    <li class="side-nav__item">
-        <a href="#" class="side-nav__link">
+    <li class="{{ 'side-nav__item side-nav__item--active' if active_page == 'moderator' else 'side-nav__item' }}">
+        <a href="{{ url_for('moderator', username='amosbastian') }}" class="side-nav__link">
         <!-- <svg class="side-nav__icon">
           <use xlink:href="../static/img/sprite.svg#icon-star2"></use>
         </svg> -->
-        <span>FDR</span>
+        <span>Moderators</span>
+      </a>
+    </li>
+    <li class="{{ 'side-nav__item side-nav__item--active' if active_page == 'contributor' else 'side-nav__item' }}">
+        <a href="{{ url_for('contributor', username='amosbastian') }}" class="side-nav__link">
+        <!-- <svg class="side-nav__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-star2"></use>
+        </svg> -->
+        <span>Contributors</span>
+      </a>
+    </li>
+    <li class="{{ 'side-nav__item side-nav__item--active' if active_page == 'category' else 'side-nav__item' }}">
+        <a href="{{ url_for('categories', category='all') }}" class="side-nav__link">
+        <!-- <svg class="side-nav__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-star2"></use>
+        </svg> -->
+        <span>Categories</span>
       </a>
     </li>
   </ul>

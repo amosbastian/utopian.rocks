@@ -87,9 +87,11 @@ def get_posts(status, update=True):
 
     # Get total amount of posts submitted to Utopian.io
     if not status == "pending":
-        r = requests.get(generate_url(action, {"status": status, "limit": 1}))
+        r = requests.get(generate_url(action, {"status": status, "limit": 1}),
+                         headers=HEADERS)
     else:
-        r = requests.get(generate_url(action, {"filterBy": "review", "limit": 1}))
+        r = requests.get(generate_url(action, {"filterBy": "review",
+                         "limit": 1}), headers=HEADERS)
     if r.status_code == 200:
         total = r.json()["total"]
         total = math.ceil(total / 1000)
@@ -107,7 +109,7 @@ def get_posts(status, update=True):
                 parameters = {"filterBy": "review", "limit": limit, "skip": skip}
             url = generate_url(action, parameters)
             print(f"{datetime.datetime.now()} - Fetching from {url}")
-            r = requests.get(url)
+            r = requests.get(url, headers=HEADERS)
             if r.status_code == 200:
                 pool = Pool()
                 x = partial(create_post, status=status, update=False)
@@ -129,7 +131,7 @@ def get_posts(status, update=True):
             parameters = {"status": status, "limit": limit, "skip": skip}
             url = generate_url(action, parameters)
             print(f"{datetime.datetime.now()} - Fetching from {url}")
-            r = requests.get(url)
+            r = requests.get(url, headers=HEADERS)
             if r.status_code == 200:
                 pool = Pool()
                 x = partial(create_post, status=status, update=True)
