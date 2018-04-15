@@ -558,7 +558,7 @@ def moderator(username):
     category_performance = moderator_categories(post_list)
 
     return render_template(
-        "moderator/index.html", username=username, post_list=post_list,
+        "moderator/reviews.html", username=username, post_list=post_list,
         moderating_since=moderating_since.date(),
         category_list=sorted(categories), accepted=accepted, rejected=rejected,
         percentage=percentage(accepted + rejected, accepted),

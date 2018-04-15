@@ -11,7 +11,7 @@
   <div class="profile-body">
     <ul class="profile-nav">
       <li class="profile-nav__item">
-        <a href="#" class="profile-nav__link">
+        <a href="{{ url_for('moderator', username=username) }}" class="profile-nav__link">
           Reviews
         </a>
       </li>
@@ -33,7 +33,7 @@
     </ul>
 
     <div class="profile-body__content" id="reviews">
-      {% include "moderator/reviews.html" %}
+      {% block profile_content %}{% endblock %}
     </div>
   </div>
 </div>

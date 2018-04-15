@@ -1,4 +1,5 @@
-{% block content %}
+{% extends "moderator/index.html" %}
+{% block profile_content %}
 {% for post in post_list|sort(True, attribute='moderator.time') %}
 <div class="review">
   {% if "task" in post.category %}
