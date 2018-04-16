@@ -21,6 +21,7 @@ def update_moderators():
     db.moderators.drop()
     moderators.insert_many(current_moderators)
 
+
 def status_converter(status):
     if status == "any":
         return "approved"
@@ -57,8 +58,8 @@ def update_posts(status, force_complete=False):
 
 def main():
     update_moderators()
-    update_posts("any", True)
-    update_posts("flagged", True)
+    update_posts("any")
+    update_posts("flagged")
     update_posts("pending", True)
 
 

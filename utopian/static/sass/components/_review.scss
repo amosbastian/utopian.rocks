@@ -20,6 +20,7 @@
     background-color: var(--color-accepted);
     align-items: center;
     justify-content: center;
+    border-left: 1px solid var(--color-grey-light-1);
   }
 
   &__rejected {
@@ -27,6 +28,7 @@
     background-color: var(--color-rejected);
     align-items: center;
     justify-content: center;
+    border-left: 1px solid var(--color-grey-light-1);
   }
 
   &__project {
@@ -96,9 +98,13 @@
     display: grid;
     align-content: center;
     justify-content: center;
-    border-right: 1px solid var(--color-grey-light-3);
+    
     &--analysis {
       background-color: var(--color-analysis);
+    }
+
+    &--all {
+      background-color: var(--color-primary-light);
     }
 
     &--blog {

@@ -10,8 +10,6 @@ from dateutil.parser import parse
 from pymongo import MongoClient
 from steem import Steem
 
-steem = Steem()
-
 try:
     from urllib import urlencode
 except ImportError:
@@ -66,6 +64,8 @@ def create_post(post, status, update=True):
         # Add post's score
         if "score" in post["json_metadata"].keys():
             new_post["score"] = post["json_metadata"]["score"]
+            if new_post["score"] == None:
+                new_post["score"] = 0
         else:
             new_post["score"] = 100
 

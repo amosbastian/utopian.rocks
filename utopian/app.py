@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, redirect
 from pymongo import MongoClient
 from dateutil.parser import parse
 import datetime
@@ -49,8 +49,9 @@ def get_supervisors():
 
 @app.route("/")
 def index():
-    supervisors = get_supervisors()
-    return render_template("index.html", supervisors=supervisors)
+    # supervisors = get_supervisors()
+    # return render_template("index.html", supervisors=supervisors)
+    return redirect(url_for("moderator", username="amosbastian"))
 
 
 def percentage(moderated, accepted):
@@ -210,12 +211,12 @@ def individual_performance(posts, team):
     return performance
 
 
-@app.route("/test")
-def test():
-    """
-    Route used for testing.
-    """
-    return render_template("test.html")
+# @app.route("/test")
+# def test():
+#     """
+#     Route used for testing.
+#     """
+#     return render_template("test.html")
 
 
 def last_updated():
@@ -275,11 +276,11 @@ def category_plot(dates, accepted, rejected):
     p.outline_line_color = None
     p.legend.location = "top_right"
     p.legend.orientation = "horizontal"
-    p.add_tools(
-        HoverTool(tooltips=[
-            ("Accepted", "@Accepted"),
-            ("Rejected", "@Rejected"), 
-            ("%", "@percentages")]))
+    # p.add_tools(
+    #     HoverTool(tooltips=[
+    #         ("Accepted", "@Accepted"),
+    #         ("Rejected", "@Rejected"),
+    #         ("%", "@percentages")]))
 
     script, div = components(p)
     return script, div
@@ -359,8 +360,8 @@ def category_information(posts):
         authors[author]["total"] += 1
 
     # Add moderator leaderboard
-    category["moderators"] = moderator_leaderboard(moderators, 5)
-    best, worst = leaderboard(authors, 5, "author")
+    category["moderators"] = moderator_leaderboard(moderators, 10)
+    best, worst = leaderboard(authors, 10, "author")
     # Add author leaderboard
     category["best_authors"] = best
     category["worst_authors"] = worst
@@ -379,23 +380,201 @@ def category_information(posts):
     return category
 
 
+def category_colour(category):
+    if category == "ideas":
+        return "#54d2a0"
+    elif category == "development":
+        return "#000000"
+    elif category == "translations":
+        return "#ffce3d"
+    elif category == "graphics":
+        return "#f6a623"
+    elif category == "documentation":
+        return "#b1b1b1"
+    elif category == "copywriting":
+        return "#008080"
+    elif category == "tutorials":
+        return "#782c51"
+    elif category == "analysis":
+        return "#164265"
+    elif category == "social":
+        return "#7ec2f3"
+    elif category == "blog":
+        return "#0275d8"
+    elif category == "video-tutorials":
+        return "#ec3324"
+    elif category == "bug-hunting":
+        return "#d9534f"
+    elif category == "all":
+        return "#7954A7"
+
+
+def category_piechart(categories):
+    from numpy import pi, cumsum
+    percents = [c["percentage"] for c in categories]
+    percents = list(cumsum(percents))
+    percents.insert(0, 0)
+    starts = [p * 2 * pi for p in percents[:-1]]
+    ends = [p * 2 * pi for p in percents[1:]]
+    colors = [category_colour(c["category"]) for c in categories]
+    total = sum([c["count"] for c in categories])
+
+    p = figure(x_range=(-1, 1), y_range=(-1, 1), sizing_mode="scale_height",
+               toolbar_location=None, tools="",
+               title="Total pending: {}".format(total))
+
+    p.title.align = "center"
+
+    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends,
+            color=colors)
+
+    p.axis.visible = False
+    p.ygrid.visible = False
+    p.xgrid.visible = False
+
+    script, div = components(p)
+    return script, div
+
+
+def all_piechart():
+    posts = db.posts
+    information = {"all": 0}
+    for post in posts.find({"status": "pending"}):
+        information.setdefault(post["category"], 0)
+        information[post["category"]] += 1
+        information["all"] += 1
+
+    categories = []
+    for category in information:
+        if category == "all":
+            continue
+        pct = percentage(information["all"], information[category]) / 100.0
+        categories.append({"category": category, "percentage": pct,
+                           "count": information[category]})
+
+    script, div = category_piechart(categories)
+    return script, div
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for("moderator", username="amosbastian"))
+
+
 @app.route("/category/<category>")
 def categories(category):
     posts = db.posts
+    all_piechart()
+    page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
+    limit = 8 * page
+    skip = limit - 8
+
     week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
     week_ago = datetime.datetime.combine(
         week_ago, datetime.datetime.min.time())
     if not category == "all":
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}], "category": category}}]
+        post_list = [post for post in posts.find(
+                     {"category": category, "status": {"$ne": "pending"}})]
     else:
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}]}}]
+        post_list = [post for post in posts.find(
+                     {"status": {"$ne": "pending"}})]
 
-    post_list = [post for post in posts.aggregate(pipeline)]
-    information = category_information(post_list)
+    post_weekly = [post for post in posts.aggregate(pipeline)]
+    information = category_information(post_weekly)
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    next_url = url_for("categories", category=category, page=[page + 1])
+    previous_url = url_for("categories", category=category, page=[page - 1])
+    script, div = all_piechart()
+
     return render_template(
-        "category/category.html", category=category, information=information)
+        "category/reviews.html",
+        category=category,
+        information=information,
+        page=page,
+        post_list=post_list[skip:limit],
+        next=next_url,
+        previous=previous_url,
+        script=script,
+        div=div)
+
+
+@app.route("/category/<category>/moderators")
+def category_moderators(category):
+    posts = db.posts
+    all_piechart()
+
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
+    week_ago = datetime.datetime.combine(
+        week_ago, datetime.datetime.min.time())
+    if not category == "all":
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}], "category": category}}]
+        post_list = [post for post in posts.find(
+                     {"category": category, "status": {"$ne": "pending"}})]
+    else:
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}]}}]
+        post_list = [post for post in posts.find(
+                     {"status": {"$ne": "pending"}})]
+
+    post_weekly = [post for post in posts.aggregate(pipeline)]
+    information = category_information(post_weekly)
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    script, div = all_piechart()
+
+    return render_template(
+        "category/moderators.html",
+        category=category,
+        information=information,
+        script=script,
+        div=div)
+
+
+@app.route("/category/<category>/contributors")
+def category_contributors(category):
+    posts = db.posts
+    all_piechart()
+
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
+    week_ago = datetime.datetime.combine(
+        week_ago, datetime.datetime.min.time())
+    if not category == "all":
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}], "category": category}}]
+        post_list = [post for post in posts.find(
+                     {"category": category, "status": {"$ne": "pending"}})]
+    else:
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}]}}]
+        post_list = [post for post in posts.find(
+                     {"status": {"$ne": "pending"}})]
+
+    post_weekly = [post for post in posts.aggregate(pipeline)]
+    information = category_information(post_weekly)
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    script, div = all_piechart()
+
+    return render_template(
+        "category/contributors.html",
+        category=category,
+        information=information,
+        script=script,
+        div=div)
 
 
 @app.template_filter("timeago")
@@ -448,35 +627,6 @@ def moderator_activity(posts, moderating_since):
     data["dates"] = [parse(date) for date in dates]
     best, worst = leaderboard(authors, 10, "author")
     return data, best, worst
-
-
-def category_colour(category):
-    if category == "ideas":
-        return "#54d2a0"
-    elif category == "development":
-        return "#000000"
-    elif category == "translations":
-        return "#ffce3d"
-    elif category == "graphics":
-        return "#f6a623"
-    elif category == "documentation":
-        return "#b1b1b1"
-    elif category == "copywriting":
-        return "#008080"
-    elif category == "tutorials":
-        return "#782c51"
-    elif category == "analysis":
-        return "#164265"
-    elif category == "social":
-        return "#7ec2f3"
-    elif category == "blog":
-        return "#0275d8"
-    elif category == "video-tutorials":
-        return "#ec3324"
-    elif category == "bug-hunting":
-        return "#d9534f"
-    elif category == "all":
-        return "#7954A7"
 
 
 def activity_plot(activity):
@@ -547,6 +697,8 @@ def information(post_list, is_moderator):
 def moderator(username):
     posts = db.posts
     page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
     limit = 10 * page
     skip = limit - 10
 
@@ -672,6 +824,8 @@ def contributor_activity(posts):
 def contributor(username):
     posts = db.posts
     page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
     limit = 10 * page
     skip = limit - 10
 

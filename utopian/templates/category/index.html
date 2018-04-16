@@ -1,21 +1,103 @@
 {% extends "base.html" %}
-{% block body %}
+{% set active_page = "category" %}
+{% block content %}
 <div class="category">
   <div class="category-header">
     <div class="category-header__categories">
-
+      {% for c in categories %}
+      {% if c == category %}
+      <a href="{{url_for('categories', category=c)}}" class="category-header__link--active">
+      {% else %}
+      <a href="{{url_for('categories', category=c)}}" class="category-header__link">
+      {% endif %}
+      <div class="review__category review__category--{{c}}" title="{{c.replace("-", " ").title()}}">
+        {% if c == "analysis" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-poll"></use>
+        </svg>
+        {% elif c == "all" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-all_inclusive"></use>
+        </svg>
+        {% elif c == "blog" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-mode_edit"></use>
+        </svg>
+        {% elif c == "bug-hunting" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-bug_report"></use>
+        </svg>
+        {% elif c == "copywriting" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-textsms"></use>
+        </svg>
+        {% elif c == "development" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-code"></use>
+        </svg>
+        {% elif c == "documentation" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-assignment"></use>
+        </svg>
+        {% elif c == "graphics" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-brush"></use>
+        </svg>
+        {% elif c == "ideas" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-lightbulb_outline"></use>
+        </svg>
+        {% elif c == "translations" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-delete"></use>
+        </svg>
+        {% elif c == "tutorials" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-school"></use>
+        </svg>
+        {% elif c == "video-tutorials" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-ondemand_video"></use>
+        </svg>
+        {% elif c == "social" %}
+        <svg class="review__icon">
+          <use xlink:href="../static/img/sprite.svg#icon-share"></use>
+        </svg>
+        {% endif %}
+      </div>
+      </a>
+      {% endfor %}
     </div>
     <div class="category-header__charts">
       <div class="category-header__chart">
-
+        {{information.plot|safe}}
       </div>
-      <div class="category-header__chart">
-
+      <div class="category-header__chart--pie">
+        {{div|safe}}
       </div>
     </div>
   </div>
-  <div class="category-body">
+  <ul class="profile-nav">
+    <li class="profile-nav__item">
+      <a href="{{url_for('categories', category=category)}}" class="profile-nav__link">
+        Reviews
+      </a>
+    </li>
+    <li class="profile-nav__item">
+      <a href="{{url_for('category_moderators', category=category)}}" class="profile-nav__link">
+        Moderators
+      </a>
+    </li>
+    <li class="profile-nav__item">
+      <a href="{{url_for('category_contributors', category=category)}}" class="profile-nav__link">
+        Contributors
+      </a>
+    </li>
+  </ul>
+  <div class="category-body__content">
     {% block category_content %}{% endblock %}
   </div>
 </div>
+{{information.script|safe}}
+{{script|safe}}
 {% endblock %}

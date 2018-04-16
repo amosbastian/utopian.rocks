@@ -1,5 +1,5 @@
-{% extends "moderator/index.html" %}
-{% block profile_content %}
+{% extends "category/index.html" %}
+{% block category_content %}
 {% for post in post_list %}
 <div class="review">
   {% if "task" in post.category %}
@@ -9,7 +9,7 @@
   {% endif %}
     {% if "task" in post.category %}
     <svg class="review__icon">
-      <use xlink:href="../static/img/sprite.svg#icon-poll"></use>
+      <use xlink:href="../static/img/sprite.svg#icon-assignment_late"></use>
     </svg>
     {% elif post.category == "analysis" %}
     <svg class="review__icon">
@@ -87,10 +87,10 @@
         </a>
       </div>
       <p class="review__text">
-        posted by
+        moderated by
       </p>
-      <a href="{{url_for('contributor', username=post.author)}}" class="review__link">
-        {{post.author}}
+      <a href="{{url_for('moderator', username=post.moderator.account)}}" class="review__link">
+        {{post.moderator.account}}
       </a>
   </div>
 

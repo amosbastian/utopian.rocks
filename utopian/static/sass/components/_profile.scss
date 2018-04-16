@@ -20,6 +20,12 @@
     align-items: center;
   }
 
+  &__link:link,
+  &__link:visited {
+    text-decoration: none;
+    color: var(--color-grey-dark-1);
+  }
+
   &__image {
     border-radius: 50%;
     height: 15rem;
