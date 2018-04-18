@@ -1,0 +1,117 @@
+{% extends "category/index.html" %}
+{% block category_content %}
+{% for post in post_list %}
+<div class="review">
+  {% if "task" in post.category %}
+  <div class="review__category review__category--{{post.category.split('-')[1]}}" title="{{post.category.replace("-", " ").title()}}">
+  {% else %}  
+  <div class="review__category review__category--{{post.category}}" title="{{post.category.replace("-", " ").title()}}">
+  {% endif %}
+    {% if "task" in post.category %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-assignment_late"></use>
+    </svg>
+    {% elif post.category == "analysis" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-poll"></use>
+    </svg>
+    {% elif post.category == "blog" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-mode_edit"></use>
+    </svg>
+    {% elif post.category == "bug-hunting" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-bug_report"></use>
+    </svg>
+    {% elif post.category == "copywriting" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-textsms"></use>
+    </svg>
+    {% elif post.category == "development" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-code"></use>
+    </svg>
+    {% elif post.category == "documentation" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-assignment"></use>
+    </svg>
+    {% elif post.category == "graphics" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-brush"></use>
+    </svg>
+    {% elif post.category == "ideas" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-lightbulb_outline"></use>
+    </svg>
+    {% elif post.category == "translations" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-delete"></use>
+    </svg>
+    {% elif post.category == "tutorials" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-school"></use>
+    </svg>
+    {% elif post.category == "video-tutorials" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-ondemand_video"></use>
+    </svg>
+    {% elif post.category == "social" %}
+    <svg class="review__icon">
+      <use xlink:href="../static/img/sprite.svg#icon-share"></use>
+    </svg>
+    {% endif %}
+  </div>
+  {% if post.status == "any" %}
+  <div class="review__accepted">
+    Accepted
+  </div>
+  {% else %}
+  <div class="review__rejected">
+    Rejected
+  </div>
+  {% endif %}
+  
+  <div class="review__project">
+    <svg class="review__icon review__icon--github">
+      <use xlink:href="../static/img/sprite.svg#icon-github"></use>
+    </svg>
+    <a href="https://github.com/{{post.repository.owner.login}}/{{post.repository.name}}" class="review__link">
+      {{post.repository.owner.login}}/{{post.repository.name}}
+    </a>
+  </div>
+
+  <div class="review__information">
+      <div class="review__title">
+        <a href="https://utopian.io/utopian-io/@{{post.author}}/{{post.permlink}}" class="review__link">
+          {{post.title}}
+        </a>
+      </div>
+      <p class="review__text">
+        moderated by
+      </p>
+      <a href="{{url_for('moderator', username=post.moderator.account)}}" class="review__link">
+        {{post.moderator.account}}
+      </a>
+  </div>
+
+  <div class="review__time">
+    <small title="{{post.moderator.time}}">{{post.moderator.time|timeago}}</small>
+  </div>
+
+  <div class="review__score">
+    {{post.score}}
+  </div>
+</div>
+{% endfor %}
+<div class="pagination">
+  <a href="{{previous}}" class="pagination__link">
+    Previous
+  </a>
+  <div class="pagination__page">
+    {{page}}
+  </div>
+  <a href="{{next}}" class="pagination__link">
+    Next
+  </a>
+</div>
+{% endblock %}

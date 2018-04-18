@@ -1,0 +1,154 @@
+.review {
+  display: grid;
+  grid-template-columns: min-content 10rem 30rem 4fr .5fr min-content;
+  font-size: 1.4rem;
+  border: 1px solid var(--color-grey-dark-3);
+  color: var(--color-grey-light-1);
+  
+  &__icon {
+    margin: 1rem;
+    fill: currentColor;
+    width: 2rem;
+    height: 2rem;
+    &--github {
+      fill: var(--color-development);
+    }
+  }
+
+  &__accepted {
+    display: grid;
+    background-color: var(--color-accepted);
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--color-grey-light-1);
+  }
+
+  &__rejected {
+    display: grid;
+    background-color: var(--color-rejected);
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--color-grey-light-1);
+  }
+
+  &__project {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    background-color: var(--color-grey-light-1);
+    border-right: 1px solid var(--color-grey-light-3);
+    border-left: 1px solid var(--color-grey-light-3);
+  }
+
+  &__title {
+    width: 30rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__time {
+    color: var(--color-grey-dark-1);
+    font-weight: 700;
+    background-color: var(--color-grey-light-3);
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    small {
+      cursor: pointer;
+    }
+  }
+
+  &__link,
+  &__link:active,
+  &__link:visited {
+    text-decoration: none;
+    color: var(--color-link);
+  }
+
+  &__link:hover {
+    color: var(--color-primary);
+  }
+
+  &__information {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-grey-light-3);
+    padding-left: 1rem;
+    color: var(--color-grey-light-3);
+  }
+
+  &__text {
+    padding-right: .5rem;
+    color: var(--color-grey-dark-1);
+  }
+
+  &__score {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-grey-dark-1);
+    margin: 1rem;
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-grey-light-1);
+  }
+
+  &__category {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    
+    &--analysis {
+      background-color: var(--color-analysis);
+    }
+
+    &--all {
+      background-color: var(--color-primary-light);
+    }
+
+    &--blog {
+      background-color: var(--color-blogs);
+    }
+
+    &--bug-hunting {
+      background-color: var(--color-bug-hunting);
+    }
+
+    &--copywriting {
+      background-color: var(--color-copywriting);
+    }
+
+    &--development {
+      background-color: var(--color-development);
+    }
+
+    &--documentation {
+      background-color: var(--color-documentation);
+    }
+
+    &--graphics {
+      background-color: var(--color-graphics);
+    }
+
+    &--ideas {
+      background-color: var(--color-suggestions);
+    }
+
+    &--translations {
+      background-color: var(--color-translations);
+    }
+
+    &--tutorials {
+      background-color: var(--color-tutorials);
+    }
+
+    &--video-tutorials {
+      background-color: var(--color-video-tutorials);
+    }
+
+    &--social {
+      background-color: var(--color-visibility);
+    }
+  }
+}

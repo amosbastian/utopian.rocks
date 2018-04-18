@@ -1,6 +1,7 @@
 import datetime
 import json
 import math
+import os
 import requests
 import threading
 from multiprocessing import Pool
@@ -9,17 +10,22 @@ from dateutil.parser import parse
 from pymongo import MongoClient
 from steem import Steem
 
-steem = Steem()
-
 try:
     from urllib import urlencode
 except ImportError:
     from urllib.parse import urlencode
 
-client = MongoClient()
-db = client.utopian
+CLIENT = MongoClient()
+DB = CLIENT.utopian
 
 UTOPIAN_API = "https://api.utopian.io/api/"
+
+HEADERS = {
+    "Origin": "https://utopian.info",
+    "Accept": "application/json",
+    "x-api-key": os.environ["API_KEY"],
+    "x-api-key-id": os.environ["API_KEY_ID"]
+}
 
 
 def generate_url(action, parameters):
@@ -30,7 +36,7 @@ def create_post(post, status, update=True):
     week = datetime.datetime.now() - datetime.timedelta(days=7)
     if update and parse(post["created"]) < week:
         return None
-    
+
     new_post = {
         "moderator": None,
         "author": post["author"],
@@ -47,7 +53,6 @@ def create_post(post, status, update=True):
         "updated": datetime.datetime.now()
     }
     if not status == "pending":
-        # print(post["permlink"])
         # Add moderator to post
         moderator = post["json_metadata"]["moderator"]
         try:
@@ -59,6 +64,8 @@ def create_post(post, status, update=True):
         # Add post's score
         if "score" in post["json_metadata"].keys():
             new_post["score"] = post["json_metadata"]["score"]
+            if new_post["score"] == None:
+                new_post["score"] = 0
         else:
             new_post["score"] = 100
 
@@ -68,34 +75,23 @@ def create_post(post, status, update=True):
         else:
             new_post["questions"] = "N/A"
 
-        # Add moderator's comment to post
-        # author = new_post["author"]
-        # permlink = new_post["permlink"]
-        # new_post["comment"] = "N/A"
-        # steemit_post = Post(f"@{author}/{permlink}")
-        # replies = steem.get_content_replies(author, permlink)
-        # if replies:
-        #     for post in replies:
-        #         if (post["author"] == moderator["account"] and
-        #             "[[utopian-moderator]]" in post["body"]):
-        #             new_post["comment"] = post["body"]
-        #             return new_post
-        # else:
-        #     return new_post
     return new_post
+
 
 def get_posts(status, update=True):
     posts = []
     limit = 1000
     skip = 0
     action = "posts"
-    posts = db.posts
+    posts = DB.posts
 
     # Get total amount of posts submitted to Utopian.io
     if not status == "pending":
-        r = requests.get(generate_url(action, {"status": status, "limit": 1}))
+        r = requests.get(generate_url(action, {"status": status, "limit": 1}),
+                         headers=HEADERS)
     else:
-        r = requests.get(generate_url(action, {"filterBy": "review", "limit": 1}))
+        r = requests.get(generate_url(action, {"filterBy": "review",
+                         "limit": 1}), headers=HEADERS)
     if r.status_code == 200:
         total = r.json()["total"]
         total = math.ceil(total / 1000)
@@ -113,7 +109,7 @@ def get_posts(status, update=True):
                 parameters = {"filterBy": "review", "limit": limit, "skip": skip}
             url = generate_url(action, parameters)
             print(f"{datetime.datetime.now()} - Fetching from {url}")
-            r = requests.get(url)
+            r = requests.get(url, headers=HEADERS)
             if r.status_code == 200:
                 pool = Pool()
                 x = partial(create_post, status=status, update=False)
@@ -135,7 +131,7 @@ def get_posts(status, update=True):
             parameters = {"status": status, "limit": limit, "skip": skip}
             url = generate_url(action, parameters)
             print(f"{datetime.datetime.now()} - Fetching from {url}")
-            r = requests.get(url)
+            r = requests.get(url, headers=HEADERS)
             if r.status_code == 200:
                 pool = Pool()
                 x = partial(create_post, status=status, update=True)
@@ -143,7 +139,7 @@ def get_posts(status, update=True):
                 pool.close()
                 pool.join()
                 for post in post_list:
-                    if post == None:
+                    if post is None:
                         return
                     database_post = posts.find_one({"_id": post["_id"]})
                     if database_post and "flagged" in database_post:
@@ -157,13 +153,14 @@ def get_posts(status, update=True):
                 time = datetime.datetime.now()
                 print(f"{time} - Something went wrong, please try again later.")
                 return
-            
+
             skip += 1000
+
 
 def get_moderators():
     action = "moderators"
     url = generate_url(action, {})
-    r = requests.get(url)
+    r = requests.get(url, headers=HEADERS)
     if r.status_code == 200:
         return r.json()["results"]
     else:

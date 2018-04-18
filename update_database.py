@@ -21,6 +21,7 @@ def update_moderators():
     db.moderators.drop()
     moderators.insert_many(current_moderators)
 
+
 def status_converter(status):
     if status == "any":
         return "approved"

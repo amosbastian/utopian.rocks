@@ -1,0 +1,22 @@
+{
+  "name": "utopian",
+  "version": "1.0.0",
+  "description": "A web application showing additional information about Utopian.io.",
+  "main": "index.js",
+  "scripts": {
+    "watch:sass": "node-sass utopian/static/sass/main.scss utopian/static/style.css -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amosbastian/utopian.git"
+  },
+  "author": "Amos Bastian",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/amosbastian/utopian/issues"
+  },
+  "homepage": "https://github.com/amosbastian/utopian#readme",
+  "devDependencies": {
+    "node-sass": "^4.8.3"
+  }
+}

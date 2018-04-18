@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, url_for, redirect
 from pymongo import MongoClient
 from dateutil.parser import parse
 import datetime
@@ -9,6 +9,7 @@ from bokeh.io import show, output_file
 from bokeh.models import ColumnDataSource, HoverTool, Legend
 from bokeh.plotting import figure, output_file, show
 from bokeh.embed import components
+from collections import Counter
 
 client = MongoClient()
 db = client.utopian
@@ -16,40 +17,23 @@ db = client.utopian
 app = Flask(__name__)
 
 
-def moderation_team(supervisor):
-    """
-    Returns a list containing the names of moderators in a supervisor's team.
-    """
-    moderators = db.moderators
-    team = [moderator["account"] for moderator in
-        moderators.find({"referrer": supervisor})]
-    team.append(supervisor)
-    return team
-
-
-def get_supervisors():
+def get_cms():
     """
     Get a list of all the names of all current supervisors, with the exception
     of Elear.
     """
     moderators = db.moderators
-    supervisors = [moderator["account"] for moderator in 
-        moderators.find({"supermoderator": True})]
-    try:
-        supervisors.remove("elear")
-    except Exception as error:
-        print(repr(error))
-    
-    supervisors = [(supervisor, len(moderation_team(supervisor)))
-        for supervisor in supervisors]
+    cms = [moderator["account"] for moderator in
+           moderators.find({"supermoderator": True})]
 
-    return sorted(supervisors, key=lambda x: x[1], reverse=True)
+    return cms
 
 
 @app.route("/")
 def index():
-    supervisors = get_supervisors()
-    return render_template("index.html", supervisors=supervisors)
+    # supervisors = get_supervisors()
+    # return render_template("index.html", supervisors=supervisors)
+    return redirect(url_for("moderator", username="amosbastian"))
 
 
 def percentage(moderated, accepted):
@@ -64,7 +48,11 @@ def percentage(moderated, accepted):
         return float(accepted) / moderated * 100
 
 
-def moderator_points(category, reviewed):
+def moderator_points(category, cm):
+    if cm:
+        reviewed = 1.8
+    else:
+        reviewed = 1.0
     if category == "ideas":
         return reviewed * 0.75
     elif category == "development":
@@ -108,139 +96,10 @@ def moderator_points(category, reviewed):
     elif category == "overall":
         return 0
 
-def individual_performance(posts, team):
-    performance = {"categories": {"overall": {}}, "overall": []}
-    for post in posts:
-        category = post["category"]
-        if "task" in category:
-            continue
-        moderator = post["moderator"]["account"]
-        performance["categories"].setdefault(category, {})
-        performance["categories"][category].setdefault(moderator, {
-            "moderated": 0,
-            "accepted": 0,
-            "rejected": 0
-        })
-        performance["categories"]["overall"].setdefault(moderator, {
-            "moderated": 0,
-            "accepted": 0,
-            "rejected": 0
-        })
-
-        if post["moderator"]["flagged"]:
-            performance["categories"][category][moderator]["rejected"] += 1
-            performance["categories"]["overall"][moderator]["rejected"] += 1
-        else:
-            performance["categories"][category][moderator]["accepted"] += 1
-            performance["categories"]["overall"][moderator]["accepted"] += 1
-        performance["categories"][category][moderator]["moderated"] += 1
-        performance["categories"]["overall"][moderator]["moderated"] += 1
-
-    categories = []
-    points_dictionary = {}
-    for moderator in team:
-        points_dictionary[moderator] = 0
-    for category in performance["categories"]:
-        moderators = []
-        for key, value in performance["categories"][category].items():
-            points = moderator_points(category, value["moderated"])
-            try:
-                points_dictionary[key] += points
-            except TypeError:
-                continue
-            moderator = {
-                "moderator": key,
-                "moderated": value["moderated"],
-                "accepted": value["accepted"],
-                "rejected": value["rejected"],
-                "percentage": percentage(value["moderated"], value["accepted"]),
-                "points": points
-            }
-            moderators.append(moderator)
-
-        moderator_list = [moderator["moderator"] for moderator in moderators]
-
-        # Add performance for each moderator, even if they didn't review
-        for moderator in team:
-            if not moderator in moderator_list:
-                new_moderator = {"moderated": 0, "accepted": 0, "rejected": 0, 
-                    "moderator": moderator, "percentage": 0, "points": 0}
-                moderators.append(new_moderator)
-        moderators = sorted(moderators, key=lambda x: x["moderator"])
-        categories.append({"category": category, "moderators": moderators})
-        
-        total_moderated = sum([m["moderated"] for m in moderators])
-        total_accepted = sum([m["accepted"] for m in moderators])
-        total_rejected = total_moderated - total_accepted
-        total_percentage = percentage(total_moderated, total_accepted)
-        total_points = sum([m["points"] for m in moderators])
-
-        performance["overall"].append({
-            "category": category,
-            "moderated": total_moderated,
-            "accepted": total_accepted,
-            "rejected": total_rejected,
-            "percentage": total_percentage,
-            "points": total_points
-        })
-
-    categories = sorted(categories, key=lambda x: x["category"])
-    overall = sorted(performance["overall"], key=lambda x: x["category"])
-    
-    for category in categories:
-        if category["category"] == "overall":
-            for moderator in category["moderators"]:
-                moderator["points"] += points_dictionary[moderator["moderator"]]
-            categories.insert(0, categories.pop(categories.index(category)))
-            
-    total_points = sum([c["points"] for c in overall])
-    
-    for category in overall:
-        if category["category"] == "overall":
-            category["points"] += total_points
-            overall.insert(0, overall.pop(overall.index(category)))
-    performance["categories"] = categories
-    performance["overall"] = overall
-
-    return performance
-
-def peformance(supervisor):
-    posts = db.posts
-    team = moderation_team(supervisor)
-    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
-    pipeline = [{
-        "$match": {
-            "$and": [{
-                "moderator.account": {"$in": team}
-            },{
-                "moderator.time": {"$gt": week_ago}
-            }]
-        }
-    }]
-    team_posts = [post for post in posts.aggregate(pipeline)]
-    return individual_performance(team_posts, team)
-
-
-@app.route("/team/<supervisor>")
-def team(supervisor):
-    today = datetime.date.today()
-    week_ago = today - datetime.timedelta(days=7)
-    team_performance = peformance(supervisor)
-    return render_template("team.html", supervisor=supervisor, today=today,
-        week_ago=week_ago, team_performance=team_performance)
-
-
-@app.route("/test")
-def test():
-    """
-    Route used for testing.
-    """
-    return render_template("test.html")
-
 
 def last_updated():
     """
-    Returns the moderation time of the most recently moderated post in the 
+    Returns the moderation time of the most recently moderated post in the
     database.
     """
     posts = db.posts
@@ -256,14 +115,16 @@ def moderators_list():
         moderator_list.append(moderator["account"])
     return moderator_list
 
+
 @app.context_processor
 def inject_updated():
     moderators = moderators_list()
-    categories = sorted(["copywriting", "social", "blog", "graphics", "ideas",
+    categories = sorted([
+        "copywriting", "social", "blog", "graphics", "ideas",
         "development", "bug-hunting", "translations", "tutorials",
         "video-tutorials", "analysis", "documentation", "all"])
-    return dict(updated=last_updated(), categories=categories,
-        moderators=moderators)
+    return dict(
+        updated=last_updated(), categories=categories, moderators=moderators)
 
 
 def category_plot(dates, accepted, rejected):
@@ -272,16 +133,18 @@ def category_plot(dates, accepted, rejected):
     colours = ["#9975b9", "#3a404d"]
 
     percentages = ["{:.1f}".format(percentage(x[0] + x[1], x[0]))
-        for x in zip(accepted, rejected)]
+                   for x in zip(accepted, rejected)]
     data = {"dates": dates, "Accepted": accepted, "Rejected": rejected,
-        "percentages": percentages}
+            "percentages": percentages}
 
     source = ColumnDataSource(data=data)
 
-    p = figure(x_range=dates, plot_height=250, sizing_mode="stretch_both",
+    p = figure(
+        x_range=dates, plot_height=250, sizing_mode="stretch_both",
         toolbar_location=None, tools="")
 
-    p.vbar_stack(status, x="dates", width=0.9, color=colours, source=source,
+    p.vbar_stack(
+        status, x="dates", width=0.9, color=colours, source=source,
         legend=[value(x) for x in status])
 
     p.y_range.start = 0
@@ -291,12 +154,10 @@ def category_plot(dates, accepted, rejected):
     p.outline_line_color = None
     p.legend.location = "top_right"
     p.legend.orientation = "horizontal"
-    p.add_tools(HoverTool(tooltips=[("Accepted", "@Accepted"),
-        ("Rejected", "@Rejected"), ("%", "@percentages")]))
 
     script, div = components(p)
     return script, div
-    
+
 
 def moderator_leaderboard(moderators, N):
     """
@@ -350,9 +211,9 @@ def category_information(posts):
         author = post["author"]
         authors.setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
         moderator = post["moderator"]["account"]
-        moderators.setdefault(moderator, {"total": 0, "accepted": 0,
-            "rejected": 0})
-        
+        moderators.setdefault(
+            moderator, {"total": 0, "accepted": 0, "rejected": 0})
+
         # Post was rejected
         if post["moderator"]["flagged"]:
             category["rejected"] += 1
@@ -370,10 +231,10 @@ def category_information(posts):
         category["total"] += 1
         moderators[moderator]["total"] += 1
         authors[author]["total"] += 1
-        
+
     # Add moderator leaderboard
-    category["moderators"] = moderator_leaderboard(moderators, 5)
-    best, worst = leaderboard(authors, 5, "author")
+    category["moderators"] = moderator_leaderboard(moderators, 10)
+    best, worst = leaderboard(authors, 10, "author")
     # Add author leaderboard
     category["best_authors"] = best
     category["worst_authors"] = worst
@@ -391,76 +252,6 @@ def category_information(posts):
     category["pending_percentage"] = percentage(total, category["pending"])
     return category
 
-
-@app.route("/category/<category>")
-def categories(category):
-    posts = db.posts
-    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
-    week_ago = datetime.datetime.combine(week_ago, datetime.datetime.min.time())
-    if not category == "all":
-        pipeline = [{"$match": {"$or": [{"status": "pending"},{
-            "moderator.time": {"$gt": week_ago}}], "category": category}}]
-    else:
-        pipeline = [{"$match": {"$or": [{"status": "pending"},{
-            "moderator.time": {"$gt": week_ago}}]}}]
-
-    post_list = [post for post in posts.aggregate(pipeline)]
-    information = category_information(post_list)
-    return render_template("category.html", category=category,
-        information=information)
-
-
-@app.template_filter("timeago")
-def time_ago(date):
-    return timeago.format(date)
-
-
-def categories_moderated(posts):
-    categories = []
-    accepted = 0
-    rejected = 0
-    for post in posts:
-        if post["status"] == "pending":
-            continue
-        if post["moderator"]["flagged"]:
-            rejected += 1
-        else:
-            accepted += 1
-        categories.append(post["category"])
-    return list(set(categories)), accepted, rejected
-
-
-def moderator_activity(posts, moderating_since):
-    authors = {}
-    delta = datetime.datetime.now() - moderating_since
-    dates = [str((moderating_since + datetime.timedelta(days=i)).date())
-        for i in range(delta.days + 2)]
-    
-    data = {"all": [0] * len(dates)}
-    for post in posts:
-        category = post["category"]
-        author = post["author"]
-        if "task" in category or "sub" in category:
-            continue
-        authors.setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
-        date = str(post["moderator"]["time"].date())
-        data.setdefault(category, [0] * len(dates))
-        
-        index = dates.index(date)
-
-        if post["moderator"]["flagged"]:
-            authors[author]["rejected"] += 1
-        else:
-            authors[author]["accepted"] += 1
-
-        authors[author]["total"] += 1
-        data[category][index] += 1
-        data["all"][index] += 1
-
-    data["dates"] = [parse(date) for date in dates]
-    best, worst = leaderboard(authors, 10, "author")
-    return data, best, worst
-    
 
 def category_colour(category):
     if category == "ideas":
@@ -491,6 +282,226 @@ def category_colour(category):
         return "#7954A7"
 
 
+def category_piechart(categories):
+    from numpy import pi, cumsum
+    percents = [c["percentage"] for c in categories]
+    percents = list(cumsum(percents))
+    percents.insert(0, 0)
+    starts = [p * 2 * pi for p in percents[:-1]]
+    ends = [p * 2 * pi for p in percents[1:]]
+    colors = [category_colour(c["category"]) for c in categories]
+    total = sum([c["count"] for c in categories])
+
+    p = figure(x_range=(-1, 1), y_range=(-1, 1), sizing_mode="scale_height",
+               toolbar_location=None, tools="",
+               title="Total pending: {}".format(total))
+
+    p.title.align = "center"
+
+    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends,
+            color=colors)
+
+    p.axis.visible = False
+    p.ygrid.visible = False
+    p.xgrid.visible = False
+
+    script, div = components(p)
+    return script, div
+
+
+def all_piechart():
+    posts = db.posts
+    information = {"all": 0}
+    for post in posts.find({"status": "pending"}):
+        information.setdefault(post["category"], 0)
+        information[post["category"]] += 1
+        information["all"] += 1
+
+    categories = []
+    for category in information:
+        if category == "all":
+            continue
+        pct = percentage(information["all"], information[category]) / 100.0
+        categories.append({"category": category, "percentage": pct,
+                           "count": information[category]})
+
+    script, div = category_piechart(categories)
+    return script, div
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for("moderator", username="amosbastian"))
+
+
+@app.route("/category/<category>")
+def categories(category):
+    posts = db.posts
+    all_piechart()
+    page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
+    limit = 8 * page
+    skip = limit - 8
+
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
+    week_ago = datetime.datetime.combine(
+        week_ago, datetime.datetime.min.time())
+    if not category == "all":
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}], "category": category}}]
+        post_list = [post for post in posts.find(
+                     {"category": category, "status": {"$ne": "pending"}})]
+    else:
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}]}}]
+        post_list = [post for post in posts.find(
+                     {"status": {"$ne": "pending"}})]
+
+    post_weekly = [post for post in posts.aggregate(pipeline)]
+    information = category_information(post_weekly)
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    next_url = url_for("categories", category=category, page=[page + 1])
+    previous_url = url_for("categories", category=category, page=[page - 1])
+    script, div = all_piechart()
+
+    return render_template(
+        "category/reviews.html",
+        category=category,
+        information=information,
+        page=page,
+        post_list=post_list[skip:limit],
+        next=next_url,
+        previous=previous_url,
+        script=script,
+        div=div)
+
+
+@app.route("/category/<category>/moderators")
+def category_moderators(category):
+    posts = db.posts
+    all_piechart()
+
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
+    week_ago = datetime.datetime.combine(
+        week_ago, datetime.datetime.min.time())
+    if not category == "all":
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}], "category": category}}]
+        post_list = [post for post in posts.find(
+                     {"category": category, "status": {"$ne": "pending"}})]
+    else:
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}]}}]
+        post_list = [post for post in posts.find(
+                     {"status": {"$ne": "pending"}})]
+
+    post_weekly = [post for post in posts.aggregate(pipeline)]
+    information = category_information(post_weekly)
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    script, div = all_piechart()
+
+    return render_template(
+        "category/moderators.html",
+        category=category,
+        information=information,
+        script=script,
+        div=div)
+
+
+@app.route("/category/<category>/contributors")
+def category_contributors(category):
+    posts = db.posts
+    all_piechart()
+
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=6)
+    week_ago = datetime.datetime.combine(
+        week_ago, datetime.datetime.min.time())
+    if not category == "all":
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}], "category": category}}]
+        post_list = [post for post in posts.find(
+                     {"category": category, "status": {"$ne": "pending"}})]
+    else:
+        pipeline = [{"$match": {"$or": [{"status": "pending"}, {
+            "moderator.time": {"$gt": week_ago}}]}}]
+        post_list = [post for post in posts.find(
+                     {"status": {"$ne": "pending"}})]
+
+    post_weekly = [post for post in posts.aggregate(pipeline)]
+    information = category_information(post_weekly)
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    script, div = all_piechart()
+
+    return render_template(
+        "category/contributors.html",
+        category=category,
+        information=information,
+        script=script,
+        div=div)
+
+
+@app.template_filter("timeago")
+def time_ago(date):
+    return timeago.format(date)
+
+
+def categories_moderated(posts):
+    categories = []
+    accepted = 0
+    rejected = 0
+    for post in posts:
+        if post["status"] == "pending":
+            continue
+        if post["moderator"]["flagged"]:
+            rejected += 1
+        else:
+            accepted += 1
+        categories.append(post["category"])
+    return Counter(categories).most_common(3), accepted, rejected
+
+
+def moderator_activity(posts, moderating_since):
+    authors = {}
+    delta = datetime.datetime.now() - moderating_since
+    dates = [str((moderating_since + datetime.timedelta(days=i)).date())
+             for i in range(delta.days + 2)]
+
+    data = {"all": [0] * len(dates)}
+    for post in posts:
+        category = post["category"]
+        author = post["author"]
+        if "task" in category or "sub" in category:
+            continue
+        authors.setdefault(author, {"total": 0, "accepted": 0, "rejected": 0})
+        date = str(post["moderator"]["time"].date())
+        data.setdefault(category, [0] * len(dates))
+
+        index = dates.index(date)
+
+        if post["moderator"]["flagged"]:
+            authors[author]["rejected"] += 1
+        else:
+            authors[author]["accepted"] += 1
+
+        authors[author]["total"] += 1
+        data[category][index] += 1
+        data["all"][index] += 1
+
+    data["dates"] = [parse(date) for date in dates]
+    best, worst = leaderboard(authors, 10, "author")
+    return data, best, worst
+
+
 def activity_plot(activity):
     x = activity["dates"]
     p = figure(plot_width=1100, plot_height=500, x_axis_type="datetime")
@@ -499,7 +510,8 @@ def activity_plot(activity):
     for category, y in activity.items():
         if not category == "dates":
             colour = category_colour(category)
-            line = p.line(x, y, line_width=2, color=colour, alpha=0.8,
+            line = p.line(
+                x, y, line_width=2, color=colour, alpha=0.8,
                 muted_color=colour, muted_alpha=0.2, name=category)
             legend.append((category.replace("-", " ").title(), [line]))
     legend = Legend(items=legend, location=(0, 0))
@@ -507,8 +519,8 @@ def activity_plot(activity):
     p.add_tools(HoverTool(
         names=["all"],
         tooltips=[
-            ( "date", "@x{%F}" ),
-            ( "moderated", "@y")
+            ("date", "@x{%F}"),
+            ("moderated", "@y")
         ],
         formatters={
             "x": "datetime",
@@ -517,7 +529,7 @@ def activity_plot(activity):
     ))
 
     p.add_layout(legend, "right")
-    p.legend.click_policy="mute"
+    p.legend.click_policy = "mute"
     script, div = components(p)
     return script, div
 
@@ -532,7 +544,7 @@ def moderator_categories(posts):
             categories[category]["rejected"] += 1
         else:
             categories[category]["accepted"] += 1
-    
+
     category_list = []
     for key, value in categories.items():
         value["category"] = key
@@ -543,43 +555,145 @@ def moderator_categories(posts):
     return sorted(category_list, key=lambda x: x["category"])
 
 
-@app.route("/moderator/<username>")
-def user(username):
+def information(post_list, is_moderator):
+    if is_moderator:
+        since = post_list[-1]["moderator"]["time"]
+    else:
+        since = post_list[-1]["created"]
+    categories, accepted, rejected = categories_moderated(post_list)
+    categories_formatted = [c[0].replace("-", " ").title() for c in categories]
+
+    return since.date(), categories_formatted, accepted, rejected
+
+
+def calculate_points(username):
+    if username in get_cms():
+        cm = True
+        total = 100
+    else:
+        cm = False
+        total = 0
+
     posts = db.posts
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    pipeline = [{"$match": {
+        "moderator.time": {"$gt": week_ago}, 
+        "moderator.account": username
+    }}]
+
+    post_list = [post for post in posts.aggregate(pipeline)]
+
+    pts = sum([moderator_points(post["category"], cm) for post in post_list])
+    return round(total + pts)
+
+
+@app.route("/moderator/<username>")
+def moderator(username):
     moderators = db.moderators
-    moderator = moderators.find_one({"account": username})
+    moderator_list = [moderator["account"] for moderator in moderators.find()]
+    if username not in moderator_list:
+        return redirect(url_for("moderator", username="amosbastian"))
+    posts = db.posts
+    page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
+    limit = 10 * page
+    skip = limit - 10
+
+    post_list = [post for post in posts.find({"moderator.account": username})]
+
+    # Add empty repository if it doesn't exist
+    for post in post_list:
+        if post["repository"] is None:
+            post["repository"] = {"owner": {"login": "None"}}
+
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
+                       reverse=True)
+
+    next_url = url_for("moderator", username=username, page=[page + 1])
+    previous_url = url_for("moderator", username=username, page=[page - 1])
+
+    since, categories, accepted, rejected = information(post_list, True)
+
+    points = calculate_points(username)
+    return render_template(
+        "moderator/reviews.html",
+        username=username,
+        post_list=post_list[skip:limit],
+        page=page,
+        next=next_url,
+        previous=previous_url,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted),
+        points=points
+    )
+
+
+@app.route("/moderator/<username>/activity")
+def m_activity(username):
+    moderators = db.moderators
+    moderator_list = [moderator["account"] for moderator in moderators.find()]
+    if username not in moderator_list:
+        return redirect(url_for("m_activity", username="amosbastian"))
+    posts = db.posts
 
     post_list = [post for post in posts.find({"moderator.account": username})]
     post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
 
-    # Add empty repository if it doesn't exist
-    for post in post_list:
-        if post["repository"] == None:
-            post["repository"] = {"owner": {"login": "None"}}
-
     moderating_since = post_list[0]["moderator"]["time"]
-    categories, accepted, rejected = categories_moderated(post_list)
 
-    # Format categories for showing them in template
-    categories_formatted = [c.replace("-", " ").title() for c in categories]
-
-    # If too many categories just replace with "All"...
-    if len(categories_formatted) > 7:
-        categories_formatted = ["All"]
-    
     # Calculate moderator's activity and create plot
-    activity, best, worst = moderator_activity(post_list, moderating_since)
+    activity, _, _ = moderator_activity(post_list, moderating_since)
     script, div = activity_plot(activity)
 
-    category_performance = moderator_categories(post_list)
-
-    return render_template("moderator.html", username=username, 
-        post_list=post_list, moderating_since=moderating_since.date(),
-        category_list=sorted(categories), accepted=accepted, rejected=rejected,
+    since, categories, accepted, rejected = information(post_list, True)
+    points = calculate_points(username)
+    return render_template(
+        "moderator/activity.html",
+        div=div,
+        script=script,
+        username=username,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
         percentage=percentage(accepted + rejected, accepted),
-        categories_formatted=sorted(categories_formatted), moderator=moderator,
-        script=script, div=div, best=best, worst=worst,
-        category_performance=category_performance)
+        points=points
+    )
+
+
+@app.route("/moderator/<username>/contributors")
+def moderator_contributors(username):
+    moderators = db.moderators
+    moderator_list = [moderator["account"] for moderator in moderators.find()]
+    if username not in moderator_list:
+        return redirect(url_for("moderator_contributors",
+                                username="amosbastian"))
+    posts = db.posts
+
+    post_list = [post for post in posts.find({"moderator.account": username})]
+    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
+
+    moderating_since = post_list[0]["moderator"]["time"]
+    _, best, worst = moderator_activity(post_list, moderating_since)
+
+    since, categories, accepted, rejected = information(post_list, True)
+    points = calculate_points(username)
+    return render_template(
+        "moderator/contributors.html",
+        best=best,
+        worst=worst,
+        username=username,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted),
+        points=points
+    )
 
 
 def contributor_activity(posts):
@@ -587,8 +701,8 @@ def contributor_activity(posts):
 
     for post in posts:
         moderator = post["moderator"]["account"]
-        moderators.setdefault(moderator,
-            {"total": 0, "accepted": 0, "rejected": 0})
+        moderators.setdefault(
+            moderator, {"total": 0, "accepted": 0, "rejected": 0})
 
         if post["moderator"]["flagged"]:
             moderators[moderator]["rejected"] += 1
@@ -601,37 +715,88 @@ def contributor_activity(posts):
     return best, worst
 
 
-
 @app.route("/contributor/<username>")
 def contributor(username):
     posts = db.posts
-    post_list = [post for post in posts.find({"author": username}) if 
-        not post["status"] == "pending"]
-    post_list = sorted(post_list, key=lambda x: x["created"])
+    page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
+    limit = 10 * page
+    skip = limit - 10
 
-    categories, accepted, rejected = categories_moderated(post_list)
-    # Format categories for showing them in template
-    categories_formatted = [c.replace("-", " ").title() for c in categories]
+    post_list = [post for post in posts.find({"author": username}) if
+                 not post["status"] == "pending"]
+
+    if post_list == []:
+        return redirect(url_for("contributor", username="amosbastian"))
 
     # Add empty repository if it doesn't exist
     for post in post_list:
-        if post["repository"] == None:
+        if post["repository"] is None:
             post["repository"] = {"owner": {"login": "None"}}
 
-    contributing_since = post_list[0]["created"]
-    best, worst = contributor_activity(post_list)
-    category_performance = moderator_categories(post_list)
+    post_list = sorted(post_list, key=lambda x: x["created"], reverse=True)
 
-    return render_template("contributor.html", username=username,
-        post_list=post_list, contributing_since=contributing_since.date(),
-        category_list=sorted(categories), accepted=accepted, rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted),
-        categories_formatted=sorted(categories_formatted),
-        best=best, worst=worst, category_performance=category_performance)
+    next_url = url_for("contributor", username=username, page=[page + 1])
+    previous_url = url_for("contributor", username=username, page=[page - 1])
+
+    since, categories, accepted, rejected = information(post_list, False)
+
+    return render_template(
+        "contributor/reviews.html",
+        username=username,
+        post_list=post_list[skip:limit],
+        page=page,
+        next=next_url,
+        previous=previous_url,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
+
+
+@app.route("/contributor/<username>/moderators")
+def contributor_moderators(username):
+    posts = db.posts
+
+    post_list = [post for post in posts.find({"author": username}) if
+                 not post["status"] == "pending"]
+
+    if post_list == []:
+        return redirect(url_for("contributor_moderators",
+                                username="amosbastian"))
+
+    # Add empty repository if it doesn't exist
+    for post in post_list:
+        if post["repository"] is None:
+            post["repository"] = {"owner": {"login": "None"}}
+
+    best, worst = contributor_activity(post_list)
+
+    since, categories, accepted, rejected = information(post_list, False)
+
+    return render_template(
+        "contributor/moderators.html",
+        best=best,
+        worst=worst,
+        username=username,
+        since=since,
+        categories=categories,
+        accepted=accepted,
+        rejected=rejected,
+        percentage=percentage(accepted + rejected, accepted)
+    )
+
+
+@app.route("/icon/<name>")
+def icon(name):
+    print(url_for("static", filename="img"))
 
 
 def main():
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0")
 
 
 if __name__ == '__main__':

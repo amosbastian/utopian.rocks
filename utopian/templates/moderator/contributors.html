@@ -1,0 +1,35 @@
+{% extends "moderator/index.html" %}
+{% block profile_content %}
+<div class="profile-leaderboards">
+  <div class="profile-leaderboard">
+    <div class="profile-leaderboard__header">
+      <h1>Most accepted</h1>
+    </div>
+    <ol class="profile-leaderboard__list">
+    {% for contributor in best %}
+      {% if not contributor.accepted == 0 %}
+        <li class="profile-leaderboard__item">
+        <a class="profile-leaderboard__link" href="https://utopian.io/@{{contributor.author}}">{{contributor.author}}</a>
+        <div class="profile-leaderboard__reviewed">{{contributor.accepted}}</div>
+        </li>
+      {% endif %}
+    {% endfor %}
+    </ol>
+  </div>
+  <div class="profile-leaderboard">
+    <div class="profile-leaderboard__header">
+      <h1>Most rejected</h1>
+    </div>
+    <ol class="profile-leaderboard__list">
+    {% for contributor in worst %}
+      {% if not contributor.rejected == 0 %}
+        <li class="profile-leaderboard__item">
+        <a class="profile-leaderboard__link" href="https://utopian.io/@{{contributor.author}}">{{contributor.author}}</a>
+        <div class="profile-leaderboard__reviewed">{{contributor.rejected}}</div>
+        </li>
+      {% endif %}        
+    {% endfor %}
+    </ol>
+  </div>
+</div>
+{% endblock %}
