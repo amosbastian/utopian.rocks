@@ -5,7 +5,14 @@
   <div class="profile-header">
     <figure class="profile-header__figure">
       <img src="https://steemitimages.com/u/{{username}}/avatar" alt="Moderator's profile picture" class="profile-header__image">
+      {% if username in moderators %}
+      <a href="{{url_for('moderator', username=username)}}" class="profile-header__link">
+        <span class="profile-header__text">{{username}}</span>
+      </a>
+      <span class="profile-header__text">Moderator</span>
+      {% else %}
       <span class="profile-header__text">{{username}}</span>
+      {% endif %}
     </figure>
     <div class="profile-header__information">
       <div class="profile-header__top">
