@@ -17,34 +17,16 @@ db = client.utopian
 app = Flask(__name__)
 
 
-def moderation_team(supervisor):
-    """
-    Returns a list containing the names of moderators in a supervisor's team.
-    """
-    moderators = db.moderators
-    team = [moderator["account"] for moderator in
-            moderators.find({"referrer": supervisor})]
-    team.append(supervisor)
-    return team
-
-
-def get_supervisors():
+def get_cms():
     """
     Get a list of all the names of all current supervisors, with the exception
     of Elear.
     """
     moderators = db.moderators
-    supervisors = [moderator["account"] for moderator in 
-                   moderators.find({"supermoderator": True})]
-    try:
-        supervisors.remove("elear")
-    except Exception as error:
-        print(repr(error))
+    cms = [moderator["account"] for moderator in
+           moderators.find({"supermoderator": True})]
 
-    supervisors = [(supervisor, len(moderation_team(supervisor)))
-                   for supervisor in supervisors]
-
-    return sorted(supervisors, key=lambda x: x[1], reverse=True)
+    return cms
 
 
 @app.route("/")
@@ -66,7 +48,11 @@ def percentage(moderated, accepted):
         return float(accepted) / moderated * 100
 
 
-def moderator_points(category, reviewed):
+def moderator_points(category, cm):
+    if cm:
+        reviewed = 1.8
+    else:
+        reviewed = 1.0
     if category == "ideas":
         return reviewed * 0.75
     elif category == "development":
@@ -109,114 +95,6 @@ def moderator_points(category, reviewed):
         return reviewed * 0.5
     elif category == "overall":
         return 0
-
-
-def individual_performance(posts, team):
-    performance = {"categories": {"overall": {}}, "overall": []}
-    for post in posts:
-        category = post["category"]
-        if "task" in category:
-            continue
-        moderator = post["moderator"]["account"]
-        performance["categories"].setdefault(category, {})
-        performance["categories"][category].setdefault(moderator, {
-            "moderated": 0,
-            "accepted": 0,
-            "rejected": 0
-        })
-        performance["categories"]["overall"].setdefault(moderator, {
-            "moderated": 0,
-            "accepted": 0,
-            "rejected": 0
-        })
-
-        if post["moderator"]["flagged"]:
-            performance["categories"][category][moderator]["rejected"] += 1
-            performance["categories"]["overall"][moderator]["rejected"] += 1
-        else:
-            performance["categories"][category][moderator]["accepted"] += 1
-            performance["categories"]["overall"][moderator]["accepted"] += 1
-        performance["categories"][category][moderator]["moderated"] += 1
-        performance["categories"]["overall"][moderator]["moderated"] += 1
-
-    categories = []
-    points_dictionary = {}
-    for moderator in team:
-        points_dictionary[moderator] = 0
-    for category in performance["categories"]:
-        moderators = []
-        for key, value in performance["categories"][category].items():
-            points = moderator_points(category, value["moderated"])
-            try:
-                points_dictionary[key] += points
-            except TypeError:
-                continue
-            moderator = {
-                "moderator": key,
-                "moderated": value["moderated"],
-                "accepted": value["accepted"],
-                "rejected": value["rejected"],
-                "percentage": percentage(value["moderated"],
-                                         value["accepted"]),
-                "points": points
-            }
-            moderators.append(moderator)
-
-        moderator_list = [moderator["moderator"] for moderator in moderators]
-
-        # Add performance for each moderator, even if they didn't review
-        for moderator in team:
-            if moderator not in moderator_list:
-                new_moderator = {
-                    "moderated": 0, "accepted": 0, "rejected": 0,
-                    "moderator": moderator, "percentage": 0, "points": 0}
-                moderators.append(new_moderator)
-        moderators = sorted(moderators, key=lambda x: x["moderator"])
-        categories.append({"category": category, "moderators": moderators})
-
-        total_moderated = sum([m["moderated"] for m in moderators])
-        total_accepted = sum([m["accepted"] for m in moderators])
-        total_rejected = total_moderated - total_accepted
-        total_percentage = percentage(total_moderated, total_accepted)
-        total_points = sum([m["points"] for m in moderators])
-
-        performance["overall"].append({
-            "category": category,
-            "moderated": total_moderated,
-            "accepted": total_accepted,
-            "rejected": total_rejected,
-            "percentage": total_percentage,
-            "points": total_points
-        })
-
-    categories = sorted(categories, key=lambda x: x["category"])
-    overall = sorted(performance["overall"], key=lambda x: x["category"])
-
-    for category in categories:
-        if category["category"] == "overall":
-            for moderator in category["moderators"]:
-                moderator["points"] += points_dictionary[
-                    moderator["moderator"]]
-            categories.insert(0, categories.pop(categories.index(category)))
-
-    total_points = sum([c["points"] for c in overall])
-
-    for category in overall:
-        if category["category"] == "overall":
-            category["points"] += total_points
-            overall.insert(0, overall.pop(overall.index(category)))
-    performance["categories"] = categories
-    performance["overall"] = overall
-
-    return performance
-
-
-# @app.route("/test")
-# def test():
-#     """
-#     Route used for testing.
-#     """
-#     return render_template("test.html")
 
 
 def last_updated():
@@ -276,11 +154,6 @@ def category_plot(dates, accepted, rejected):
     p.outline_line_color = None
     p.legend.location = "top_right"
     p.legend.orientation = "horizontal"
-    # p.add_tools(
-    #     HoverTool(tooltips=[
-    #         ("Accepted", "@Accepted"),
-    #         ("Rejected", "@Rejected"),
-    #         ("%", "@percentages")]))
 
     script, div = components(p)
     return script, div
@@ -693,8 +566,33 @@ def information(post_list, is_moderator):
     return since.date(), categories_formatted, accepted, rejected
 
 
+def calculate_points(username):
+    if username in get_cms():
+        cm = True
+        total = 100
+    else:
+        cm = False
+        total = 0
+
+    posts = db.posts
+    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    pipeline = [{"$match": {
+        "moderator.time": {"$gt": week_ago}, 
+        "moderator.account": username
+    }}]
+
+    post_list = [post for post in posts.aggregate(pipeline)]
+
+    pts = sum([moderator_points(post["category"], cm) for post in post_list])
+    return round(total + pts)
+
+
 @app.route("/moderator/<username>")
 def moderator(username):
+    moderators = db.moderators
+    moderator_list = [moderator["account"] for moderator in moderators.find()]
+    if username not in moderator_list:
+        return redirect(url_for("moderator", username="amosbastian"))
     posts = db.posts
     page = request.args.get("page", 1, type=int)
     if page < 1:
@@ -717,6 +615,7 @@ def moderator(username):
 
     since, categories, accepted, rejected = information(post_list, True)
 
+    points = calculate_points(username)
     return render_template(
         "moderator/reviews.html",
         username=username,
@@ -728,12 +627,17 @@ def moderator(username):
         categories=categories,
         accepted=accepted,
         rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted)
+        percentage=percentage(accepted + rejected, accepted),
+        points=points
     )
 
 
 @app.route("/moderator/<username>/activity")
 def m_activity(username):
+    moderators = db.moderators
+    moderator_list = [moderator["account"] for moderator in moderators.find()]
+    if username not in moderator_list:
+        return redirect(url_for("m_activity", username="amosbastian"))
     posts = db.posts
 
     post_list = [post for post in posts.find({"moderator.account": username})]
@@ -746,7 +650,7 @@ def m_activity(username):
     script, div = activity_plot(activity)
 
     since, categories, accepted, rejected = information(post_list, True)
-
+    points = calculate_points(username)
     return render_template(
         "moderator/activity.html",
         div=div,
@@ -756,12 +660,18 @@ def m_activity(username):
         categories=categories,
         accepted=accepted,
         rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted)
+        percentage=percentage(accepted + rejected, accepted),
+        points=points
     )
 
 
 @app.route("/moderator/<username>/contributors")
 def moderator_contributors(username):
+    moderators = db.moderators
+    moderator_list = [moderator["account"] for moderator in moderators.find()]
+    if username not in moderator_list:
+        return redirect(url_for("moderator_contributors",
+                                username="amosbastian"))
     posts = db.posts
 
     post_list = [post for post in posts.find({"moderator.account": username})]
@@ -771,7 +681,7 @@ def moderator_contributors(username):
     _, best, worst = moderator_activity(post_list, moderating_since)
 
     since, categories, accepted, rejected = information(post_list, True)
-
+    points = calculate_points(username)
     return render_template(
         "moderator/contributors.html",
         best=best,
@@ -781,24 +691,9 @@ def moderator_contributors(username):
         categories=categories,
         accepted=accepted,
         rejected=rejected,
-        percentage=percentage(accepted + rejected, accepted)
+        percentage=percentage(accepted + rejected, accepted),
+        points=points
     )
-
-
-# @app.route("/moderator/<username>/categories")
-# def m_categories(username):
-#     posts = db.posts
-
-#     post_list = [post for post in posts.find({"moderator.account": username})]
-#     post_list = sorted(post_list, key=lambda x: x["moderator"]["time"])
-
-#     category_performance = moderator_categories(post_list)
-
-#     return render_template(
-#         "moderator/categories.html",
-#         category_performance=category_performance,
-#         username=username
-#     )
 
 
 def contributor_activity(posts):
@@ -831,6 +726,9 @@ def contributor(username):
 
     post_list = [post for post in posts.find({"author": username}) if
                  not post["status"] == "pending"]
+
+    if post_list == []:
+        return redirect(url_for("contributor", username="amosbastian"))
 
     # Add empty repository if it doesn't exist
     for post in post_list:
@@ -866,6 +764,10 @@ def contributor_moderators(username):
     post_list = [post for post in posts.find({"author": username}) if
                  not post["status"] == "pending"]
 
+    if post_list == []:
+        return redirect(url_for("contributor_moderators",
+                                username="amosbastian"))
+
     # Add empty repository if it doesn't exist
     for post in post_list:
         if post["repository"] is None:
@@ -888,8 +790,13 @@ def contributor_moderators(username):
     )
 
 
+@app.route("/icon/<name>")
+def icon(name):
+    print(url_for("static", filename="img"))
+
+
 def main():
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0")
 
 
 if __name__ == '__main__':

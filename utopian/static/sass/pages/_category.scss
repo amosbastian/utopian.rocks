@@ -30,16 +30,28 @@
     justify-content: center;
   }
 
+  &__link:link,
+  &__link:visited {
+    text-decoration: none;
+  }
+
+  &__link--active {
+    z-index: 100;
+    text-decoration: none;
+  }
+
   &__link:link div,
   &__link:visited div {
-    color: var(--color-grey-light-1);
     transition: all .2s;
+    color: var(--color-grey-dark-1);
+    background-color: var(--color-grey-light-2);
+  }
+
+  &__link:hover div {
+    background-color: var(--color-primary-lighter);
   }
 
   &__link--active div {
-    box-shadow: 0 2rem 4rem rgba(0,0,0,.3);
-    transform: scale(1.5) translateY(-50%);
-    z-index: 100;
     color: var(--color-grey-light-1);
   }
 }

@@ -12,57 +12,31 @@
       {% endif %}
       <div class="review__category review__category--{{c}}" title="{{c.replace("-", " ").title()}}">
         {% if c == "analysis" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-poll"></use>
-        </svg>
+          Analysis
         {% elif c == "all" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-all_inclusive"></use>
-        </svg>
+          All
         {% elif c == "blog" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-mode_edit"></use>
-        </svg>
+          Blog
         {% elif c == "bug-hunting" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-bug_report"></use>
-        </svg>
+          Bug Hunting
         {% elif c == "copywriting" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-textsms"></use>
-        </svg>
+          Copywriting
         {% elif c == "development" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-code"></use>
-        </svg>
+          Development
         {% elif c == "documentation" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-assignment"></use>
-        </svg>
+          Documentation
         {% elif c == "graphics" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-brush"></use>
-        </svg>
+          Graphics
         {% elif c == "ideas" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-lightbulb_outline"></use>
-        </svg>
+          Suggestions
         {% elif c == "translations" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-delete"></use>
-        </svg>
+          Translations
         {% elif c == "tutorials" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-school"></use>
-        </svg>
+          Tutorials
         {% elif c == "video-tutorials" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-ondemand_video"></use>
-        </svg>
+          Video Tutorials
         {% elif c == "social" %}
-        <svg class="review__icon">
-          <use xlink:href="../static/img/sprite.svg#icon-share"></use>
-        </svg>
+          Visibility
         {% endif %}
       </div>
       </a>
