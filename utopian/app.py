@@ -394,23 +394,12 @@ def category_moderators(category):
     if not category == "all":
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}], "category": category}}]
-        post_list = [post for post in posts.find({
-                     "category": category,
-                     "status": {"$ne": "pending"}}).sort(
-                     "moderator.time", -1).skip(skip).limit(10)]
     else:
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}]}}]
-        post_list = [post for post in posts.find({
-                     "status": {"$ne": "pending"}}).sort(
-                     "moderator.time", -1).skip(skip).limit(10)]
-
 
     post_weekly = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_weekly)
-
-    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
-                       reverse=True)
 
     script, div = all_piechart()
 
@@ -433,23 +422,12 @@ def category_contributors(category):
     if not category == "all":
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}], "category": category}}]
-        post_list = [post for post in posts.find({
-                     "category": category,
-                     "status": {"$ne": "pending"}}).sort(
-                     "moderator.time", -1).skip(skip).limit(10)]
     else:
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}]}}]
-        post_list = [post for post in posts.find({
-                     "status": {"$ne": "pending"}}).sort(
-                     "moderator.time", -1).skip(skip).limit(10)]
-
 
     post_weekly = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_weekly)
-
-    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
-                       reverse=True)
 
     script, div = all_piechart()
 
