@@ -360,9 +360,6 @@ def categories(category):
     post_weekly = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_weekly)
 
-    post_list = sorted(post_list, key=lambda x: x["moderator"]["time"],
-                       reverse=True)
-
     next_url = url_for("categories", category=category, page=[page + 1])
     previous_url = url_for("categories", category=category, page=[page - 1])
     script, div = all_piechart()
@@ -372,7 +369,7 @@ def categories(category):
         category=category,
         information=information,
         page=page,
-        post_list=post_list[skip:limit],
+        post_list=post_list,
         next=next_url,
         previous=previous_url,
         script=script,
@@ -553,10 +550,8 @@ def information(post_list, is_moderator):
 
 def calculate_points(username):
     if username in get_cms():
-        cm = True
         total = 100
     else:
-        cm = False
         total = 0
 
     posts = db.posts
