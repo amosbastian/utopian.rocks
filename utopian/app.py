@@ -48,51 +48,47 @@ def percentage(moderated, accepted):
         return float(accepted) / moderated * 100
 
 
-def moderator_points(category, cm):
-    if cm:
-        reviewed = 1.8
-    else:
-        reviewed = 1.0
+def moderator_points(category):
     if category == "ideas":
-        return reviewed * 0.75
+        return 2.0
     elif category == "development":
-        return reviewed * 2.0
+        return 4.25
     elif category == "translations":
-        return reviewed * 1.25
+        return 4.0
     elif category == "graphics":
-        return reviewed * 1.0
+        return 3.0
     elif category == "documentation":
-        return reviewed * 0.75
+        return 2.25
     elif category == "copywriting":
-        return reviewed * 0.75
+        return 2.0
     elif category == "tutorials":
-        return reviewed * 1.0
+        return 4.0
     elif category == "analysis":
-        return reviewed * 1.25
+        return 3.25
     elif category == "social":
-        return reviewed * 1.0
+        return 2.0
     elif category == "blog":
-        return reviewed * 0.75
+        return 2.25
     elif category == "video-tutorials":
-        return reviewed * 1.25
+        return 4.0
     elif category == "bug-hunting":
-        return reviewed * 1.0
+        return 3.25
     elif category == "task-ideas":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-development":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-bug-huntung":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-translations":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-graphics":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-documentation":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-analysis":
-        return reviewed * 0.5
+        return 1.25
     elif category == "task-social":
-        return reviewed * 0.5
+        return 1.25
     elif category == "overall":
         return 0
 
@@ -572,7 +568,7 @@ def calculate_points(username):
 
     post_list = [post for post in posts.aggregate(pipeline)]
 
-    pts = sum([moderator_points(post["category"], cm) for post in post_list])
+    pts = sum([moderator_points(post["category"]) for post in post_list])
     return round(total + pts)
 
 
