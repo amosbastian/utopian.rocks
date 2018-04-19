@@ -354,13 +354,13 @@ def categories(category):
         post_list = [post for post in posts.find({
                      "category": category,
                      "status": {"$ne": "pending"}}).sort(
-                     "moderator.time", -1).skip(skip).limit(10)]
+                     "moderator.time", -1).skip(skip).limit(limit)]
     else:
         pipeline = [{"$match": {"$or": [{"status": "pending"}, {
             "moderator.time": {"$gt": week_ago}}]}}]
         post_list = [post for post in posts.find({
                      "status": {"$ne": "pending"}}).sort(
-                     "moderator.time", -1).skip(skip).limit(10)]
+                     "moderator.time", -1).skip(skip).limit(limit)]
 
     post_weekly = [post for post in posts.aggregate(pipeline)]
     information = category_information(post_weekly)
