@@ -248,12 +248,15 @@ body {
   .review__link:hover {
     color: var(--color-primary); }
   .review__information {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     align-items: center;
     background-color: var(--color-grey-light-3);
     padding-left: 1rem;
     color: var(--color-grey-light-3); }
   .review__text {
+    display: inline-block;
+    justify-content: start;
     padding-right: .5rem;
     color: var(--color-grey-dark-1); }
   .review__score {

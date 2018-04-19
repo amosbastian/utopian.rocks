@@ -87,11 +87,17 @@
         </a>
       </div>
       <p class="review__text">
-        moderated by
+        posted by
+        <a href="{{url_for('contributor', username=post.author)}}" class="review__link">
+          {{post.author}}
+        </a>
       </p>
-      <a href="{{url_for('moderator', username=post.moderator.account)}}" class="review__link">
-        {{post.moderator.account}}
-      </a>
+      <p class="review__text">
+         moderated by
+         <a href="{{url_for('moderator', username=post.moderator.account)}}" class="review__link">
+          {{post.moderator.account}}
+        </a>
+      </p>
   </div>
 
   <div class="review__time">
