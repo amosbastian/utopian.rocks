@@ -56,3 +56,7 @@ Currently I have the following plans, but this could all change in the future
 * Add a page for projects that show statistics about contributions made to it (e.g. best contributor, overall acceptance rate etc.)
 * Add the ability to search for moderators, contributors, projects etc.
 
+Contributing
+------------
+
+If you want to contribute, then please read [CONTRIBUTING.md](https://github.com/amosbastian/utopian/blob/master/CONTRIBUTING.md) for more information.
