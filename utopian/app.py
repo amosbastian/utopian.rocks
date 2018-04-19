@@ -135,9 +135,13 @@ def category_plot(dates, accepted, rejected):
 
     source = ColumnDataSource(data=data)
 
+    maximum = max([accepted + rejected for accepted, rejected in zip(
+        data["Accepted"], data["Rejected"]
+    )])
+
     p = figure(
         x_range=dates, plot_height=250, sizing_mode="stretch_both",
-        toolbar_location=None, tools="")
+        toolbar_location=None, tools="", y_range=(0, maximum * 1.5))
 
     p.vbar_stack(
         status, x="dates", width=0.9, color=colours, source=source,
@@ -288,7 +292,8 @@ def category_piechart(categories):
     colors = [category_colour(c["category"]) for c in categories]
     total = sum([c["count"] for c in categories])
 
-    p = figure(x_range=(-1, 1), y_range=(-1, 1), sizing_mode="scale_height",
+    p = figure(x_range=(-1.1, 1.1), y_range=(-1.1, 1.1),
+               sizing_mode="scale_height",
                toolbar_location=None, tools="",
                title="Total pending: {}".format(total))
 
