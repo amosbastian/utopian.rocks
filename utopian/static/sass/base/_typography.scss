@@ -1,0 +1,15 @@
+%heading {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  color: var(--color-grey-light-1);  
+}
+
+.header-1 {
+  @extend %heading;
+  font-size: 6rem;
+}
+
+.header-3 {
+  @extend %heading;
+  font-size: 3rem;
+}

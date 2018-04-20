@@ -1,4 +1,9 @@
 @import "base/base";
+@import "base/typography";
+
+@import "components/category";
 
 @import "layout/footer";
 @import "layout/header";
+
+@import "pages/home";

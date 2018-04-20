@@ -1,17 +1,21 @@
 :root {
+  --color-white: #fff;
   --color-grey-light-1: #faf9f9;
   --color-grey-light-2: #f4f2f2;
   --color-grey-light-3: #f0eeee;
-  --color-grey-light-4: #ccc;
+  --color-grey-light-4: #dfdfdf;
+  --color-grey-light-5: #ccc;
 
   --color-grey-dark-1: #333;
   --color-grey-dark-2: #777;
   --color-grey-dark-3: #999;
 
+  --color-black-1: #24292e;
+
   --color-suggestions: #54d2a0;
   --color-development: #000;
   --color-bug-hunting: #d9534f;
-  --color-translations: #ffce3d;
+  --color-translation: #ffce3d;
   --color-graphics: #f6a623;
   --color-analysis: #164265;
   --color-visibility: #7ec2f3;
@@ -19,7 +23,7 @@
   --color-tutorials: #782c51;
   --color-video-tutorials: #ec3324;
   --color-copywriting: teal;
-  --color-blogs: #0275d8;
+  --color-blog: #0275d8;
 
   --color-accepted: #2ecc71;
   --color-rejected: #e74c3c;
@@ -51,7 +55,7 @@ body {
   display: grid;
 
   grid-template-rows: min-content 1fr min-content;
-  grid-template-columns: [sidebar-start] 16rem [sidebar-end full-start]
+  grid-template-columns: [full-start]
     minmax(6rem, 1fr)
     [center-start]
     repeat(8, [col-start] minmax(min-content, 14rem) [col-end]) 

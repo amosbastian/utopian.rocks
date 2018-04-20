@@ -1,0 +1,43 @@
+.home {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-rows: 80vh 1fr;
+  grid-template-columns: [full-start]
+    minmax(6rem, 1fr)
+    [center-start]
+    8fr
+    [center-end]
+    minmax(6rem, 1fr) 
+    [full-end];
+}
+
+.home-header {
+  display: grid;
+  grid-column: full-start / full-end;
+  align-items: center;
+  text-align: center;
+  background-size: cover;
+  background-image: url("img/header.jpg");
+  background-position: center center;
+}
+
+.home-categories {
+  display: grid;
+  grid-column: center-start / center-end;
+  font-size: 1.2rem;
+
+  &__categories {
+    display: grid;
+    grid-gap: .5rem;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  &__category {
+    display: grid;
+    grid-gap: .5rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}

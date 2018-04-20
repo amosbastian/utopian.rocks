@@ -1,0 +1,138 @@
+.category-circle {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  width: 8rem;
+  height: 8rem;
+  background-color: var(--color-white);
+  border-radius: 50%;
+  border: 1px solid var(--color-grey-light-4);
+  transition: background .3s ease, border-color .3s ease, transform .3s ease;
+  text-decoration: none;
+  outline: 0;
+
+  &:hover {
+    transform: scale(1.1);
+    border-color: transparent;
+    color: var(--color-white) !important;
+  }
+
+  &--analysis:link,
+  &--analysis:visited {
+    color: var(--color-analysis);
+  }
+
+  &--analysis:hover {
+    background: var(--color-analysis);
+  }
+
+  &--blog:link,
+  &--blog:visited {
+    color: var(--color-blog);
+  }
+
+  &--blog:hover {
+    background: var(--color-blog);
+  }
+
+  &--bug-hunting:link,
+  &--bug-hunting:visited {
+    color: var(--color-bug-hunting);
+  }
+
+  &--bug-hunting:hover {
+    background: var(--color-bug-hunting);
+  }
+
+  &--copywriting:link,
+  &--copywriting:visited {
+    color: var(--color-copywriting);
+  }
+
+  &--copywriting:hover {
+    background: var(--color-copywriting);
+  }
+
+  &--development:link,
+  &--development:visited {
+    color: var(--color-development);
+  }
+
+  &--development:hover {
+    background: var(--color-development);
+  }
+
+  &--documentation:link,
+  &--documentation:visited {
+    color: var(--color-documentation);
+  }
+
+  &--documentation:hover {
+    background: var(--color-documentation);
+  }
+
+  &--graphics:link,
+  &--graphics:visited {
+    color: var(--color-graphics);
+  }
+
+  &--graphics:hover {
+    background: var(--color-graphics);
+  }
+
+  &--suggestions:link,
+  &--suggestions:visited {
+    color: var(--color-suggestions);
+  }
+
+  &--suggestions:hover {
+    background: var(--color-suggestions);
+  }
+
+  &--translation:link,
+  &--translation:visited {
+    color: var(--color-translation);
+  }
+
+  &--translation:hover {
+    background: var(--color-translation);
+  }
+
+  &--tutorials:link,
+  &--tutorials:visited {
+    color: var(--color-tutorials);
+  }
+
+  &--tutorials:hover {
+    background: var(--color-tutorials);
+  }
+
+  &--video-tutorials:link,
+  &--video-tutorials:visited {
+    color: var(--color-video-tutorials);
+  }
+
+  &--video-tutorials:hover {
+    background: var(--color-video-tutorials);
+  }
+
+  &--visibility:link,
+  &--visibility:visited {
+    color: var(--color-visibility);
+  }
+
+  &--visibility:hover {
+    background: var(--color-visibility);
+  }
+}
+
+.category-icon {
+  transition: fill .3s ease;
+  width: 3.5rem;
+  fill: currentColor;
+}
+
+a:link,
+a:visited {
+  text-decoration: none;
+}

@@ -1,0 +1,3 @@
+graft utopian/static
+graft utopian/templates
+global-exclude *.pyc
