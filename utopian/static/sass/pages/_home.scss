@@ -14,24 +14,29 @@
 .home-header {
   display: grid;
   grid-column: full-start / full-end;
+  justify-content: center;
   align-items: center;
   text-align: center;
   background-size: cover;
   background-image: url("img/header.jpg");
   background-position: center center;
   color: var(--color-grey-light-1);
+
+  &__image {
+    
+  }
 }
 
 .home-categories {
   margin: 10rem 0;
   display: grid;
-  grid-gap: 5rem;
   grid-column: center-start / center-end;
   grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
   font-size: 1.2rem;
 
   &__text {
     color: var(--color-grey-dark-1);
+    margin-bottom: 5rem;
   }
 
   &__paragraph {
@@ -58,6 +63,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  margin-bottom: 10rem;
   &__slick {
     width: 80vw;
   }
@@ -67,6 +73,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  margin-bottom: 10rem;
   &__slick {
     width: 80vw;
   }
@@ -76,6 +83,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  margin-bottom: 10rem;
   &__slick {
     width: 80vw;
   }
@@ -85,6 +93,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  margin-bottom: 10rem;
   &__slick {
     width: 80vw;
   }
@@ -100,4 +109,53 @@ button::-moz-focus-inner { border: 0; }
 .slick-arrow:before {
   color: #888 !important;
   transition: opacity 0.3s ease;
+}
+
+.home-search {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-form {
+  margin-top: 5rem;
+
+  &__input {
+    font-size: 1.5rem;
+    font-family: inherit;
+    color: inherit;
+    padding: 1.5rem 2rem;
+    border-radius: .2rem;
+    background-color: var(--color-grey-light-3);
+    border: none;
+    border-bottom: 3px solid transparent;
+    display: grid;
+    align-items: center;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 1rem 2rem rgba(0,0,0,.1);
+      border-bottom: 3px solid var(--color-link);
+    }
+
+    &::-webkit-input-placeholder {
+      color: var(--color-grey-dark-3);
+    }
+  }
+
+  &__label {
+    color: var(--color-link);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-left: 2rem;
+    margin-top: .7rem;
+    display: block;
+    transition: all .3s;
+  }
+
+  &__input:placeholder-shown + &__label {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4rem);
+  }
 }

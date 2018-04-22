@@ -1,5 +1,57 @@
 .footer {
-  grid-column: full-start / full-end;
+  grid-column: center-start / center-end;
   padding: 1.2rem 1.6rem;
-  border-top: 1px solid var(--color-grey-light-2);
+  border-top: 1px solid var(--color-grey-light-3);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 1.2rem;
+
+  &__amosbastian {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
+
+  &__link:link,
+  &__link:visited {
+    color: var(--color-link);
+  }
+
+  &__image {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin-right: .5rem;
+  }
+
+  &__github {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__github-link:link,
+  &__github-link:visited {
+    transition: all .3s ease;
+    outline: none;
+    text-decoration: none;
+    color: var(--color-grey-dark-3);
+  }
+
+  &__github-link:hover {
+    color: var(--color-grey-dark-2);
+  }
+
+  &__icon {
+    width: 2rem;
+    height: 2rem;
+    fill: currentColor;
+  }
+
+  &__updated {
+    display: grid;
+    justify-content: end;
+    align-items: center;
+    color: var(--color-link);
+  }
 }
