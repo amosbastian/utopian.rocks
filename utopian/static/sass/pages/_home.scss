@@ -58,19 +58,19 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
-  text-align: center;
   &__slick {
     width: 80vw;
-  }
-  &__manager {
-    background-color: red;
-    img {
-      margin: auto;
-    }
   }
 }
 
 .slick-dots li.slick-active  {
   transform: scale(2);
   transition: transform 0.3s ease;
+}
+
+button::-moz-focus-inner { border: 0; }
+
+.slick-arrow:before {
+  color: #888 !important;
+  transition: opacity 0.3s ease;
 }
