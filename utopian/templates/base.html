@@ -4,14 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet"> 
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slick/slick.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slick/slick-theme.css') }}"/>
     <title>{% block title %}{% endblock %} - Utopian.info</title>
   </head>
   <body class="container">
     {% include "header.html" %}
     {% block content %}{% endblock %}
     {% include "footer.html" %}
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='slick/slick.min.js') }}"></script>
+    <script>
+      $(document).ready(function(){
+        $('.home-managers__slick').slick({
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+          accessibility: false
+        });
+      });
+    </script>
   </body>
 </html>

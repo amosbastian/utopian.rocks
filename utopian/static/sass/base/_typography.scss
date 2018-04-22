@@ -1,7 +1,7 @@
 %heading {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  color: var(--color-grey-light-1);  
+  color: inherit;
 }
 
 .header-1 {
@@ -12,4 +12,9 @@
 .header-3 {
   @extend %heading;
   font-size: 3rem;
+  margin: 1rem 0;
+  &--bold {
+    font-weight: 700;
+    letter-spacing: .2rem;
+  }
 }

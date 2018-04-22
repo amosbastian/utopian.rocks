@@ -11,6 +11,8 @@
   --color-grey-dark-3: #999;
 
   --color-black-1: #24292e;
+  
+  --color-home: #7483a5;
 
   --color-suggestions: #54d2a0;
   --color-development: #000;
@@ -49,6 +51,7 @@ body {
   font-family: 'Lato', sans-serif;
   font-weight: 400;
   line-height: 1.6;
+  outline: none;
 }
 
 .container {
@@ -56,10 +59,10 @@ body {
 
   grid-template-rows: min-content 1fr min-content;
   grid-template-columns: [full-start]
-    minmax(6rem, 1fr)
+    minmax(3rem, 1fr)
     [center-start]
     repeat(8, [col-start] minmax(min-content, 14rem) [col-end]) 
     [center-end]
-    minmax(6rem, 1fr) 
+    minmax(3rem, 1fr) 
     [full-end];
 }
