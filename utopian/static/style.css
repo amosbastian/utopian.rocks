@@ -307,7 +307,7 @@ a:visited {
 .home {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-rows: 80vh 1fr 1fr 1fr;
+  grid-template-rows: 80vh 1fr 1fr 1fr 1fr 1fr;
   grid-template-columns: [full-start] minmax(3rem, 1fr) [center-start] 8fr [center-end] minmax(3rem, 1fr) [full-end]; }
 
 .home-header {
@@ -355,6 +355,13 @@ a:visited {
   grid-column: center-start / center-end;
   align-items: center; }
   .home-moderators__slick {
+    width: 80vw; }
+
+.home-contributors {
+  display: grid;
+  grid-column: center-start / center-end;
+  align-items: center; }
+  .home-contributors__slick {
     width: 80vw; }
 
 .home-projects {
