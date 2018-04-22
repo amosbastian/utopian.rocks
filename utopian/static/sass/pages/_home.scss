@@ -1,7 +1,7 @@
 .home {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-rows: 80vh 1fr 1fr;
+  grid-template-rows: 80vh 1fr 1fr 1fr;
   grid-template-columns: [full-start]
     minmax(3rem, 1fr)
     [center-start]
@@ -55,6 +55,24 @@
 }
 
 .home-managers {
+  display: grid;
+  grid-column: center-start / center-end;
+  align-items: center;
+  &__slick {
+    width: 80vw;
+  }
+}
+
+.home-moderators {
+  display: grid;
+  grid-column: center-start / center-end;
+  align-items: center;
+  &__slick {
+    width: 80vw;
+  }
+}
+
+.home-projects {
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
