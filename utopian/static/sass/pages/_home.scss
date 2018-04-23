@@ -1,14 +1,22 @@
 .home {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-rows: 80vh 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 80vh min-content 1fr 1fr 1fr 1fr;
   grid-template-columns: [full-start]
-    minmax(3rem, 1fr)
+    minmax(6rem, 1fr)
     [center-start]
     8fr
     [center-end]
-    minmax(3rem, 1fr) 
+    minmax(6rem, 1fr) 
     [full-end];
+
+  &__gradient {
+    position: absolute;
+    height: 50%;
+    width: 100%;
+    background: linear-gradient(to right,#fff, transparent, #fff);
+    z-index: 100;
+  }
 }
 
 .home-header {
@@ -21,17 +29,13 @@
   background-image: url("img/header.jpg");
   background-position: center center;
   color: var(--color-grey-light-1);
-
-  &__image {
-    
-  }
 }
 
 .home-categories {
   margin: 10rem 0;
   display: grid;
   grid-column: center-start / center-end;
-  grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
+  grid-template-rows: min-content min-content;
   font-size: 1.2rem;
 
   &__text {
@@ -46,16 +50,38 @@
 
   &__categories {
     display: grid;
-    grid-gap: .5rem;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    justify-content: center;
+    align-items: center;
+    grid-gap: 3rem;
+    grid-template-areas: 
+      "cat1 cat2 cat3 cat4  cat5   cat6"
+      "cat7 cat8 cat9 cat10 cat11 cat12"
   }
 
   &__category {
     display: grid;
-    grid-gap: .5rem;
     justify-content: center;
     align-items: center;
     text-align: center;
+  }
+}
+
+@media (max-width: 90rem) {
+  .home-categories__categories {
+    grid-template-areas:
+      "cat1 cat2  cat3  cat4"
+      "cat5 cat6  cat7  cat8"
+      "cat9 cat10 cat11 cat12"
+  }
+}
+
+@media (max-width: 60rem) {
+  .home-categories__categories {
+    grid-template-areas:
+      "cat1  cat2  cat3"
+      "cat4  cat5  cat6"
+      "cat7  cat8  cat9"
+      "cat10 cat11 cat12"
   }
 }
 
@@ -63,6 +89,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  position: relative;
   margin-bottom: 10rem;
   &__slick {
     width: 80vw;
@@ -73,6 +100,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  position: relative;
   margin-bottom: 10rem;
   &__slick {
     width: 80vw;
@@ -83,6 +111,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  position: relative;
   margin-bottom: 10rem;
   &__slick {
     width: 80vw;
@@ -93,6 +122,7 @@
   display: grid;
   grid-column: center-start / center-end;
   align-items: center;
+  position: relative;
   margin-bottom: 10rem;
   &__slick {
     width: 80vw;
@@ -102,6 +132,11 @@
 .slick-dots li.slick-active  {
   transform: scale(2);
   transition: transform 0.3s ease;
+  z-index: 150;
+}
+
+.slick-current .slick-active {
+  /* Fix current card getting transparent */
 }
 
 button::-moz-focus-inner { border: 0; }

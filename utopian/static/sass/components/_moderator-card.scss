@@ -26,12 +26,9 @@
 
   &__statistics {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    align-items: center;
+    grid-template-columns: 1fr min-content;
     color: var(--color-grey-dark-1);
     background-color: var(--color-grey-light-2);
-    border-bottom-left-radius: .4rem;
-    border-bottom-right-radius: .4rem;
     padding-right: 1rem;
   }
 
@@ -53,6 +50,13 @@
       margin: 1rem;
       fill: currentColor;
     }
+    &--accepted {
+      fill: var(--color-accepted);
+    }
+
+    &--rejected {
+      fill: var(--color-rejected);
+    }
   }
 
   &__link:link,
@@ -70,5 +74,5 @@
 .statistics-right {
   display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: flex-end;
 }

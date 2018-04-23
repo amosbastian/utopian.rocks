@@ -21,9 +21,6 @@
     padding: 2.5rem 5rem;
     background-color: var(--color-grey-light-1);
     text-align: center;
-    background-image: url("img/header.jpg");
-    background-size: cover;
-    background-position: center center;
   }
 
   &__statistics {
@@ -72,5 +69,5 @@
 .statistics-right {
   display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: flex-end;
 }

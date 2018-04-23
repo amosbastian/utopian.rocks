@@ -17,30 +17,6 @@
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='slick/slick.min.js') }}"></script>
-    <script>
-      $(document).ready(function(){
-        $('.home-managers__slick').slick({
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          centerMode: true,
-          centerPadding: '6rem',
-          infinite: true,
-          dots: true,
-          accessibility: false
-        });
-      });
-
-      $(document).ready(function(){
-        $('.home-projects__slick').slick({
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          centerMode: true,
-          centerPadding: '6rem',
-          infinite: true,
-          dots: true,
-          accessibility: false
-        });
-      });
-    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/carousel.js') }}"></script>
   </body>
 </html>
