@@ -60,7 +60,7 @@ $(document).ready(function(){
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
-          centerPadding: '10rem'
+          centerPadding: '5rem'
         }
       }
     ]

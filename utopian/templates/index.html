@@ -155,165 +155,83 @@
     </div>
     <div class="home__gradient"></div>
     <div class="home-managers__slick">
+      {% for manager in manager_info %}
       <div class="moderator-card">
-        <div class="moderator-card__category development">
+        <div class="moderator-card__category {{manager.category}}">
+          {% if manager.category == "analysis" %}
           <svg class="moderator-card__icon">
-            <use xlink:href="../static/img/sprite.svg#icon-code"></use>
+            <use xlink:href="../static/img/sprite.svg#icon-show_chart"></use>
           </svg>
-          <p class="moderator-card__text">
-            Development
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/amosbastian/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              amosbastian
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              16
-            </p>
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              42
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              250
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category blog">
+          {% elif manager.category == "blog" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-library_books"></use>
           </svg>
-          <p class="moderator-card__text">
-            Blog
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/espoem/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              espoem
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              8
-            </p>
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              4
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              124
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category bug-hunting">
+          {% elif manager.category == "bug-hunting" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-bug_report"></use>
           </svg>
-          <p class="moderator-card__text">
-            Bug Hunting
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/sachincool/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              sachincool
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              22
-            </p>
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              8
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              180
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category documentation">
+          {% elif manager.category == "copywriting" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-mode_edit"></use>
+          </svg>
+          {% elif manager.category == "development" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-code"></use>
+          </svg>
+          {% elif manager.category == "documentation" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-insert_drive_file"></use>
           </svg>
+          {% elif manager.category == "graphics" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-brush"></use>
+          </svg>
+          {% elif manager.category == "suggestions" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-lightbulb_outline"></use>
+          </svg>
+          {% elif manager.category == "translations" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-translate"></use>
+          </svg>
+          {% elif manager.category == "tutorials" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-school"></use>
+          </svg>
+          {% elif manager.category == "video-tutorials" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-videocam"></use>
+          </svg>
+          {% elif manager.category == "visibility" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-share"></use>
+          </svg>
+          {% endif %}
           <p class="moderator-card__text">
-            Documentation
+            {{manager.category.replace("-", " ").title()}}
           </p>
         </div>
         <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/ms10398/avatar" alt="Moderator's profile picture" class="moderator-card__image">
+          <img src="https://steemitimages.com/u/{{manager.account}}/avatar" alt="Moderator's profile picture" class="moderator-card__image">
           <p class="moderator-card__text">
             <a href="#" class="moderator-card__link">
-              ms10398
+              {{manager.account}}
             </a>
           </p>
         </div>
         <div class="moderator-card__statistics">
           <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
+            <svg class="moderator-card__icon--small moderator-card__icon--accepted">
               <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
             </svg>
             <p class="moderator-card__text">
-              38
+              {{manager.accepted}}
             </p>
-            <svg class="moderator-card__icon--small">
+            <svg class="moderator-card__icon--small moderator-card__icon--rejected">
               <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
             </svg>
             <p class="moderator-card__text">
-              20
+              {{manager.rejected}}
             </p>
           </div>
           <div class="statistics-right">
@@ -321,55 +239,12 @@
               <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
             </svg>
             <p class="moderator-card__text">
-              214
+              {{manager.points}}
             </p>
           </div>
         </div>
       </div>
-
-      <div class="moderator-card">
-          <div class="moderator-card__category suggestions">
-            <svg class="moderator-card__icon">
-              <use xlink:href="../static/img/sprite.svg#icon-lightbulb_outline"></use>
-            </svg>
-            <p class="moderator-card__text">
-              Suggestions
-            </p>
-          </div>
-          <div class="moderator-card__profile">
-            <img src="https://steemitimages.com/u/knowledges/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-            <p class="moderator-card__text">
-              <a href="#" class="moderator-card__link">
-                knowledges
-              </a>
-            </p>
-          </div>
-          <div class="moderator-card__statistics">
-            <div class="statistics-left">
-              <svg class="moderator-card__icon--small">
-                <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-              </svg>
-              <p class="moderator-card__text">
-                8
-              </p>
-              <svg class="moderator-card__icon--small">
-                <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-              </svg>
-              <p class="moderator-card__text">
-                13
-              </p>
-            </div>
-            <div class="statistics-right">
-              <svg class="moderator-card__icon--small">
-                <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-              </svg>
-              <p class="moderator-card__text">
-                169
-              </p>
-            </div>
-          </div>
-        </div>
-
+      {% endfor %}
     </div>
     <div class="home-search">
       <form action="#" class="home-form">
@@ -389,192 +264,67 @@
     </div>
     <div class="home__gradient"></div>
     <div class="home-managers__slick">
+      {% for moderator in moderator_info %}
       <div class="moderator-card">
-        <div class="moderator-card__category development">
+        <div class="moderator-card__category {{moderator.category}}">
+          {% if moderator.category == "analysis" %}
           <svg class="moderator-card__icon">
-            <use xlink:href="../static/img/sprite.svg#icon-code"></use>
+            <use xlink:href="../static/img/sprite.svg#icon-show_chart"></use>
           </svg>
-          <p class="moderator-card__text">
-            Development
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/codingdefined/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              codingdefined
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              16
-            </p>
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              42
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              250
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category blog">
+          {% elif moderator.category == "blog" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-library_books"></use>
           </svg>
-          <p class="moderator-card__text">
-            Blog
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/roj/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              roj
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              8
-            </p>
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              4
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              124
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category bug-hunting">
+          {% elif moderator.category == "bug-hunting" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-bug_report"></use>
           </svg>
-          <p class="moderator-card__text">
-            Bug Hunting
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/tobias-g/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              tobias-g
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small moderator-card__icon--accepted">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              22
-            </p>
-            <svg class="moderator-card__icon--small moderator-card__icon--rejected">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              8
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              180
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category graphics">
+          {% elif moderator.category == "copywriting" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-mode_edit"></use>
+          </svg>
+          {% elif moderator.category == "development" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-code"></use>
+          </svg>
+          {% elif moderator.category == "documentation" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-insert_drive_file"></use>
           </svg>
-          <p class="moderator-card__text">
-            Graphics
-          </p>
-        </div>
-        <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/oups/avatar" alt="Moderator's profile picture" class="moderator-card__image">
-          <p class="moderator-card__text">
-            <a href="#" class="moderator-card__link">
-              oups
-            </a>
-          </p>
-        </div>
-        <div class="moderator-card__statistics">
-          <div class="statistics-left">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="moderator-card__text">
-              38
-            </p>
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="moderator-card__text">
-              20
-            </p>
-          </div>
-          <div class="statistics-right">
-            <svg class="moderator-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
-            </svg>
-            <p class="moderator-card__text">
-              214
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="moderator-card">
-        <div class="moderator-card__category tutorials">
+          {% elif moderator.category == "graphics" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-brush"></use>
+          </svg>
+          {% elif moderator.category == "suggestions" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-lightbulb_outline"></use>
+          </svg>
+          {% elif moderator.category == "translations" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-translate"></use>
+          </svg>
+          {% elif moderator.category == "tutorials" %}
           <svg class="moderator-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-school"></use>
           </svg>
+          {% elif moderator.category == "video-tutorials" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-videocam"></use>
+          </svg>
+          {% elif moderator.category == "visibility" %}
+          <svg class="moderator-card__icon">
+            <use xlink:href="../static/img/sprite.svg#icon-share"></use>
+          </svg>
+          {% endif %}
           <p class="moderator-card__text">
-            Tutorials
+            {{moderator.category.replace("-", " ").title()}}
           </p>
         </div>
         <div class="moderator-card__profile">
-          <img src="https://steemitimages.com/u/portugalcoin/avatar" alt="Moderator's profile picture" class="moderator-card__image">
+          <img src="https://steemitimages.com/u/{{moderator.account}}/avatar" alt="Moderator's profile picture" class="moderator-card__image">
           <p class="moderator-card__text">
             <a href="#" class="moderator-card__link">
-              portugalcoin
+              {{moderator.account}}
             </a>
           </p>
         </div>
@@ -584,13 +334,13 @@
               <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
             </svg>
             <p class="moderator-card__text">
-              10
+              {{moderator.accepted}}
             </p>
             <svg class="moderator-card__icon--small moderator-card__icon--rejected">
               <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
             </svg>
             <p class="moderator-card__text">
-              2
+              {{moderator.rejected}}
             </p>
           </div>
           <div class="statistics-right">
@@ -598,11 +348,12 @@
               <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
             </svg>
             <p class="moderator-card__text">
-              124
+              {{moderator.points}}
             </p>
           </div>
         </div>
       </div>
+      {% endfor %}
     </div>
     <div class="home-search">
       <form action="#" class="home-form">

@@ -2,13 +2,13 @@
   display: grid;
   grid-column: 1 / -1;
   grid-template-rows: 80vh min-content 1fr 1fr 1fr 1fr;
-  grid-template-columns: [full-start]
+  grid-template-columns: [home-start]
     minmax(6rem, 1fr)
-    [center-start]
+    [home-center-start]
     8fr
-    [center-end]
+    [home-center-end]
     minmax(6rem, 1fr) 
-    [full-end];
+    [home-end];
 
   &__gradient {
     position: absolute;
@@ -21,7 +21,7 @@
 
 .home-header {
   display: grid;
-  grid-column: full-start / full-end;
+  grid-column: home-start / home-end;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -34,13 +34,14 @@
 .home-categories {
   margin: 10rem 0;
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   grid-template-rows: min-content min-content;
   font-size: 1.2rem;
 
   &__text {
     color: var(--color-grey-dark-1);
     margin-bottom: 5rem;
+    text-align: center;
   }
 
   &__paragraph {
@@ -75,7 +76,7 @@
   }
 }
 
-@media (max-width: 60rem) {
+@media (max-width: 50rem) {
   .home-categories__categories {
     grid-template-areas:
       "cat1  cat2  cat3"
@@ -87,7 +88,7 @@
 
 .home-managers {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem;
@@ -98,7 +99,7 @@
 
 .home-moderators {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem;
@@ -109,7 +110,7 @@
 
 .home-contributors {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem;
@@ -120,7 +121,7 @@
 
 .home-projects {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem;

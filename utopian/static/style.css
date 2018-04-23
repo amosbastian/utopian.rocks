@@ -343,7 +343,7 @@ a:visited {
   display: grid;
   grid-column: 1 / -1;
   grid-template-rows: 80vh min-content 1fr 1fr 1fr 1fr;
-  grid-template-columns: [full-start] minmax(6rem, 1fr) [center-start] 8fr [center-end] minmax(6rem, 1fr) [full-end]; }
+  grid-template-columns: [home-start] minmax(6rem, 1fr) [home-center-start] 8fr [home-center-end] minmax(6rem, 1fr) [home-end]; }
   .home__gradient {
     position: absolute;
     height: 50%;
@@ -353,7 +353,7 @@ a:visited {
 
 .home-header {
   display: grid;
-  grid-column: full-start / full-end;
+  grid-column: home-start / home-end;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -365,12 +365,13 @@ a:visited {
 .home-categories {
   margin: 10rem 0;
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   grid-template-rows: min-content min-content;
   font-size: 1.2rem; }
   .home-categories__text {
     color: var(--color-grey-dark-1);
-    margin-bottom: 5rem; }
+    margin-bottom: 5rem;
+    text-align: center; }
   .home-categories__paragraph {
     font-size: 2rem;
     color: var(--color-home); }
@@ -390,13 +391,13 @@ a:visited {
   .home-categories__categories {
     grid-template-areas: "cat1 cat2  cat3  cat4" "cat5 cat6  cat7  cat8" "cat9 cat10 cat11 cat12"; } }
 
-@media (max-width: 60rem) {
+@media (max-width: 50rem) {
   .home-categories__categories {
     grid-template-areas: "cat1  cat2  cat3" "cat4  cat5  cat6" "cat7  cat8  cat9" "cat10 cat11 cat12"; } }
 
 .home-managers {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem; }
@@ -405,7 +406,7 @@ a:visited {
 
 .home-moderators {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem; }
@@ -414,7 +415,7 @@ a:visited {
 
 .home-contributors {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem; }
@@ -423,7 +424,7 @@ a:visited {
 
 .home-projects {
   display: grid;
-  grid-column: center-start / center-end;
+  grid-column: home-center-start / home-center-end;
   align-items: center;
   position: relative;
   margin-bottom: 10rem; }

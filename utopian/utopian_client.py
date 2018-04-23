@@ -3,12 +3,9 @@ import json
 import math
 import os
 import requests
+
 from dateutil.parser import parse
 from pymongo import MongoClient
-
-# try:
-#     from urllib import urlencode
-# except ImportError:
 from urllib.parse import urlencode
 
 CLIENT = MongoClient()
@@ -157,7 +154,6 @@ def get_moderators():
     url = generate_url(action, {})
     r = requests.get(url, headers=HEADERS)
 
-    
     if r.status_code == 200:
         return r.json()["results"]
     else:

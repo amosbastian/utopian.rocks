@@ -4,6 +4,10 @@ Script used to run the Flask application.
 import os
 
 from flask import Flask, render_template
+from pymongo import MongoClient
+
+CLIENT = MongoClient()
+DB = CLIENT.utopian
 
 
 def create_app(test_config=None):
@@ -25,11 +29,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route("/")
-    def index():
-        """
-        Returns the homepage's template.
-        """
-        return render_template("index.html")
+    from . import home
+    app.register_blueprint(home.BP)
 
     return app
