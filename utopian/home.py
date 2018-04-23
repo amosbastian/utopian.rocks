@@ -72,6 +72,38 @@ def get_moderators():
     return manager_list, moderator_list
 
 
+def contributor_performance(post_list):
+    contributors = {}
+    for post in post_list:
+        contributor = post["author"]
+        contributors.setdefault(contributor, {
+            "accepted": 0, "rejected": 0, "rewards": 0, "category": []
+        })
+
+        if post["moderator"]["flagged"]:
+            contributors[contributor]["rejected"] += 1
+        else:
+            contributors[contributor]["accepted"] += 1
+
+        # TODO: Add post rewards to the database and sum them here.
+        category = post["category"]
+        contributors[contributor]["category"].append(category)
+
+    contributor_list = []
+    for key, value in contributors.items():
+        category = Counter(value["category"]).most_common(1)[0][0]
+        if "task" in category:
+            category = category.split("-")[1]
+        value["category"] = category_converter(category)
+        value["account"] = key
+        contributor_list.append(value)
+
+    return sorted(
+        contributor_list,
+        key=lambda x: x["accepted"] + x["rejected"],
+        reverse=True)[:5]
+
+
 def moderator_performance(moderator_list, post_list, manager=True):
     moderators = {}
 
@@ -104,7 +136,10 @@ def moderator_performance(moderator_list, post_list, manager=True):
         value["account"] = key
         moderator_list.append(value)
 
-    return moderator_list
+    return sorted(
+        moderator_list,
+        key=lambda x: x["accepted"] + x["rejected"],
+        reverse=True)[:5]
 
 
 @BP.route("/")
@@ -121,15 +156,12 @@ def index():
         {"moderator.time": {"$gt": time_frame}}
     )]
 
-    manager_info = sorted(
-        moderator_performance(manager_list, post_list),
-        key=lambda x: x["accepted"] + x["rejected"], reverse=True)[:5]
-    moderator_info = sorted(
-        moderator_performance(moderator_list, post_list, False),
-        key=lambda x: x["accepted"] + x["rejected"], reverse=True)[:5]
-    
+    manager_info = moderator_performance(manager_list, post_list)
+    moderator_info = moderator_performance(moderator_list, post_list, False)
+    contributor_info = contributor_performance(post_list)
     return render_template(
         "index.html",
         manager_info=manager_info,
-        moderator_info=moderator_info
+        moderator_info=moderator_info,
+        contributor_info=contributor_info
     )

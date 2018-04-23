@@ -24,7 +24,8 @@
   --color-copywriting: teal;
   --color-blog: #0275d8;
   --color-accepted: #2ecc71;
-  --color-rejected: #e74c3c; }
+  --color-rejected: #e74c3c;
+  --color-points: #ffb500; }
 
 * {
   margin: 0;
@@ -222,6 +223,8 @@ a:visited {
       fill: var(--color-accepted); }
     .moderator-card__icon--rejected {
       fill: var(--color-rejected); }
+    .moderator-card__icon--points {
+      fill: var(--color-points); }
   .moderator-card__link:link, .moderator-card__link:visited {
     text-decoration: none;
     color: var(--color-link); }

@@ -57,6 +57,9 @@
     &--rejected {
       fill: var(--color-rejected);
     }
+    &--points {
+      fill: var(--color-points);
+    }
   }
 
   &__link:link,
