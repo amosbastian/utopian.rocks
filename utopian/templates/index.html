@@ -13,7 +13,7 @@
       </a>
     </div>
     <h3 class="header-3">
-      Find additional information!
+      Get additional information about Utopian.io!
     </h3>
   </div>
   <div class="home-categories">
@@ -239,7 +239,7 @@
               <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
             </svg>
             <p class="moderator-card__text">
-              {{manager.points}}
+              {{manager.points|round|int}}
             </p>
           </div>
         </div>
@@ -348,7 +348,7 @@
               <use xlink:href="../static/img/sprite.svg#icon-stars"></use>
             </svg>
             <p class="moderator-card__text">
-              {{moderator.points}}
+              {{moderator.points|round|int}}
             </p>
           </div>
         </div>
@@ -479,190 +479,44 @@
     </div>
     <div class="home__gradient"></div>
     <div class="home-projects__slick">
+      {% for project in project_info %}
       <div class="project-card">
         <div class="project-card__project">
           <svg class="project-card__icon">
             <use xlink:href="../static/img/sprite.svg#icon-github"></use>
           </svg>
           <p class="project-card__text">
-            <a href="#" class="project-card__link">
-              utopian-io/utopian.io
+            <a href="{{project.html_url}}" class="project-card__link">
+              {{project.full_name}}
             </a>
           </p>
         </div>
         <div class="project-card__profile">
-          <img src="https://avatars3.githubusercontent.com/u/18612062?s=200&v=4" alt="Project's picture" class="project-card__image">
+          <img src="{{project.avatar_url}}" alt="Project's picture" class="project-card__image">
         </div>
         <div class="project-card__statistics">
           <div class="statistics-left">
-            <svg class="project-card__icon--small">
+            <svg class="project-card__icon--small project-card__icon--accepted">
               <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
             </svg>
             <p class="project-card__text">
-              16
+              {{project.accepted}}
             </p>
-            <svg class="project-card__icon--small">
+            <svg class="project-card__icon--small project-card__icon--rejected">
               <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
             </svg>
             <p class="project-card__text">
-              42
+              {{project.rejected}}
             </p>
           </div>
           <div class="statistics-right">
             <p class="project-card__text">
-              $250
+              ${{project.rewards}}
             </p>
           </div>
         </div>
       </div>
-
-      <div class="project-card">
-        <div class="project-card__project">
-          <svg class="project-card__icon">
-            <use xlink:href="../static/img/sprite.svg#icon-github"></use>
-          </svg>
-          <p class="project-card__text">
-            <a href="#" class="project-card__link">
-              steemit/steem
-            </a>
-          </p>
-        </div>
-        <div class="project-card__profile">
-          <img src="https://avatars2.githubusercontent.com/u/17434692?s=200&v=4" alt="Project's picture" class="project-card__image">
-        </div>
-        <div class="project-card__statistics">
-          <div class="statistics-left">
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="project-card__text">
-              16
-            </p>
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="project-card__text">
-              4
-            </p>
-          </div>
-          <div class="statistics-right">
-            <p class="project-card__text">
-              $2355
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card">
-        <div class="project-card__project">
-          <svg class="project-card__icon">
-            <use xlink:href="../static/img/sprite.svg#icon-github"></use>
-          </svg>
-          <p class="project-card__text">
-            <a href="#" class="project-card__link">
-              busyorg/busy
-            </a>
-          </p>
-        </div>
-        <div class="project-card__profile">
-          <img src="https://avatars1.githubusercontent.com/u/25360286?s=200&v=4" alt="Project's picture" class="project-card__image">
-        </div>
-        <div class="project-card__statistics">
-          <div class="statistics-left">
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="project-card__text">
-              5
-            </p>
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="project-card__text">
-              2
-            </p>
-          </div>
-          <div class="statistics-right">
-            <p class="project-card__text">
-              $377
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card">
-        <div class="project-card__project">
-          <svg class="project-card__icon">
-            <use xlink:href="../static/img/sprite.svg#icon-github"></use>
-          </svg>
-          <p class="project-card__text">
-            <a href="#" class="project-card__link">
-              WordPress/WordPress
-            </a>
-          </p>
-        </div>
-        <div class="project-card__profile">
-          <img src="https://avatars2.githubusercontent.com/u/276006?s=200&v=4" alt="Project's picture" class="project-card__image">
-        </div>
-        <div class="project-card__statistics">
-          <div class="statistics-left">
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="project-card__text">
-              1
-            </p>
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="project-card__text">
-              0
-            </p>
-          </div>
-          <div class="statistics-right">
-            <p class="project-card__text">
-              $50
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card">
-        <div class="project-card__project">
-          <svg class="project-card__icon">
-            <use xlink:href="../static/img/sprite.svg#icon-github"></use>
-          </svg>
-          <p class="project-card__text">
-            <a href="#" class="project-card__link">
-              dtube/embed
-            </a>
-          </p>
-        </div>
-        <div class="project-card__profile">
-          <img src="https://avatars0.githubusercontent.com/u/32245859?s=200&v=4" alt="Project's picture" class="project-card__image">
-        </div>
-        <div class="project-card__statistics">
-          <div class="statistics-left">
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_up"></use>
-            </svg>
-            <p class="project-card__text">
-              5
-            </p>
-            <svg class="project-card__icon--small">
-              <use xlink:href="../static/img/sprite.svg#icon-thumb_down"></use>
-            </svg>
-            <p class="project-card__text">
-              31
-            </p>
-          </div>
-          <div class="statistics-right">
-            <p class="project-card__text">
-              $102
-            </p>
-          </div>
-        </div>
-      </div>
+      {% endfor %}
     </div>
     <div class="home-search">
       <form action="#" class="home-form">

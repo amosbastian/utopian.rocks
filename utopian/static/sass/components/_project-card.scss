@@ -46,11 +46,20 @@
     height: 2.25rem;
     margin: 1rem;
     fill: var(--color-grey-dark-1);
+
     &--small {
       width: 1.5rem;
       height: 1.5rem;
       margin: 1rem;
       fill: currentColor;
+    }
+
+    &--accepted {
+      fill: var(--color-accepted);
+    }
+
+    &--rejected {
+      fill: var(--color-rejected);
     }
   }
 

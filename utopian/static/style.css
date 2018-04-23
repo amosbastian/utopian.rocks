@@ -282,6 +282,10 @@ a:visited {
       height: 1.5rem;
       margin: 1rem;
       fill: currentColor; }
+    .project-card__icon--accepted {
+      fill: var(--color-accepted); }
+    .project-card__icon--rejected {
+      fill: var(--color-rejected); }
   .project-card__link:link, .project-card__link:visited {
     text-decoration: none;
     color: var(--color-link); }

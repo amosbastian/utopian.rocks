@@ -2,6 +2,8 @@
 Blueprint for the homepage.
 """
 import datetime
+import json
+import requests
 
 from collections import Counter
 from flask import Blueprint, render_template
@@ -10,6 +12,10 @@ from pymongo import MongoClient
 BP = Blueprint("home", __name__, url_prefix="/")
 CLIENT = MongoClient()
 DB = CLIENT.utopian
+GITHUB = "https://api.github.com/"
+HEADERS = {
+    "Accept": "application/vnd.github.v3+json"
+}
 
 
 def converter(object_):
@@ -72,38 +78,6 @@ def get_moderators():
     return manager_list, moderator_list
 
 
-def contributor_performance(post_list):
-    contributors = {}
-    for post in post_list:
-        contributor = post["author"]
-        contributors.setdefault(contributor, {
-            "accepted": 0, "rejected": 0, "rewards": 0, "category": []
-        })
-
-        if post["moderator"]["flagged"]:
-            contributors[contributor]["rejected"] += 1
-        else:
-            contributors[contributor]["accepted"] += 1
-
-        # TODO: Add post rewards to the database and sum them here.
-        category = post["category"]
-        contributors[contributor]["category"].append(category)
-
-    contributor_list = []
-    for key, value in contributors.items():
-        category = Counter(value["category"]).most_common(1)[0][0]
-        if "task" in category:
-            category = category.split("-")[1]
-        value["category"] = category_converter(category)
-        value["account"] = key
-        contributor_list.append(value)
-
-    return sorted(
-        contributor_list,
-        key=lambda x: x["accepted"] + x["rejected"],
-        reverse=True)[:5]
-
-
 def moderator_performance(moderator_list, post_list, manager=True):
     moderators = {}
 
@@ -142,6 +116,72 @@ def moderator_performance(moderator_list, post_list, manager=True):
         reverse=True)[:5]
 
 
+def contributor_performance(post_list):
+    contributors = {}
+    for post in post_list:
+        contributor = post["author"]
+        contributors.setdefault(contributor, {
+            "accepted": 0, "rejected": 0, "rewards": 0, "category": []
+        })
+
+        if post["moderator"]["flagged"]:
+            contributors[contributor]["rejected"] += 1
+        else:
+            contributors[contributor]["accepted"] += 1
+
+        # TODO: Add post rewards to the database and sum them here.
+        category = post["category"]
+        contributors[contributor]["category"].append(category)
+
+    contributor_list = []
+    for key, value in contributors.items():
+        category = Counter(value["category"]).most_common(1)[0][0]
+        if "task" in category:
+            category = category.split("-")[1]
+        value["category"] = category_converter(category)
+        value["account"] = key
+        contributor_list.append(value)
+
+    return sorted(
+        contributor_list,
+        key=lambda x: x["accepted"] + x["rejected"],
+        reverse=True)[:5]
+
+
+def project_performance(post_list):
+    projects = {}
+    for post in post_list:
+        project = str(post["repository"]["id"])
+        projects.setdefault(project, {
+            "accepted": 0, "rejected": 0, "rewards": 0
+        })
+
+        if post["moderator"]["flagged"]:
+            projects[project]["rejected"] += 1
+        else:
+            projects[project]["accepted"] += 1
+
+        # TODO: Add post rewards to the database and sum them here.
+
+    project_list = []
+    for key, value in projects.items():
+        value["id"] = key
+        project_list.append(value)
+
+    project_list = sorted(project_list,
+                          key=lambda x: x["accepted"] + x["rejected"],
+                          reverse=True)[:5]
+
+    for project in project_list:
+        project_id = project["id"]
+        request = requests.get(f"{GITHUB}repositories/{project_id}").json()
+        project["full_name"] = request["full_name"]
+        project["avatar_url"] = request["owner"]["avatar_url"]
+        project["html_url"] = request["html_url"]
+
+    return project_list
+
+
 @BP.route("/")
 def index():
     """
@@ -159,9 +199,11 @@ def index():
     manager_info = moderator_performance(manager_list, post_list)
     moderator_info = moderator_performance(moderator_list, post_list, False)
     contributor_info = contributor_performance(post_list)
+    project_info = project_performance(post_list)
     return render_template(
         "index.html",
         manager_info=manager_info,
         moderator_info=moderator_info,
-        contributor_info=contributor_info
+        contributor_info=contributor_info,
+        project_info=project_info
     )
