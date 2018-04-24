@@ -3,6 +3,7 @@ Blueprint for the homepage.
 """
 import datetime
 import json
+import os
 import requests
 
 from collections import Counter
@@ -14,16 +15,16 @@ CLIENT = MongoClient()
 DB = CLIENT.utopian
 GITHUB = "https://api.github.com/"
 HEADERS = {
+    "Authorization": "token {}".format(os.environ["GITHUB_TOKEN"]),
     "Accept": "application/vnd.github.v3+json"
 }
-
-
-def converter(object_):
-    if isinstance(object_, datetime.datetime):
-        return object_.__str__()
+N = 7
 
 
 def category_converter(category):
+    """
+    Convert category to its actual name.
+    """
     if category == "social":
         return "visibility"
     elif category == "ideas":
@@ -32,6 +33,10 @@ def category_converter(category):
 
 
 def moderator_points(category):
+    """
+    Return the amount of points received for reviewing a contribution in the
+    given category.
+    """
     if category == "ideas":
         return 2.0
     elif category == "development":
@@ -69,6 +74,7 @@ def get_moderators():
     moderator_list = []
     manager_list = []
 
+    # Sort moderators and managers into own list
     for moderator in moderators.find():
         if moderator["supermoderator"]:
             manager_list.append(moderator["account"])
@@ -79,6 +85,10 @@ def get_moderators():
 
 
 def moderator_performance(moderator_list, post_list, manager=True):
+    """
+    Returns a list of the N most active moderators/managers in the last week,
+    with their name, amount of accepted and rejected contributions and points.
+    """
     moderators = {}
 
     if manager:
@@ -92,11 +102,13 @@ def moderator_performance(moderator_list, post_list, manager=True):
             moderators.setdefault(moderator, {
                 "accepted": 0, "rejected": 0, "points": points, "category": []
             })
+
             if post["moderator"]["flagged"]:
                 moderators[moderator]["rejected"] += 1
             else:
                 moderators[moderator]["accepted"] += 1
 
+            # Add category to list and count points
             category = post["category"]
             moderators[moderator]["points"] += moderator_points(category)
             moderators[moderator]["category"].append(category)
@@ -104,8 +116,10 @@ def moderator_performance(moderator_list, post_list, manager=True):
     moderator_list = []
     for key, value in moderators.items():
         category = Counter(value["category"]).most_common(1)[0][0]
+        # Replace task request with actual category
         if "task" in category:
             category = category.split("-")[1]
+
         value["category"] = category_converter(category)
         value["account"] = key
         moderator_list.append(value)
@@ -113,10 +127,15 @@ def moderator_performance(moderator_list, post_list, manager=True):
     return sorted(
         moderator_list,
         key=lambda x: x["accepted"] + x["rejected"],
-        reverse=True)[:5]
+        reverse=True)[:N]
 
 
 def contributor_performance(post_list):
+    """
+    Returns a list of the N most rewarded contributors in the last week, with
+    their name, amount of accepted and rejected contributions and amount of
+    pending rewards on those contributions.
+    """
     contributors = {}
     for post in post_list:
         contributor = post["author"]
@@ -129,26 +148,35 @@ def contributor_performance(post_list):
         else:
             contributors[contributor]["accepted"] += 1
 
-        # TODO: Add post rewards to the database and sum them here.
+        # Add category to list and count points
         category = post["category"]
         contributors[contributor]["category"].append(category)
+        contributors[contributor]["rewards"] += post["reward"]
 
     contributor_list = []
     for key, value in contributors.items():
         category = Counter(value["category"]).most_common(1)[0][0]
+        # Replace task request with actual category
         if "task" in category:
             category = category.split("-")[1]
+
         value["category"] = category_converter(category)
         value["account"] = key
         contributor_list.append(value)
 
     return sorted(
         contributor_list,
-        key=lambda x: x["accepted"] + x["rejected"],
-        reverse=True)[:5]
+        key=lambda x: x["rewards"],
+        reverse=True)[:N]
 
 
 def project_performance(post_list):
+    """
+    Returns a list of the N most rewarded projects in the last week. This list
+    contains each project's name, avatar URL, repository URL, amount of
+    accepted and rejected contributions made to it and the amount of pending
+    rewards on those contributions.
+    """
     projects = {}
     for post in post_list:
         project = str(post["repository"]["id"])
@@ -161,17 +189,19 @@ def project_performance(post_list):
         else:
             projects[project]["accepted"] += 1
 
-        # TODO: Add post rewards to the database and sum them here.
+        projects[project]["rewards"] += post["reward"]
 
     project_list = []
     for key, value in projects.items():
         value["id"] = key
         project_list.append(value)
 
+    # Get IDs of N most rewarded projects
     project_list = sorted(project_list,
-                          key=lambda x: x["accepted"] + x["rejected"],
-                          reverse=True)[:5]
+                          key=lambda x: x["rewards"],
+                          reverse=True)[:N]
 
+    # Use GitHub API to get additional information
     for project in project_list:
         project_id = project["id"]
         request = requests.get(f"{GITHUB}repositories/{project_id}").json()
@@ -191,15 +221,18 @@ def index():
 
     manager_list, moderator_list = get_moderators()
 
+    # Set time frame and retrieve posts
     time_frame = datetime.datetime.now() - datetime.timedelta(days=7)
     post_list = [post for post in posts.find(
         {"moderator.time": {"$gt": time_frame}}
     )]
 
+    # Get all information needed for homepage
     manager_info = moderator_performance(manager_list, post_list)
     moderator_info = moderator_performance(moderator_list, post_list, False)
     contributor_info = contributor_performance(post_list)
     project_info = project_performance(post_list)
+
     return render_template(
         "index.html",
         manager_info=manager_info,

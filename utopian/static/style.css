@@ -351,12 +351,20 @@ a:visited {
   grid-column: 1 / -1;
   grid-template-rows: 80vh min-content 1fr 1fr 1fr 1fr;
   grid-template-columns: [home-start] minmax(6rem, 1fr) [home-center-start] 8fr [home-center-end] minmax(6rem, 1fr) [home-end]; }
-  .home__gradient {
+  .home__gradient-left {
     position: absolute;
     height: 50%;
-    width: 100%;
-    background: linear-gradient(to right, #fff, transparent, #fff);
-    z-index: 100; }
+    width: 30%;
+    background: linear-gradient(to right, #fff, transparent);
+    z-index: 100;
+    left: 0; }
+  .home__gradient-right {
+    position: absolute;
+    height: 50%;
+    width: 30%;
+    background: linear-gradient(to left, #fff, transparent);
+    z-index: 100;
+    right: 0; }
 
 .home-header {
   display: grid;

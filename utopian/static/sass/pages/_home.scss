@@ -10,12 +10,21 @@
     minmax(6rem, 1fr) 
     [home-end];
 
-  &__gradient {
+  &__gradient-left {
     position: absolute;
     height: 50%;
-    width: 100%;
-    background: linear-gradient(to right,#fff, transparent, #fff);
+    width: 30%;
+    background: linear-gradient(to right,#fff, transparent);
     z-index: 100;
+    left: 0;
+  }
+  &__gradient-right {
+    position: absolute;
+    height: 50%;
+    width: 30%;
+    background: linear-gradient(to left,#fff, transparent);
+    z-index: 100;
+    right: 0;
   }
 }
 

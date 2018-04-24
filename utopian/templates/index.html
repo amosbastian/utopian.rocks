@@ -20,7 +20,7 @@
     <div class="home-categories__text">
       <h3 class="header-3 header-3--bold">Categories</h3>
       <p class="home-categories__paragraph">
-        Get additional information about your favourite categories! This includes X, Y and Z.
+        Get additional information about your favourite categories!
       </p>
     </div>
     <div class="home-categories__categories">
@@ -153,7 +153,8 @@
         Get additional information about your favourite community managers!
       </p>
     </div>
-    <div class="home__gradient"></div>
+    <div class="home__gradient-left"></div>
+    <div class="home__gradient-right"></div>
     <div class="home-managers__slick">
       {% for manager in manager_info %}
       <div class="moderator-card">
@@ -262,7 +263,8 @@
         Get additional information about your favourite Utopian moderators!
       </p>
     </div>
-    <div class="home__gradient"></div>
+    <div class="home__gradient-left"></div>
+    <div class="home__gradient-right"></div>
     <div class="home-managers__slick">
       {% for moderator in moderator_info %}
       <div class="moderator-card">
@@ -371,7 +373,8 @@
         Get additional information about your favourite Utopian contributors!
       </p>
     </div>
-    <div class="home__gradient"></div>
+    <div class="home__gradient-left"></div>
+    <div class="home__gradient-right"></div>
     <div class="home-managers__slick">
       {% for contributor in contributor_info %}
       <div class="moderator-card">
@@ -454,7 +457,7 @@
           </div>
           <div class="statistics-right">
             <p class="moderator-card__text">
-              ${{contributor.rewards}}
+              ${{contributor.rewards|round|int}}
             </p>
           </div>
         </div>
@@ -477,7 +480,8 @@
         Get additional information about your favourite GitHub projects on Utopian!
       </p>
     </div>
-    <div class="home__gradient"></div>
+    <div class="home__gradient-left"></div>
+    <div class="home__gradient-right"></div>
     <div class="home-projects__slick">
       {% for project in project_info %}
       <div class="project-card">
@@ -511,7 +515,7 @@
           </div>
           <div class="statistics-right">
             <p class="project-card__text">
-              ${{project.rewards}}
+              ${{project.rewards|round|int}}
             </p>
           </div>
         </div>

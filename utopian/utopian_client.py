@@ -43,8 +43,13 @@ def create_post(post, status, update=True):
         "category": post.get("json_metadata").get("type"),
         "modified": False,
         "status": status,
-        "updated": datetime.datetime.now()
+        "updated": datetime.datetime.now(),
+        "reward": float(post["pending_payout_value"].split()[0])
     }
+
+    if new_post["reward"] == 0:
+        new_post["reward"] = float(post["total_payout_value"].split()[0])
+
     if not status == "pending":
         # Add moderator to post
         moderator = post["json_metadata"]["moderator"]
@@ -137,10 +142,12 @@ def get_posts(status, update=True):
                 post_list = [create_post(post, status, True)
                              for post in r.json()["results"]]
                 for post in post_list:
-                    if post is not None:
-                        if post["created"] > week:
-                            return
-                        posts.replace_one({"_id": post["_id"]}, post, True)
+                    if post is None:
+                        return
+                    posts.replace_one({"_id": post["_id"]}, post, True)
+                    if post["created"] < week:
+                        print("YES")
+                        return
             else:
                 time = datetime.datetime.now()
                 print(f"{time} - {ERROR}")
