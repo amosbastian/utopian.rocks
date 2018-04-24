@@ -1,22 +1,29 @@
-Utopian
--------
+# Utopian.info
 
 A web application showing additional information about Utopian.io. It was created using Flask and MongoDB. Visit https://utopian.info/ to see it in action!
 
-Usage
------
+Note: this is the `develop` branch and is completely separate to the `master` branch. On this branch I am converting the application structure to something much better. Because of this I am remaking most of the application from scratch, while reusing snippets of code. My aim is to make the website much more aesthetically pleasing, but more importantly quicker and easier to use.
 
-To run this locally you must have MongoDB and Python3.6 installed. After this you can clone this repository with
+### Prerequisites
+
+To run Utopian.info locally you need to have Python installed - you can find more information and instructions on https://www.python.org/. Nutmega also uses MongoDB - tutorials on installation of MongoDB can be found on https://docs.mongodb.com/manual/installation/.
+
+### Installing
+
+Once you have Python and MongoDB installed the first step is cloning the repository and setting up a virtual environment
+
+```bash
+git clone https://github.com/amosbastian/utopian.git
+cd utopian
+python3 -m venv venv
+. venv/bin/activate
+```
+
+Utopian.info currently requires the version of Flask that is only available on GitHub, so install this and the other requires packages with the following commands
 
 ```
-$ https://github.com/amosbastian/utopian.git
-```
-
-and install all the Python packages using
-
-```
-$ cd utopian
-$ pip install requirements.txt
+$ pip install git+https://github.com/pallets/flask.git
+$ python setup.py install
 ```
 
 Once you have a MongoDB instance running you can use the following script to populate the database
@@ -25,10 +32,11 @@ Once you have a MongoDB instance running you can use the following script to pop
 $ python update_database.py
 ```
 
-Finally, you can run the web application with either of the following commands
+Finally, you need to set the environment variables `FLASK_APP` and `FLASK_ENV` like this
 
 ```
-$ python utopian/app.py
+$ export FLASK_APP=nutmega
+$ export FLASK_env=development
 ```
 
 or 
@@ -37,22 +45,55 @@ or
 $ gunicorn wsgi:app
 ```
 
-Features
---------
+### Usage
 
-### [Supervisor team overview](https://utopian.info/team/amosbastian)
-Shows a supervisor's team's performance in the last week.
-### [Moderator overview](https://utopian.info/moderator/amosbastian)
-Shows a moderator's performance, like recent reviews, activity and more.
-### [Contributor overview](https://utopian.info/moderator/amosbastian)
-Shows a contributor's performance, like recent contributions, who they were moderated by and more.
+After installing everything all that's left is to run the application with the following command
 
-Roadmap
--------
+```
+flask run
+```
 
-Currently I have the following plans, but this could all change in the future
+However, since Utopian.info uses SCSS I use node.js to compile my `.scss` files into the final `style.css` file. If you want to do the same, then you must first install node.js and use the following command in the Utopian.info folder to install all the dependencies
 
-* Add a way to change the static time frame of 7 days to e.g. 1 day, 12 hours etc.
-* Add a page for projects that show statistics about contributions made to it (e.g. best contributor, overall acceptance rate etc.)
-* Improve overall look and feel, making everything more consistent.
+```
+npm install
+```
 
+I have also added a script that *should* run the Flask application and recompile the SCSS files every time you make a change to them. You can run this using the following command
+
+```
+npm start
+```
+
+## Built with
+
+Nutmega was built with
+
+* [Flask](http://flask.pocoo.org/docs/0.12/) - a micro webdevelopment framework for Python.
+* [MongoDB](https://www.mongodb.com/) - a free and open-source cross-platform document-oriented database program.
+
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://github.com/amosbastian/utopian/blob/master/CONTRIBUTING.md) for details on how to contribute to Utopian.info and what the best way to go about this is!
+
+## Roadmap
+
+Currently remaking the website to make it more dynamic and usable
+
+* Finish homepage
+* Remake page for moderators
+* Remake page for contributors
+* Remake page for categories
+* Create page for projects
+* Create page for task requests
+
+## Authors
+
+* **Amos Bastian** - *Initial work* - [@amosbastian](https://github.com/amosbastian)
+
+See also the list of [contributors](https://github.com/amosbastian/utopian/graphs/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT license - see the [LICENSE](https://github.com/amosbastian/utopian/blob/master/LICENSE) file for details.
