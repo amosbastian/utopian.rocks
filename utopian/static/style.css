@@ -299,7 +299,32 @@ a:visited {
   align-items: center;
   justify-content: flex-end; }
 
+.tt-menu {
+  min-width: 100%;
+  margin: 1rem 0;
+  padding: .5rem 0;
+  background-color: #fff;
+  border: 0.1rem solid var(--color-grey-light-2);
+  border: 0.1rem solid rgba(0, 0, 0, 0.3);
+  border-radius: .5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3); }
+
+.tt-suggestion {
+  padding: .5rem 2rem;
+  font-size: 1.5rem;
+  line-height: 2rem; }
+
+.tt-suggestion:hover {
+  cursor: pointer;
+  color: #fff;
+  background-color: var(--color-link); }
+
+.tt-suggestion.tt-cursor {
+  color: #fff;
+  background-color: var(--color-link); }
+
 .footer {
+  margin-top: 20rem;
   grid-column: center-start / center-end;
   padding: 1.2rem 1.6rem;
   border-top: 1px solid var(--color-grey-light-3);
@@ -485,15 +510,3 @@ button::-moz-focus-inner {
       border-bottom: 3px solid var(--color-link); }
     .home-form__input::-webkit-input-placeholder {
       color: var(--color-grey-dark-3); }
-  .home-form__label {
-    color: var(--color-link);
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-left: 2rem;
-    margin-top: .7rem;
-    display: block;
-    transition: all .3s; }
-  .home-form__input:placeholder-shown + .home-form__label {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-4rem); }

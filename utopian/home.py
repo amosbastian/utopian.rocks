@@ -219,7 +219,10 @@ def index():
     """
     posts = DB.posts
 
+    # Get lists for use in autocompletion
     manager_list, moderator_list = get_moderators()
+    contributor_list = posts.find().distinct("author")
+    project_list = posts.find().distinct("repository.full_name")
 
     # Set time frame and retrieve posts
     time_frame = datetime.datetime.now() - datetime.timedelta(days=7)
@@ -236,7 +239,11 @@ def index():
     return render_template(
         "index.html",
         manager_info=manager_info,
+        manager_list=manager_list,
         moderator_info=moderator_info,
+        moderator_list=moderator_list,
         contributor_info=contributor_info,
-        project_info=project_info
+        contributor_list=contributor_list,
+        project_info=project_info,
+        project_list=project_list
     )

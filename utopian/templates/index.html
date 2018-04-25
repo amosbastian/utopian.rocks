@@ -2,6 +2,12 @@
 {% set active_page = "index" %}
 {% block title %}Home{% endblock %}
 {% block content %}
+<script>
+  var managers = {{manager_list|tojson|safe}};
+  var moderators = {{moderator_list|tojson|safe}};
+  var contributors = {{contributor_list|tojson|safe}};
+  var projects = {{project_list|tojson|safe}};
+</script>
 <div class="home">
   <div class="home-header">
     <h1 class="header-1">
@@ -249,9 +255,8 @@
     </div>
     <div class="home-search">
       <form action="#" class="home-form">
-        <div class="home-form__group">
-          <input type="text" class="home-form__input" placeholder="Community manager" id="community-manager">
-          <label for="community-manager" class="home-form__label">Community manager</label>
+        <div class="home-form__group" id="community-managers">
+          <input type="text" class="home-form__input typeahead" placeholder="Community manager" id="community-manager">
         </div>
       </form>
     </div>
@@ -359,9 +364,8 @@
     </div>
     <div class="home-search">
       <form action="#" class="home-form">
-        <div class="home-form__group">
-          <input type="text" class="home-form__input" placeholder="Moderator" id="moderator">
-          <label for="moderator" class="home-form__label">Moderator</label>
+        <div class="home-form__group" id="moderators">
+          <input type="text" class="home-form__input typeahead" placeholder="Moderator" id="moderator">
         </div>
       </form>
     </div>
@@ -466,9 +470,8 @@
     </div>
     <div class="home-search">
       <form action="#" class="home-form">
-        <div class="home-form__group">
-          <input type="text" class="home-form__input" placeholder="Contributor" id="contributor">
-          <label for="contributor" class="home-form__label">Contributor</label>
+        <div class="home-form__group" id="contributors">
+          <input type="text" class="home-form__input typeahead" placeholder="Contributor" id="contributor">
         </div>
       </form>
     </div>
@@ -524,9 +527,8 @@
     </div>
     <div class="home-search">
       <form action="#" class="home-form">
-        <div class="home-form__group">
-          <input type="text" class="home-form__input" placeholder="Project" id="project">
-          <label for="project" class="home-form__label">Project</label>
+        <div class="home-form__group" id="projects">
+          <input type="text" class="home-form__input typeahead" placeholder="Project" id="project">
         </div>
       </form>
     </div>
