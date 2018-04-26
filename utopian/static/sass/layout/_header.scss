@@ -1,8 +1,46 @@
 .header {
   background-color: var(--color-black-1);
   grid-column: full-start / full-end;
+  display: grid;
+  grid-template-columns: [header-start]
+    minmax(6rem, 1fr)
+    [header-center-start]
+    3fr
+    [header-center-end]
+    minmax(6rem, 1fr) 
+    [header-end];
   padding: 1.25rem 2rem;
   color: var(--color-grey-light-1);
   font-size: 2rem;
   font-weight: 700;
+}
+
+.header-center {
+  display: grid;
+  grid-column: header-center-start / header-center-end;
+  grid-template-columns: min-content min-content;
+  grid-gap: 1.5rem;
+  align-items: center;
+}
+
+.header-search {
+  &__input {
+    width: 40rem;
+    font-family: inherit;
+    padding: .75rem 1rem;
+    color: var(--color-grey-dark-3);
+    border-radius: .2rem;
+    background-color: var(--color-grey-search);
+    border: none;
+    display: grid;
+
+    &:focus {
+      outline: none;
+      background-color: var(--color-grey-search-light);
+    }
+
+    &::-webkit-input-placeholder {
+      color: var(--color-grey-dark-3);
+    }
+  }
 }
