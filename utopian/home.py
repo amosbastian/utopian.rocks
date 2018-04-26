@@ -7,8 +7,9 @@ import os
 import requests
 
 from collections import Counter
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash, redirect
 from pymongo import MongoClient
+from utopian.forms import ManagerForm, ModeratorForm, ContributorForm, ProjectForm
 
 BP = Blueprint("home", __name__, url_prefix="/")
 CLIENT = MongoClient()
@@ -245,5 +246,9 @@ def index():
         contributor_info=contributor_info,
         contributor_list=contributor_list,
         project_info=project_info,
-        project_list=project_list
+        project_list=project_list,
+        manager_form=ManagerForm(),
+        moderator_form=ModeratorForm(),
+        contributor_form=ContributorForm(),
+        project_form=ProjectForm()
     )
