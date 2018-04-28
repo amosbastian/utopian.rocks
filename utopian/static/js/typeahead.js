@@ -26,7 +26,7 @@ $('#community-managers .typeahead').typeahead({
   minLength: 1
 },
 {
-  name: 'managers',
+  name: 'manager',
   source: substringMatcher(managers)
 });
 
@@ -36,7 +36,7 @@ $('#moderators .typeahead').typeahead({
   minLength: 1
 },
 {
-  name: 'moderators',
+  name: 'moderator',
   source: substringMatcher(moderators)
 });
 
@@ -46,7 +46,7 @@ $('#contributors .typeahead').typeahead({
   minLength: 1
 },
 {
-  name: 'contributors',
+  name: 'contributor',
   source: substringMatcher(contributors)
 });
 
@@ -56,6 +56,40 @@ $('#projects .typeahead').typeahead({
   minLength: 1
 },
 {
-  name: 'projects',
+  name: 'project',
   source: substringMatcher(projects)
+});
+
+$('#search .typeahead').typeahead({
+  hint: true,
+  highlight: true,
+  minLength: 1
+},
+{
+  name: 'manager',
+  source: substringMatcher(managers),
+  templates: {
+    header: '<p class="search-dataset">Community managers</p>'
+  }
+},
+{
+  name: 'moderator',
+  source: substringMatcher(moderators),
+  templates: {
+    header: '<p class="search-dataset">Moderators</p>'
+  }
+}
+,{
+  name: 'contributor',
+  source: substringMatcher(contributors),
+  templates: {
+    header: '<p class="search-dataset">Contributors</p>'
+  }
+}
+,{
+  name: 'project',
+  source: substringMatcher(projects),
+  templates: {
+    header: '<p class="search-dataset">Projects</p>'
+  }
 });

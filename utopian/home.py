@@ -208,12 +208,12 @@ def project_performance(post_list):
                           reverse=True)[:N]
 
     # Use GitHub API to get additional information
-    for project in project_list:
-        project_id = project["id"]
-        request = requests.get(f"{GITHUB}repositories/{project_id}").json()
-        project["full_name"] = request["full_name"]
-        project["avatar_url"] = request["owner"]["avatar_url"]
-        project["html_url"] = request["html_url"]
+    # for project in project_list:
+    #     project_id = project["id"]
+    #     request = requests.get(f"{GITHUB}repositories/{project_id}").json()
+    #     project["full_name"] = request["full_name"]
+    #     project["avatar_url"] = request["owner"]["avatar_url"]
+    #     project["html_url"] = request["html_url"]
 
     return project_list
 
@@ -227,8 +227,6 @@ def index():
 
     # Get lists for use in autocompletion
     manager_list, moderator_list = get_moderators()
-    contributor_list = posts.find().distinct("author")
-    project_list = posts.find().distinct("repository.full_name")
 
     # Set time frame and retrieve posts
     time_frame = datetime.datetime.now() - datetime.timedelta(days=7)
@@ -245,13 +243,9 @@ def index():
     return render_template(
         "index.html",
         manager_info=manager_info,
-        manager_list=manager_list,
         moderator_info=moderator_info,
-        moderator_list=moderator_list,
         contributor_info=contributor_info,
-        contributor_list=contributor_list,
         project_info=project_info,
-        project_list=project_list,
         manager_form=ManagerForm(),
         moderator_form=ModeratorForm(),
         contributor_form=ContributorForm(),

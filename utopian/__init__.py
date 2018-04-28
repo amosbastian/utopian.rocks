@@ -32,4 +32,21 @@ def create_app(test_config=None):
     from . import home
     app.register_blueprint(home.BP)
 
+    @app.context_processor
+    def inject_autocompletion():
+        moderators = DB.moderators
+        posts = DB.posts
+        manager_list = [moderator["account"] for moderator in
+                        moderators.find({"supermoderator": True})]
+        moderator_list = [moderator["account"] for moderator in
+                          moderators.find({"supermoderator": False})]
+        contributor_list = posts.find().distinct("author")
+        project_list = posts.find().distinct("repository.full_name")
+        return dict(
+            manager_list=manager_list,
+            moderator_list=moderator_list,
+            contributor_list=contributor_list,
+            project_list=project_list,
+        )
+
     return app

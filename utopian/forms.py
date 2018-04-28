@@ -10,7 +10,7 @@ class ManagerForm(FlaskForm):
     """
     Form for handling the community manager search on the home page.
     """
-    username = StringField(
+    manager = StringField(
         "Username",
         validators=[DataRequired()],
         render_kw={
@@ -24,7 +24,7 @@ class ModeratorForm(FlaskForm):
     """
     Form for handling the moderator search on the home page.
     """
-    username = StringField(
+    moderator = StringField(
         "Username",
         validators=[DataRequired()],
         render_kw={
@@ -38,7 +38,7 @@ class ContributorForm(FlaskForm):
     """
     Form for handling the contributor search on the home page.
     """
-    username = StringField(
+    contributor = StringField(
         "Username",
         validators=[DataRequired()],
         render_kw={

@@ -31,7 +31,7 @@ def create_post(post, status, update=True):
         return None
 
     new_post = {
-        "moderator": None,
+        "moderator": {"account": ""},
         "author": post["author"],
         "permlink": post["permlink"],
         "title": post["title"],
@@ -46,6 +46,9 @@ def create_post(post, status, update=True):
         "updated": datetime.datetime.now(),
         "reward": float(post["pending_payout_value"].split()[0])
     }
+
+    if not new_post["repository"]:
+        new_post["repository"] = {"full_name": ""}
 
     if new_post["reward"] == 0:
         new_post["reward"] = float(post["total_payout_value"].split()[0])

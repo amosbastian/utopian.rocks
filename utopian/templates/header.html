@@ -1,9 +1,10 @@
 <header class="header">
   <div class="header-center">
     Utopian.info
-    <form class="header-search">
-      <div class="header-search__group">
-        <input type="text" class="header-search__input" placeholder="Search Utopian.info">
+    <form action="{{ url_for('home.index') }}" method="get" class="header-search">
+      <div class="header-search__group" id="search">
+        <input type="text" name="q" class="header-search__input typeahead" placeholder="Search Utopian.info">
+        <input type="submit" style="position: absolute; left: -9999px">
       </div>
     </form>
   </div>

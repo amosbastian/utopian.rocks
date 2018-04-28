@@ -2,13 +2,6 @@
 {% set active_page = "index" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<script>
-  var managers = {{manager_list|tojson|safe}};
-  var moderators = {{moderator_list|tojson|safe}};
-  var contributors = {{contributor_list|tojson|safe}};
-  var projects = {{project_list|tojson|safe}};
-</script>
-
 <div class="home">
   <div class="home-header">
     <h1 class="header-1">
@@ -257,7 +250,7 @@
     <div class="home-search">
       <form action="{{ url_for('home.index') }}" method="get" class="home-form">
         <div class="home-form__group" id="community-managers">
-          {{ manager_form.username(class="home-form__input typeahead") }}
+          {{ manager_form.manager(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">
         </div>
       </form>
@@ -367,7 +360,7 @@
     <div class="home-search">
       <form action="{{ url_for('home.index') }}" method="get" class="home-form">
         <div class="home-form__group" id="moderators">
-          {{ moderator_form.username(class="home-form__input typeahead") }}
+          {{ moderator_form.moderator(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">
         </div>
       </form>
@@ -474,7 +467,7 @@
     <div class="home-search">
       <form action="{{ url_for('home.index') }}" method="get" class="home-form">
         <div class="home-form__group" id="contributors">
-          {{ contributor_form.username(class="home-form__input typeahead") }}
+          {{ contributor_form.contributor(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">
         </div>
       </form>

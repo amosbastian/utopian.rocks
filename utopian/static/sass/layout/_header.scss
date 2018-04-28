@@ -12,7 +12,6 @@
   padding: 1.25rem 2rem;
   color: var(--color-grey-light-1);
   font-size: 2rem;
-  font-weight: 700;
 }
 
 .header-center {
@@ -23,6 +22,7 @@
   align-items: center;
 }
 
+// Search bar
 .header-search {
   &__input {
     width: 40rem;
@@ -36,11 +36,18 @@
 
     &:focus {
       outline: none;
-      background-color: var(--color-grey-search-light);
+      background-color: var(--color-grey-search-light) !important;
     }
 
     &::-webkit-input-placeholder {
       color: var(--color-grey-dark-3);
     }
   }
+}
+
+// Headers for each dataset
+#search .search-dataset {
+  margin: 0 2rem .5rem 2rem;
+  border-bottom: 1px solid var(--color-grey-light-5);
+  color: var(--color-grey-dark-2);
 }
