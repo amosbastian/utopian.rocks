@@ -544,7 +544,10 @@ button::-moz-focus-inner {
 
 .search-results {
   display: grid;
+  margin-top: 2rem;
   grid-column: center-start / center-end; }
 
 .search-result {
-  display: grid; }
+  display: grid;
+  grid-gap: .5rem;
+  margin-bottom: 1rem; }
