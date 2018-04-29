@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<script>
+  var managers = {{manager_list|tojson|safe}};
+  var moderators = {{moderator_list|tojson|safe}};
+  var contributors = {{contributor_list|tojson|safe}};
+  var projects = {{project_list|tojson|safe}};
+</script>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -18,5 +24,8 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='slick/slick.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='typeahead.js/typeahead.jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='typeahead.js/typeahead.bundle.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/typeahead.js') }}"></script>
   </body>
 </html>

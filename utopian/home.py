@@ -7,8 +7,14 @@ import os
 import requests
 
 from collections import Counter
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash, redirect
 from pymongo import MongoClient
+from utopian.forms import (
+    ManagerForm,
+    ModeratorForm,
+    ContributorForm,
+    ProjectForm
+)
 
 BP = Blueprint("home", __name__, url_prefix="/")
 CLIENT = MongoClient()
@@ -202,12 +208,12 @@ def project_performance(post_list):
                           reverse=True)[:N]
 
     # Use GitHub API to get additional information
-    for project in project_list:
-        project_id = project["id"]
-        request = requests.get(f"{GITHUB}repositories/{project_id}").json()
-        project["full_name"] = request["full_name"]
-        project["avatar_url"] = request["owner"]["avatar_url"]
-        project["html_url"] = request["html_url"]
+    # for project in project_list:
+    #     project_id = project["id"]
+    #     request = requests.get(f"{GITHUB}repositories/{project_id}").json()
+    #     project["full_name"] = request["full_name"]
+    #     project["avatar_url"] = request["owner"]["avatar_url"]
+    #     project["html_url"] = request["html_url"]
 
     return project_list
 
@@ -219,6 +225,7 @@ def index():
     """
     posts = DB.posts
 
+    # Get lists for use in autocompletion
     manager_list, moderator_list = get_moderators()
 
     # Set time frame and retrieve posts
@@ -238,5 +245,9 @@ def index():
         manager_info=manager_info,
         moderator_info=moderator_info,
         contributor_info=contributor_info,
-        project_info=project_info
+        project_info=project_info,
+        manager_form=ManagerForm(),
+        moderator_form=ModeratorForm(),
+        contributor_form=ContributorForm(),
+        project_form=ProjectForm()
     )

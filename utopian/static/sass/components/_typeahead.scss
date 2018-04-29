@@ -1,0 +1,28 @@
+.tt-menu {
+  min-width: 100%;
+  margin: 1rem 0;
+  padding: .5rem 0;
+  background-color: #fff;
+  border: .1rem solid var(--color-grey-light-2);
+  border: .1rem solid rgba(0, 0, 0, 0.3);
+  border-radius: .2rem;
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.3);
+}
+
+.tt-suggestion {
+  padding: .5rem 2rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  color: var(--color-grey-dark-3);
+}
+
+.tt-suggestion:hover {
+  cursor: pointer;
+  color: var(--color-grey-dark-3);
+  background-color: var(--color-grey-light-3);
+}
+
+.tt-suggestion.tt-cursor {
+  color: var(--color-grey-dark-3);
+  background-color: var(--color-grey-light-3);
+}

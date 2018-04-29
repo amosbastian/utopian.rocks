@@ -1,3 +1,11 @@
 <header class="header">
-  Utopian.info
+  <div class="header-center">
+    Utopian.info
+    <form action="{{ url_for('search.index') }}" method="get" class="header-search">
+      <div class="header-search__group" id="search">
+        {{ search_form.q(class="header-search__input typeahead") }}
+        <input type="submit" style="position: absolute; left: -9999px">
+      </div>
+    </form>
+  </div>
 </header>
