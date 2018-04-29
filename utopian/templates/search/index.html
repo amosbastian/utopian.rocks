@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% set active_page = "search" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="search-results">
+  <!-- Community managers -->
+  {% if managers|length > 0 %}
+    <div class="search-result">
+      <h1>Community managers</h1>
+      {% for manager in managers %}
+        <div>
+          {{manager}}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <!-- Moderators -->
+  {% if moderators|length > 0 %}
+    <div class="search-result">
+      <h1>Moderators</h1>
+      {% for moderator in moderators %}
+        <div>
+          {{moderator}}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <!-- Contributors -->
+  {% if contributors|length > 0 %}
+    <div class="search-result">
+      <h1>Contributors</h1>
+      {% for contributor in contributors %}
+        <div>
+          {{contributor}}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <!-- Projects -->
+  {% if projects|length > 0 %}
+    <div class="search-result">
+      <h1>Projects</h1>
+      {% for project in projects %}
+        <div>
+          {{project}}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

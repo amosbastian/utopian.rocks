@@ -248,7 +248,7 @@
       {% endfor %}
     </div>
     <div class="home-search">
-      <form action="{{ url_for('home.index') }}" method="get" class="home-form">
+      <form action="{{ url_for('search.manager') }}" method="get" class="home-form">
         <div class="home-form__group" id="community-managers">
           {{ manager_form.manager(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">
@@ -358,7 +358,7 @@
       {% endfor %}
     </div>
     <div class="home-search">
-      <form action="{{ url_for('home.index') }}" method="get" class="home-form">
+      <form action="{{ url_for('search.moderator') }}" method="get" class="home-form">
         <div class="home-form__group" id="moderators">
           {{ moderator_form.moderator(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">
@@ -465,7 +465,7 @@
       {% endfor %}
     </div>
     <div class="home-search">
-      <form action="{{ url_for('home.index') }}" method="get" class="home-form">
+      <form action="{{ url_for('search.contributor') }}" method="get" class="home-form">
         <div class="home-form__group" id="contributors">
           {{ contributor_form.contributor(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">
@@ -523,7 +523,7 @@
       {% endfor %}
     </div>
     <div class="home-search">
-      <form action="{{ url_for('home.index') }}" method="get" class="home-form">
+      <form action="{{ url_for('search.project') }}" method="get" class="home-form">
         <div class="home-form__group" id="projects">
           {{ project_form.project(class="home-form__input typeahead") }}
           <input type="submit" style="position: absolute; left: -9999px">

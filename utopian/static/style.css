@@ -541,3 +541,10 @@ button::-moz-focus-inner {
       border-bottom: 3px solid var(--color-link); }
     .home-form__input::-webkit-input-placeholder {
       color: var(--color-grey-dark-3); }
+
+.search-results {
+  display: grid;
+  grid-column: center-start / center-end; }
+
+.search-result {
+  display: grid; }

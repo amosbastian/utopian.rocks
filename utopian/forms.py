@@ -20,6 +20,13 @@ class ManagerForm(FlaskForm):
         }
     )
 
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(ManagerForm, self).__init__(*args, **kwargs)
+
 
 class ModeratorForm(FlaskForm):
     """
@@ -33,6 +40,13 @@ class ModeratorForm(FlaskForm):
             "id": "moderator"
         }
     )
+
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(ModeratorForm, self).__init__(*args, **kwargs)
 
 
 class ContributorForm(FlaskForm):
@@ -48,6 +62,13 @@ class ContributorForm(FlaskForm):
         }
     )
 
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(ContributorForm, self).__init__(*args, **kwargs)
+
 
 class ProjectForm(FlaskForm):
     """
@@ -61,6 +82,13 @@ class ProjectForm(FlaskForm):
             "id": "project"
         }
     )
+
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(ProjectForm, self).__init__(*args, **kwargs)
 
 
 class SearchForm(FlaskForm):
