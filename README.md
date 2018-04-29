@@ -19,10 +19,9 @@ python3 -m venv venv
 . venv/bin/activate
 ```
 
-Utopian.info currently requires the version of Flask that is only available on GitHub, so install this and the other requires packages with the following commands
+Install all the required packages with the following command
 
 ```
-$ pip install git+https://github.com/pallets/flask.git
 $ python setup.py install
 ```
 
@@ -35,7 +34,7 @@ $ python update_database.py
 Finally, you need to set the environment variables `FLASK_APP` and `FLASK_ENV` like this
 
 ```
-$ export FLASK_APP=nutmega
+$ export FLASK_APP=utopian
 $ export FLASK_env=development
 ```
 
@@ -81,7 +80,9 @@ Please read [CONTRIBUTING.md](https://github.com/amosbastian/utopian/blob/master
 
 Currently remaking the website to make it more dynamic and usable
 
-* Finish homepage
+* ~~Finish home page~~
+* ~~Add autocompletion~~
+* Create search results page
 * Remake page for moderators
 * Remake page for contributors
 * Remake page for categories
