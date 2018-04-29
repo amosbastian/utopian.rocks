@@ -10,6 +10,7 @@ from utopian.forms import (
     ProjectForm,
     SearchForm
 )
+import re
 
 BP = Blueprint("search", __name__, url_prefix="/")
 CLIENT = MongoClient()
@@ -78,7 +79,9 @@ def contributor():
 
 def project_search(data):
     posts = DB.posts
-    search_result = posts.find({"repository.full_name": {"$regex": data}})
+    # Use re instead of $regex
+    data = re.compile(data, re.IGNORECASE)
+    search_result = posts.find({"repository.full_name": data})
     return list(search_result.distinct("repository.full_name"))
 
 
