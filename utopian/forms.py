@@ -1,6 +1,7 @@
 """
 File to store all the forms used across the application.
 """
+from flask import request
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
@@ -60,3 +61,23 @@ class ProjectForm(FlaskForm):
             "id": "project"
         }
     )
+
+
+class SearchForm(FlaskForm):
+    """
+    Form for handling the overall search on Utopian.info.
+    """
+    q = StringField(
+        "Search",
+        validators=[DataRequired()],
+        render_kw={
+            "placeholder": "Search Utopian.info"
+        }
+    )
+
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super(SearchForm, self).__init__(*args, **kwargs)

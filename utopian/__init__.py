@@ -5,6 +5,7 @@ import os
 
 from flask import Flask, render_template
 from pymongo import MongoClient
+from utopian.forms import SearchForm
 
 CLIENT = MongoClient()
 DB = CLIENT.utopian
@@ -32,6 +33,9 @@ def create_app(test_config=None):
     from . import home
     app.register_blueprint(home.BP)
 
+    from . import search
+    app.register_blueprint(search.BP)
+
     @app.context_processor
     def inject_autocompletion():
         moderators = DB.moderators
@@ -42,11 +46,13 @@ def create_app(test_config=None):
                           moderators.find({"supermoderator": False})]
         contributor_list = posts.find().distinct("author")
         project_list = posts.find().distinct("repository.full_name")
+        search_form = SearchForm()
         return dict(
             manager_list=manager_list,
             moderator_list=moderator_list,
             contributor_list=contributor_list,
             project_list=project_list,
+            search_form=search_form
         )
 
     return app
