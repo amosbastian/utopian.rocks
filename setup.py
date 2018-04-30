@@ -11,6 +11,9 @@ setup(
     zip_safe=False,
     install_requires=[
         "pymongo",
-        "requests"
+        "requests",
+        "flask_wtf",
+        "wtforms",
+        "flask"
     ]
 )

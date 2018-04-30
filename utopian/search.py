@@ -59,6 +59,9 @@ def moderator():
 
 
 def contributor_search(data):
+    """
+    Returns a list of distinct contributors that match the given data.
+    """
     posts = DB.posts
     search_result = posts.find({"author": {"$regex": data}})
     return list(search_result.distinct("author"))
@@ -78,6 +81,9 @@ def contributor():
 
 
 def project_search(data):
+    """
+    Returns a list of distinct projects that match the given data.
+    """
     posts = DB.posts
     # Use re instead of $regex
     data = re.compile(data, re.IGNORECASE)
@@ -117,7 +123,8 @@ def index():
     """
     search_form = SearchForm()
     managers, moderators, contributors, projects = search(search_form.q.data)
-    return render_template("search/index.html",
+    return render_template(
+        "search/index.html",
         managers=managers,
         moderators=moderators,
         contributors=contributors,
