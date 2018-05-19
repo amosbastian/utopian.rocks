@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<table>
+  <tr>
+    <th>Author</th>
+    <th>URL</th> 
+    <th>Repository</th>
+    <th>Category</th>
+  </tr>
+  {% for contribution in contributions %}
+  <tr>
+    <td>{{contribution.author}}</td>
+    <td><a href="{{contribution.url}}">{{contribution.url|truncate(75)}}</a></td>
+    <td><a href="{{contribution.repository}}">{{contribution.repository|truncate(75)}}</a></td>
+    <td>{{contribution.category}}</td>
+  </tr>
+  {% endfor %}
+</table>
+</body>
+</html>

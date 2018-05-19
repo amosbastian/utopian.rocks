@@ -1,72 +1,84 @@
-import datetime
-import pprint
-
+import gspread
+import json
+import os
+from beem.comment import Comment
+from datetime import datetime, date
+from dateutil.parser import parse
+from oauth2client.service_account import ServiceAccountCredentials
 from pymongo import MongoClient
-from utopian import utopian_client
-
-client = MongoClient()
-db = client.utopian
 
 
-def update_moderators():
-    print(f"{datetime.datetime.now()} - Updating moderators.")
-    moderators = db.moderators
-    current_moderators = utopian_client.get_moderators()
+CLIENT = MongoClient()
+DB = CLIENT.utempian
 
-    if not current_moderators:
-        time = datetime.datetime.now()
-        print(f"{time} - Could not update moderators.")
-        return
-
-    db.moderators.drop()
-    moderators.insert_many(current_moderators)
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+SCOPE = ["https://spreadsheets.google.com/feeds",
+         "https://www.googleapis.com/auth/drive"]
+CREDENTIALS = ServiceAccountCredentials.from_json_keyfile_name(
+    f"{DIR_PATH}/client_secret.json", SCOPE)
+GSPREAD_CLIENT = gspread.authorize(CREDENTIALS)
+SHEET = GSPREAD_CLIENT.open("Utopian Reviews")
 
 
-def status_converter(status):
-    if status == "any":
-        return "approved"
+def contribution(row, status):
+    if row[6] == "Yes":
+        staff_picked = True
     else:
-        return status
+        staff_picked = False
 
+    try:
+        review_date = parse(row[1])
+    except Exception:
+        review_date = datetime(1970, 1, 1)
 
-def status_parameter(status):
-    if status == "any":
-        return {"moderator.flagged": False}
-    elif status == "flagged":
-        return {"moderator.flagged": True}
-    elif status == "pending":
-        return {"moderator": None}
-
-
-def update_posts(status, force_complete=False):
-    posts = db.posts
-    post_status = status_converter(status)
-    count = posts.find(status_parameter(status)).count()
-    time = datetime.datetime.now()
-    print(f"{time} - Updating {post_status} posts.")
-    time = datetime.datetime.now()
-    print(f"{time} - {count} {post_status} posts in the database.")
-    if count == 0 or force_complete:
-        utopian_client.get_posts(status, update=False)
+    url = row[2]
+    if status == "unreviewed":
+        comment = Comment(url)
+        author = comment.author
     else:
-        utopian_client.get_posts(status, update=True)
+        author = ""
 
-    added = posts.find(status_parameter(status)).count() - count
-    time = datetime.datetime.now()
-    print(f"{time} - {added} posts were added.")
-
-
-def main():
-    update_moderators()
-    update_posts("any")
-    update_posts("flagged")
-    update_posts("pending", True)
+    new_contribution = {
+        "moderator": row[0],
+        "author": author,
+        "review_date": review_date,
+        "url": url,
+        "repository": row[3],
+        "category": row[4],
+        "staff_picked": staff_picked,
+        "picked_by": row[8],
+        "status": status
+    }
+    return new_contribution
 
 
 def converter(object_):
-    if isinstance(object_, datetime.datetime):
+    if isinstance(object_, datetime):
         return object_.__str__()
 
 
+def update_posts():
+    reviewed = []
+    unreviewed = []
+    for worksheet in SHEET.worksheets():
+        if worksheet.title.startswith("Reviewed"):
+            reviewed += worksheet.get_all_values()[1:]
+    for worksheet in SHEET.worksheets():
+        if worksheet.title.startswith("Unreviewed"):
+            unreviewed += worksheet.get_all_values()[1:]
+    reviewed = [contribution(x, "reviewed") for x in reviewed]
+    unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
+
+    contributions = DB.contributions
+    DB.contributions.drop()
+    contributions.insert_many(reviewed)
+    contributions.insert_many(unreviewed)
+
+
+def main():
+    update_posts()
+
 if __name__ == '__main__':
     main()
+    contributions = DB.contributions
+    print(contributions.count())
