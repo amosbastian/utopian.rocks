@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, jsonify
 from pymongo import MongoClient
 from dateutil.parser import parse
 import datetime
 import json
 import timeago
+import os
 from bokeh.core.properties import value
 from bokeh.io import show, output_file
 from bokeh.models import ColumnDataSource, HoverTool, Legend
@@ -27,6 +28,18 @@ def get_cms():
            moderators.find({"supermoderator": True})]
 
     return cms
+
+
+@app.route("/json/<json_file>")
+def rewards(json_file):
+    filename = os.path.join(app.static_folder, "{}.json".format(json_file))
+    print(filename)
+    try:
+        with open(filename) as fp:
+            data = json.load(fp)
+        return jsonify(data)
+    except:
+        return jsonify("")
 
 
 @app.route("/")
