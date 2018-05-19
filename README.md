@@ -40,12 +40,12 @@ $ gunicorn wsgi:app
 Features
 --------
 
-### [Supervisor team overview](https://utopian.info/team/amosbastian)
-Shows a supervisor's team's performance in the last week.
-### [Moderator overview](https://utopian.info/moderator/amosbastian)
-Shows a moderator's performance, like recent reviews, activity and more.
-### [Contributor overview](https://utopian.info/moderator/amosbastian)
-Shows a contributor's performance, like recent contributions, who they were moderated by and more.
+### [Moderator profile page](https://utopian.info/contributor/amosbastian)
+Shows a moderator's recent reviews, their activity and their most accepted and rejected contributors.
+### [Contributor profile page](https://utopian.info/moderator/amosbastian)
+Shows a contributor's recent contributions and the moderators who have accepted and rejected their contributions the most.
+### [Category overview](https://utopian.rocks/category/all)
+Shows a category's review feed, the amount of moderated posts in the last week, a pie chart of the pending posts' categories. It also shows the most active moderators for that category and the most accepted and rejected contributors for that category in the last week.
 
 Roadmap
 -------
@@ -54,5 +54,9 @@ Currently I have the following plans, but this could all change in the future
 
 * Add a way to change the static time frame of 7 days to e.g. 1 day, 12 hours etc.
 * Add a page for projects that show statistics about contributions made to it (e.g. best contributor, overall acceptance rate etc.)
-* Improve overall look and feel, making everything more consistent.
+* Add the ability to search for moderators, contributors, projects etc.
 
+Contributing
+------------
+
+If you want to contribute, then please read [CONTRIBUTING.md](https://github.com/amosbastian/utopian/blob/master/CONTRIBUTING.md) for more information.
