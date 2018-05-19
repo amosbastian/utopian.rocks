@@ -32,11 +32,8 @@ def contribution(row, status):
         review_date = datetime(1970, 1, 1)
 
     url = row[2]
-    if status == "unreviewed":
-        comment = Comment(url)
-        author = comment.author
-    else:
-        author = ""
+    # hehe
+    author = url.split("/")[4][1:]
 
     new_contribution = {
         "moderator": row[0],
