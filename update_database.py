@@ -21,20 +21,25 @@ SHEET = GSPREAD_CLIENT.open("Utopian Reviews")
 
 
 def contribution(row, status):
+    """
+    Convert row to dictionary, only selecting values we want.
+    """
+    # Check if contribution was staff picked
     if row[6] == "Yes":
         staff_picked = True
     else:
         staff_picked = False
 
+    # Try and get date, since some people don't enter it correctly
     try:
         review_date = parse(row[1])
     except Exception:
         review_date = datetime(1970, 1, 1)
 
     url = row[2]
-    # hehe
     author = url.split("/")[4][1:]
 
+    # Create contribution dictionary and return it
     new_contribution = {
         "moderator": row[0],
         "author": author,
@@ -49,23 +54,25 @@ def contribution(row, status):
     return new_contribution
 
 
-def converter(object_):
-    if isinstance(object_, datetime):
-        return object_.__str__()
-
-
 def update_posts():
+    """
+    Adds all reviewed and unreviewed contributions to the database.
+    """
     reviewed = []
     unreviewed = []
+
+    # Iterate over all worksheets in the spreadsheet
     for worksheet in SHEET.worksheets():
         if worksheet.title.startswith("Reviewed"):
             reviewed += worksheet.get_all_values()[1:]
-    for worksheet in SHEET.worksheets():
-        if worksheet.title.startswith("Unreviewed"):
+        elif worksheet.title.startswith("Unreviewed"):
             unreviewed += worksheet.get_all_values()[1:]
+
+    # Convert row to dictionary
     reviewed = [contribution(x, "reviewed") for x in reviewed]
     unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
 
+    # Lazy so drop database and replace
     contributions = DB.contributions
     DB.contributions.drop()
     contributions.insert_many(reviewed)
@@ -78,4 +85,3 @@ def main():
 if __name__ == '__main__':
     main()
     contributions = DB.contributions
-    print(contributions.count())

@@ -1,7 +1,7 @@
 import datetime
 import json
 import os
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, render_template
 from pymongo import MongoClient
 
 CLIENT = MongoClient()
@@ -11,6 +11,9 @@ app = Flask(__name__)
 
 @app.route("/json/<json_file>")
 def rewards(json_file):
+    """
+    Return all moderator's points for the given week.
+    """
     filename = os.path.join(app.static_folder, "{}.json".format(json_file))
     try:
         with open(filename) as fp:
@@ -22,6 +25,9 @@ def rewards(json_file):
 
 @app.route("/")
 def index():
+    """
+    Sends all unreviewed contributions to index.html.
+    """
     contributions = DB.contributions
     unreviewed = contributions.find({"status": "unreviewed"})
     return render_template("index.html", contributions=unreviewed)

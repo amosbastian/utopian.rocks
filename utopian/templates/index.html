@@ -3,19 +3,19 @@
 <head>
 <style>
 table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
 td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }
 
 tr:nth-child(even) {
-    background-color: #dddddd;
+  background-color: #dddddd;
 }
 </style>
 </head>
@@ -28,6 +28,7 @@ tr:nth-child(even) {
     <th>Repository</th>
     <th>Category</th>
   </tr>
+  <!-- Show all unreviewed contributions for worried contributors :) -->
   {% for contribution in contributions %}
   <tr>
     <td>{{contribution.author}}</td>
