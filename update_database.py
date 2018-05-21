@@ -74,9 +74,9 @@ def update_posts():
 
     # Lazy so drop database and replace
     contributions = DB.contributions
-    DB.contributions.drop()
-    contributions.insert_many(reviewed)
-    contributions.insert_many(unreviewed)
+
+    for post in reviewed + unreviewed:
+        contributions.replace_one({"url": post["url"]}, post, True)
 
 
 def main():
