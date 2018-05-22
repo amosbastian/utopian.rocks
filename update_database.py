@@ -44,6 +44,12 @@ def contribution(row, status):
         status = "unvoted"
     elif row[9] == "Pending":
         status = "pending"
+    
+    # Check if contribution was voted on
+    if row[9] == "Yes":
+        voted_on = True
+    else:
+        voted_on = False
 
     # Check for when contribution not reviewed
     if row[5] == "":
@@ -53,7 +59,7 @@ def contribution(row, status):
 
     # Create contribution dictionary and return it
     new_contribution = {
-        "moderator": row[0],
+        "moderator": row[0].strip(),
         "author": author,
         "review_date": review_date,
         "url": url,
@@ -62,7 +68,8 @@ def contribution(row, status):
         "staff_picked": staff_picked,
         "picked_by": row[8],
         "status": status,
-        "score": score
+        "score": score,
+        "voted_on": voted_on
     }
     return new_contribution
 

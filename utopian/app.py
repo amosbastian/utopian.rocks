@@ -7,6 +7,7 @@ from dateutil.parser import parse
 from flask import Flask, jsonify, render_template
 from flask_restful import Resource, Api
 from pymongo import MongoClient
+from statistics import mean
 from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
 
@@ -87,10 +88,23 @@ def string_to_date(input):
 
 
 def average_score(score):
+    """
+    Returns the average score of the given list of scores.
+    """
     try:
-        return sum(score) / len(score)
-    except TypeError:
+        return mean(score)
+    except Exception:
         return 0
+
+
+def percentage(reviewed, voted):
+    """
+    Returns the percentage of voted contributions.
+    """
+    try:
+        return 100.0 * voted / reviewed
+    except ZeroDivisionError:
+        return 100.0
 
 
 def moderator_statistics(contributions):
@@ -119,17 +133,68 @@ def moderator_statistics(contributions):
         moderators[moderator]["category"].append(contribution["category"])
 
     moderator_list = []
-
-    # Create a new dictionary with new values and add to list
     for moderator, value in moderators.items():
-        new_moderator = {
-            "moderator": moderator,
-            "category": Counter(value["category"]),
-            "score": average_score(value["score"])
-        }
-        moderator_list.append(new_moderator)
+        # Set new keys and append value to list
+        value["category"] = Counter(value["category"])
+        value["score"] = average_score(value["score"])
+        moderator_list.append(value)
 
     return {"moderators": moderator_list}
+
+
+def category_statistics(contributions):
+    categories = {}
+    for contribution in contributions:
+        if contribution["status"] == "unreviewed":
+            continue
+        category = contribution["category"]
+
+        # If contribution was task-request include it under main category
+        if "task" in category:
+            category = category.split("task-")[1]
+            is_task = True
+        else:
+            is_task = False
+
+        # Set default in case category doesn't exist
+        categories.setdefault(
+            category, {
+                "category": category,
+                "score": [],
+                "voted": 0,
+                "not_voted": 0,
+                "unvoted": 0,
+                "task-requests": 0,
+                "moderators": []
+            }
+        )
+
+        # Check if contribution was voted on or unvoted
+        if contribution["status"] == "unvoted":
+            categories[category]["unvoted"] += 1
+            categories[category]["not_voted"] += 1
+        elif contribution["voted_on"]:
+            categories[category]["voted"] += 1
+        else:
+            categories[category]["not_voted"] += 1
+
+        # Check if contribution was a task request
+        if is_task:
+            categories[category]["task-requests"] += 1
+
+        # Add moderator
+        categories[category]["moderators"].append(contribution["moderator"])
+
+    category_list = []
+    for category, value in categories.items():
+        # Set new keys and append value to list
+        value["reviewed"] = value["voted"] + value["not_voted"]
+        value["score"] = average_score(value["score"])
+        value["moderators"] = Counter(value["moderators"])
+        value["pct_voted"] = percentage(value["reviewed"], value["voted"])
+        category_list.append(value)
+
+    return {"categories": category_list}
 
 
 class WeeklyResource(Resource):
@@ -148,8 +213,9 @@ class WeeklyResource(Resource):
                          for c in contributions.aggregate(pipeline)]
 
         moderators = moderator_statistics(contributions)
+        categories = category_statistics(contributions)
 
-        return jsonify(moderators)
+        return jsonify([moderators, categories])
 
 
 api.add_resource(WeeklyResource, "/api/weekly/<string:date>")
