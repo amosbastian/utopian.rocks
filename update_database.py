@@ -39,6 +39,18 @@ def contribution(row, status):
     url = row[2]
     author = url.split("/")[4][1:]
 
+    # Add status for unvoted and pending
+    if row[9] == "Unvoted":
+        status = "unvoted"
+    elif row[9] == "Pending":
+        status = "pending"
+
+    # Check for when contribution not reviewed
+    if row[5] == "":
+        score = None
+    else:
+        score = float(row[5])
+
     # Create contribution dictionary and return it
     new_contribution = {
         "moderator": row[0],
@@ -49,7 +61,8 @@ def contribution(row, status):
         "category": row[4],
         "staff_picked": staff_picked,
         "picked_by": row[8],
-        "status": status
+        "status": status,
+        "score": score
     }
     return new_contribution
 
