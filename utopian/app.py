@@ -1,6 +1,7 @@
 import json
 import os
 from bson import json_util
+from collections import Counter
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 from flask import Flask, jsonify, render_template
@@ -8,6 +9,9 @@ from flask_restful import Resource, Api
 from pymongo import MongoClient
 from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
+
+# Score needed for a vote
+MIN_SCORE = 10
 
 CLIENT = MongoClient()
 DB = CLIENT.utempian
@@ -82,6 +86,52 @@ def string_to_date(input):
         abort(422, errors=str(error))
 
 
+def average_score(score):
+    try:
+        return sum(score) / len(score)
+    except TypeError:
+        return 0
+
+
+def moderator_statistics(contributions):
+    """
+    Returns a dictionary containing statistics about all moderators.
+    """
+    moderators = {}
+    for contribution in contributions:
+        moderator = contribution["moderator"]
+
+        # If contribution was submitted by banned user skip it
+        if moderator == "BANNED":
+            continue
+
+        # Set default in case moderator doesn't exist
+        moderators.setdefault(
+            moderator, {
+                "moderator": moderator,
+                "category": [],
+                "score": []
+            }
+        )
+
+        # Append scores and categories
+        moderators[moderator]["score"].append(contribution["score"])
+        moderators[moderator]["category"].append(contribution["category"])
+
+    moderator_list = []
+
+    # Create a new dictionary with new values and add to list
+    for moderator, value in moderators.items():
+        new_moderator = {
+            "moderator": moderator,
+            "category": Counter(value["category"]),
+            "score": average_score(value["score"])
+        }
+        moderator_list.append(new_moderator)
+
+    return {"moderators": moderator_list}
+
+
 class WeeklyResource(Resource):
     """
     Endpoint for weekly contribution data (requested).
@@ -94,10 +144,12 @@ class WeeklyResource(Resource):
         # Retrieve contributions made in week before the given date
         contributions = DB.contributions
         pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
-        contribution_weekly = [json.loads(json_util.dumps(c))
-                               for c in contributions.aggregate(pipeline)]
+        contributions = [json.loads(json_util.dumps(c))
+                         for c in contributions.aggregate(pipeline)]
 
-        return jsonify(contribution_weekly)
+        moderators = moderator_statistics(contributions)
+
+        return jsonify(moderators)
 
 
 api.add_resource(WeeklyResource, "/api/weekly/<string:date>")
