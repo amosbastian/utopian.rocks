@@ -374,6 +374,7 @@ def staff_pick_section(staff_picks):
     """
     Creates the staff pick section for the Utopian weekly post.
     """
+    LOGGER.info("Generating staff pick statistics section...")
     section = ""
     for staff_pick in staff_picks["staff_picks"]:
         url = staff_pick["url"]
@@ -403,6 +404,7 @@ def post_statistics_section(categories, contributions):
     """
     Creates the post statistics part for the Utopian weekly post.
     """
+    LOGGER.info("Generating post statistics section...")
     section = (
         "<br><br># Utopian.io Post Statistics<br><br>"
         "The staff picked contributions are only a small (but exceptional) "
@@ -488,8 +490,9 @@ def weekly():
     try:
         staff_section = staff_pick_section(staff_picks)
         post_section = post_statistics_section(categories, contributions)
+        LOGGER.info((staff_section + post_section))
     except Exception as error:
-        LOGGER.info(error)
+        LOGGER.error(error)
     return render_template("weekly.html", body=(staff_section + post_section))
 
 
