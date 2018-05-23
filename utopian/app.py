@@ -276,12 +276,39 @@ def project_statistics(contributions):
     return {"projects": project_list}
 
 
+def staff_pick_statistics(contributions):
+    """
+    Returns a list of contributions that were staff picked.
+    """
+    staff_picks = []
+    for contribution in contributions:
+        # If contribution wasn't staff picked skip it
+        if not contribution["staff_picked"]:
+            continue
+
+        staff_picks.append(contribution)
+
+    return {"staff_picks": staff_picks}
+
+
+def task_request_statistics(contributions):
+    """
+    Returns a list of task requests.
+    """
+    task_requests = []
+    for contribution in contributions:
+        # If contribution wasn't staff picked skip it
+        if "task" in contribution["category"]:
+            task_requests.append(contribution)
+
+    return {"task_requests": task_requests}
+
+
 class WeeklyResource(Resource):
     """
     Endpoint for weekly contribution data (requested).
     """
     def get(self, date):
-        print(DIR_PATH)
         LOGGER.info(f"Retrieving for {date}")
         try:
             # Get date for retrieving posts
@@ -292,13 +319,16 @@ class WeeklyResource(Resource):
             contributions = DB.contributions
             pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
             contributions = [json.loads(json_util.dumps(c))
-                            for c in contributions.aggregate(pipeline)]
+                             for c in contributions.aggregate(pipeline)]
 
             moderators = moderator_statistics(contributions)
             categories = category_statistics(contributions)
             projects = project_statistics(contributions)
+            staff_picks = staff_pick_statistics(contributions)
+            task_requests = task_request_statistics(contributions)
 
-            return jsonify([moderators, categories, projects])
+            return jsonify(
+                [moderators, categories, projects, staff_picks, task_requests])
         except Exception as error:
             LOGGER.error(error)
 

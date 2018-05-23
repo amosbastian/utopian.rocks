@@ -47,6 +47,8 @@ def contribution(row, status):
     else:
         total_payout = Amount(comment.json()["pending_payout_value"]).amount
 
+    votes = comment.json()["net_votes"]
+
     # Get the author by splitting
     author = url.split("/")[4][1:]
 
@@ -81,7 +83,8 @@ def contribution(row, status):
         "status": status,
         "score": score,
         "voted_on": voted_on,
-        "total_payout": total_payout
+        "total_payout": total_payout,
+        "total_votes": votes
     }
     return new_contribution
 
