@@ -283,21 +283,24 @@ class WeeklyResource(Resource):
     def get(self, date):
         print(DIR_PATH)
         LOGGER.info(f"Retrieving for {date}")
-        # Get date for retrieving posts
-        date = string_to_date(date)
-        week_ago = date - timedelta(days=7)
+        try:
+            # Get date for retrieving posts
+            date = string_to_date(date)
+            week_ago = date - timedelta(days=7)
 
-        # Retrieve contributions made in week before the given date
-        contributions = DB.contributions
-        pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
-        contributions = [json.loads(json_util.dumps(c))
-                         for c in contributions.aggregate(pipeline)]
+            # Retrieve contributions made in week before the given date
+            contributions = DB.contributions
+            pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
+            contributions = [json.loads(json_util.dumps(c))
+                            for c in contributions.aggregate(pipeline)]
 
-        moderators = moderator_statistics(contributions)
-        categories = category_statistics(contributions)
-        projects = project_statistics(contributions)
+            moderators = moderator_statistics(contributions)
+            categories = category_statistics(contributions)
+            projects = project_statistics(contributions)
 
-        return jsonify([moderators, categories, projects])
+            return jsonify([moderators, categories, projects])
+        except Exception as error:
+            LOGGER.error(error)
 
 
 api.add_resource(WeeklyResource, "/api/weekly/<string:date>")
