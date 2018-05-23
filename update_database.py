@@ -3,6 +3,7 @@ import json
 import os
 from beem.amount import Amount
 from beem.comment import Comment
+from beem.vote import Vote
 from datetime import datetime, date
 from dateutil.parser import parse
 from oauth2client.service_account import ServiceAccountCredentials
@@ -47,7 +48,15 @@ def contribution(row, status):
     else:
         total_payout = Amount(comment.json()["pending_payout_value"]).amount
 
+    # Get votes and comments
     votes = comment.json()["net_votes"]
+    comments = comment.json()["children"]
+
+    # Add worth of utopian-io's vote in SBD
+    try:
+        utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
+    except Exception:
+        utopian_vote = 0
 
     # Get the author by splitting
     author = url.split("/")[4][1:]
@@ -84,7 +93,9 @@ def contribution(row, status):
         "score": score,
         "voted_on": voted_on,
         "total_payout": total_payout,
-        "total_votes": votes
+        "total_votes": votes,
+        "total_comments": comments,
+        "utopian_vote": utopian_vote
     }
     return new_contribution
 

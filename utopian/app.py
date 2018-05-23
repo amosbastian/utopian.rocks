@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from beem.comment import Comment
 from bson import json_util
 from collections import Counter
 from datetime import datetime, timedelta
@@ -126,6 +127,8 @@ def moderator_statistics(contributions):
     """
     moderators = {}
     for contribution in contributions:
+        if contribution["status"] == "unreviewed":
+            continue
         moderator = contribution["moderator"]
 
         # If contribution was submitted by banned user skip it
@@ -184,7 +187,7 @@ def category_statistics(contributions):
                 "task-requests": 0,
                 "moderators": [],
                 "average_payout": [],
-                "total_payout": 0
+                "total_payout": 0,
             }
         )
 
@@ -333,8 +336,49 @@ class WeeklyResource(Resource):
             LOGGER.error(error)
 
 
-api.add_resource(WeeklyResource, "/api/weekly/<string:date>")
+api.add_resource(WeeklyResource, "/api/statistics/<string:date>")
 api.add_resource(ContributionResource, "/api/posts")
+
+
+def staff_pick_section(staff_picks):
+    section = ""
+    for staff_pick in staff_picks["staff_picks"]:
+        url = staff_pick["url"]
+        post = Comment(url)
+        title = post.json()["title"]
+        author = staff_pick['author']
+        category = staff_pick['category']
+        section += (
+            f"[{title}]({url}) by {author} [{category}]\n"
+            "[Image (contributor profile image / image from the post)]\n\n"
+            "[Paragraph: Background info on project etc.]\n\n"
+            "[Paragraph: CM review, including etc.]\n\n"
+            f"Total payout: {staff_pick['total_payout']}\n"
+            f"Number of votes: {staff_pick['total_votes']}\n\n"
+        )
+
+    print(section)
+    return section
+
+
+def post_statistics_section():
+    pass
+
+
+@app.route("/weekly")
+def weekly():
+    """
+    Returns weekly statistics in a format that can be posted on Steemit.
+    """
+    week_ago = datetime.now() - timedelta(days=7)
+    contributions = DB.contributions
+    pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
+    contributions = [json.loads(json_util.dumps(c))
+                     for c in contributions.aggregate(pipeline)]
+
+    # categories = category_statistics(contributions)
+    staff_picks = staff_pick_statistics(contributions)
+    return staff_pick_section(staff_picks)
 
 
 def main():
