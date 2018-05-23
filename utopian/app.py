@@ -87,7 +87,7 @@ def string_to_date(input):
         abort(422, errors=str(error))
 
 
-def average_score(score):
+def average(score):
     """
     Returns the average score of the given list of scores.
     """
@@ -124,27 +124,31 @@ def moderator_statistics(contributions):
             moderator, {
                 "moderator": moderator,
                 "category": [],
-                "score": []
+                "average_score": []
             }
         )
 
         # Append scores and categories
-        moderators[moderator]["score"].append(contribution["score"])
+        moderators[moderator]["average_score"].append(contribution["score"])
         moderators[moderator]["category"].append(contribution["category"])
 
     moderator_list = []
     for moderator, value in moderators.items():
         # Set new keys and append value to list
         value["category"] = Counter(value["category"])
-        value["score"] = average_score(value["score"])
+        value["average_score"] = average(value["average_score"])
         moderator_list.append(value)
 
     return {"moderators": moderator_list}
 
 
 def category_statistics(contributions):
+    """
+    Returns a dictionary containing statistics about all categories.
+    """
     categories = {}
     for contribution in contributions:
+        # Don't count unreviewed contributions
         if contribution["status"] == "unreviewed":
             continue
         category = contribution["category"]
@@ -160,12 +164,14 @@ def category_statistics(contributions):
         categories.setdefault(
             category, {
                 "category": category,
-                "score": [],
+                "average_score": [],
                 "voted": 0,
                 "not_voted": 0,
                 "unvoted": 0,
                 "task-requests": 0,
-                "moderators": []
+                "moderators": [],
+                "average_payout": [],
+                "total_payout": 0
             }
         )
 
@@ -182,19 +188,79 @@ def category_statistics(contributions):
         if is_task:
             categories[category]["task-requests"] += 1
 
-        # Add moderator
+        # Add moderator, score and total payout in SBD
         categories[category]["moderators"].append(contribution["moderator"])
+        categories[category]["average_score"].append(contribution["score"])
+        categories[category]["total_payout"] += contribution["total_payout"]
 
     category_list = []
     for category, value in categories.items():
         # Set new keys and append value to list
         value["reviewed"] = value["voted"] + value["not_voted"]
-        value["score"] = average_score(value["score"])
+        value["average_score"] = average(value["average_score"])
         value["moderators"] = Counter(value["moderators"])
+        value["average_payout"] = value["total_payout"] / value["reviewed"]
         value["pct_voted"] = percentage(value["reviewed"], value["voted"])
         category_list.append(value)
 
     return {"categories": category_list}
+
+
+def project_statistics(contributions):
+    """
+    Returns a dictionary containing statistics about all projects.
+    """
+    projects = {}
+    for contribution in contributions:
+        # Don't count unreviewed contributions
+        if contribution["status"] == "unreviewed":
+            continue
+        project = contribution["repository"]
+
+        # Set default in case category doesn't exist
+        projects.setdefault(
+            project, {
+                "project": project,
+                "average_score": [],
+                "voted": 0,
+                "not_voted": 0,
+                "unvoted": 0,
+                "task-requests": 0,
+                "moderators": [],
+                "average_payout": [],
+                "total_payout": 0
+            }
+        )
+
+        # Check if contribution was voted on or unvoted
+        if contribution["status"] == "unvoted":
+            projects[project]["unvoted"] += 1
+            projects[project]["not_voted"] += 1
+        elif contribution["voted_on"]:
+            projects[project]["voted"] += 1
+        else:
+            projects[project]["not_voted"] += 1
+
+        # If contribution was a task request count this
+        if "task" in contribution["category"]:
+            projects[project]["task-requests"] += 1
+
+        # Add moderator and score
+        projects[project]["moderators"].append(contribution["moderator"])
+        projects[project]["average_score"].append(contribution["score"])
+        projects[project]["total_payout"] += contribution["total_payout"]
+
+    project_list = []
+    for project, value in projects.items():
+        # Set new keys and append value to list
+        value["reviewed"] = value["voted"] + value["not_voted"]
+        value["average_score"] = average(value["average_score"])
+        value["average_payout"] = value["total_payout"] / value["reviewed"]
+        value["moderators"] = Counter(value["moderators"])
+        value["pct_voted"] = percentage(value["reviewed"], value["voted"])
+        project_list.append(value)
+
+    return {"projects": project_list}
 
 
 class WeeklyResource(Resource):
@@ -214,8 +280,9 @@ class WeeklyResource(Resource):
 
         moderators = moderator_statistics(contributions)
         categories = category_statistics(contributions)
+        projects = project_statistics(contributions)
 
-        return jsonify([moderators, categories])
+        return jsonify([moderators, categories, projects])
 
 
 api.add_resource(WeeklyResource, "/api/weekly/<string:date>")

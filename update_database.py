@@ -1,6 +1,7 @@
 import gspread
 import json
 import os
+from beem.amount import Amount
 from beem.comment import Comment
 from datetime import datetime, date
 from dateutil.parser import parse
@@ -37,6 +38,16 @@ def contribution(row, status):
         review_date = datetime(1970, 1, 1)
 
     url = row[2]
+
+    total_payout = 0
+    comment = Comment(url)
+    if (datetime.now() - review_date).days > 7:
+        total_payout = Amount(comment.json()["total_payout_value"]).amount
+    else:
+        total_payout = Amount(comment.json()["pending_payout_value"]).amount
+
+    print(total_payout)
+    # Get the author by splitting
     author = url.split("/")[4][1:]
 
     # Add status for unvoted and pending
@@ -44,7 +55,7 @@ def contribution(row, status):
         status = "unvoted"
     elif row[9] == "Pending":
         status = "pending"
-    
+
     # Check if contribution was voted on
     if row[9] == "Yes":
         voted_on = True
@@ -69,7 +80,8 @@ def contribution(row, status):
         "picked_by": row[8],
         "status": status,
         "score": score,
-        "voted_on": voted_on
+        "voted_on": voted_on,
+        "total_payout": total_payout
     }
     return new_contribution
 
