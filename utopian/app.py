@@ -393,7 +393,7 @@ def staff_pick_section(staff_picks):
             f"[{category}]<br>[Image (contributor profile image / image from "
             "the post)]<br><br>[Paragraph: Background info on project etc.]"
             "<br><br>[Paragraph: CM review, including etc.]<br><br>"
-            f"Total payout: {staff_pick['total_payout']}<br>"
+            f"Total payout: {staff_pick['total_payout']:.2f} STU<br>"
             f"Number of votes: {staff_pick['total_votes']}<br><br>"
         )
 
