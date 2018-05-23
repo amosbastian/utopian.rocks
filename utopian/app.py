@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from bson import json_util
 from collections import Counter
@@ -14,6 +15,18 @@ from webargs.flaskparser import use_args, use_kwargs, parser, abort
 # Score needed for a vote
 MIN_SCORE = 10
 
+# Logging
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+LOGGER = logging.getLogger("utopian-io")
+LOGGER.setLevel(logging.INFO)
+FH = logging.FileHandler(f"{DIR_PATH}/test.log")
+FH.setLevel(logging.DEBUG)
+FORMATTER = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+FH.setFormatter(FORMATTER)
+LOGGER.addHandler(FH)
+
+# Mongo and Flask
 CLIENT = MongoClient()
 DB = CLIENT.utempian
 app = Flask(__name__)
@@ -268,6 +281,8 @@ class WeeklyResource(Resource):
     Endpoint for weekly contribution data (requested).
     """
     def get(self, date):
+        print(DIR_PATH)
+        LOGGER.info(f"Retrieving for {date}")
         # Get date for retrieving posts
         date = string_to_date(date)
         week_ago = date - timedelta(days=7)
@@ -294,4 +309,5 @@ def main():
 
 
 if __name__ == '__main__':
+    print(DIR_PATH)
     main()

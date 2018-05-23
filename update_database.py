@@ -41,12 +41,12 @@ def contribution(row, status):
 
     total_payout = 0
     comment = Comment(url)
+    # Calculate total (pending) payout of contribution
     if (datetime.now() - review_date).days > 7:
         total_payout = Amount(comment.json()["total_payout_value"]).amount
     else:
         total_payout = Amount(comment.json()["pending_payout_value"]).amount
 
-    print(total_payout)
     # Get the author by splitting
     author = url.split("/")[4][1:]
 
