@@ -485,8 +485,11 @@ def weekly():
     staff_picks = staff_pick_statistics(contributions)
 
     # Get each section of the post
-    staff_section = staff_pick_section(staff_picks)
-    post_section = post_statistics_section(categories, contributions)
+    try:
+        staff_section = staff_pick_section(staff_picks)
+        post_section = post_statistics_section(categories, contributions)
+    except Exception as error:
+        LOGGER.info(error)
     return render_template("weekly.html", body=(staff_section + post_section))
 
 
