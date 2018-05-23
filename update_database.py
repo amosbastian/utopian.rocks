@@ -52,12 +52,6 @@ def contribution(row, status):
     votes = comment.json()["net_votes"]
     comments = comment.json()["children"]
 
-    # Add worth of utopian-io's vote in SBD
-    try:
-        utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
-    except Exception:
-        utopian_vote = 0
-
     # Get the author by splitting
     author = url.split("/")[4][1:]
 
@@ -70,8 +64,14 @@ def contribution(row, status):
     # Check if contribution was voted on
     if row[9] == "Yes":
         voted_on = True
+        try:
+            utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
+        except Exception:
+            voted_on = False
+            utopian_vote = 0
     else:
         voted_on = False
+        utopian_vote = 0
 
     # Check for when contribution not reviewed
     if row[5] == "":
