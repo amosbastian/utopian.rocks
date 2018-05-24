@@ -1,7 +1,7 @@
 Utopian
 -------
 
-A web application showing additional information about Utopian.io. It was created using Flask and MongoDB. Visit https://utopian.info/ to see it in action!
+Utopian.rocks is a flask application that includes a table showing the contributions that are currently in the unreviewed worksheet, so users can check if their contribution was added succesfully. It also includes some endpoints to retrieve contributions, statistics and a weekly template for one of Utopian's posts.
 
 Usage
 -----
@@ -221,6 +221,13 @@ Not sure, as the sheet will hopefully not be used for that long. I will probably
 * Add date range to /weekly
 * Think of more statistics that could be interesting
 * ...
+
+Technology stack
+----------------
+ 
+* Python
+* Flask
+* MongoDB
 
 Contributing
 ------------
