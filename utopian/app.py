@@ -350,7 +350,9 @@ class WeeklyResource(Resource):
 
             # Retrieve contributions made in week before the given date
             contributions = DB.contributions
-            pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
+            print(week_ago, date)
+            pipeline = [
+                {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
             contributions = [json.loads(json_util.dumps(c))
                              for c in contributions.aggregate(pipeline)]
 
@@ -476,9 +478,11 @@ def weekly():
     """
     Returns weekly statistics in a format that can be posted on Steemit.
     """
-    week_ago = datetime.now() - timedelta(days=7)
+    today = datetime.now()
+    week_ago = today - timedelta(days=7)
     contributions = DB.contributions
-    pipeline = [{"$match": {"review_date": {"$gt": week_ago}}}]
+    pipeline = [
+        {"$match": {"review_date": {"$gte": week_ago, "$lt": today}}}]
     contributions = [json.loads(json_util.dumps(c))
                      for c in contributions.aggregate(pipeline)]
 
