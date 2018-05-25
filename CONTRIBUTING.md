@@ -1,5 +1,5 @@
 # Contributing to Utopian.info
-I'd love for anyone to contribute to Utopian.info! Any contributions are appreciated, whether it's:
+I'd love for anyone to contribute to Utopian.rocks! Any contributions are appreciated, whether it's:
 
 - Discussing best pracices, state of the code etc.
 - Reporting or fixing a bug
@@ -10,14 +10,14 @@ If you want to contact me you can do so on Discord at Amos#4622. It would also b
 
 ## How to use GitHub
 
-If you'd like to contribute directly to Nutmega I'd like you to submit your changes via a pull request! An example of how this procedure can go is shown below:
+If you'd like to contribute directly to Utopian.rocks I'd like you to submit your changes via a pull request! An example of how this procedure can go is shown below:
 
 1. Fork the repository and create a new branch from `master`
 2. Develop, test, document and commit your changes
 3. [Create a new pull request](https://github.com/amosbastian/utopian/compare)!
 
 ## Any contributions you make will be under the MIT license
-Nutmega is licensed under the [MIT license](https://github.com/amosbastian/utopian/blob/master/LICENSE), so any changes you make to its code will also be licensed under this license.
+Utopian.rocks is licensed under the [MIT license](https://github.com/amosbastian/utopian/blob/master/LICENSE), so any changes you make to its code will also be licensed under this license.
 
 ## Submitting bugs, feature requests, and more can be done via [issues](https://github.com/amosbastian/utopian/issues)
 I use GitHub issues to track everything, so if you have found a bug for example, then please simply open an issue here. I would really appreciate it if you add as much detail as possible when creating issues!
