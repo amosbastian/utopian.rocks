@@ -1,7 +1,7 @@
 Utopian
 -------
 
-Utopian.rocks is a flask application that includes a table showing the contributions that are currently in the unreviewed worksheet, so users can check if their contribution was added succesfully. It also includes some endpoints to retrieve contributions, statistics and a weekly template for one of Utopian's posts.
+Utopian.rocks is a Flask application that includes a table showing the contributions that are currently in the unreviewed worksheet, so users can check if their contribution was added succesfully. It also includes some endpoints to retrieve contributions, statistics and a weekly template for one of Utopian's posts.
 
 Usage
 -----
