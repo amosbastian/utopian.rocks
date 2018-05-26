@@ -6,7 +6,7 @@ from bson import json_util
 from collections import Counter
 from datetime import datetime, timedelta
 from dateutil.parser import parse
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, abort
 from flask_restful import Resource, Api
 from pymongo import MongoClient
 from statistics import mean
@@ -45,7 +45,7 @@ def rewards(json_file):
             data = json.load(fp)
         return jsonify(data)
     except:
-        return jsonify("")
+        abort(404)
 
 
 @app.route("/")
@@ -435,16 +435,16 @@ def post_statistics_section(categories, contributions):
         f"* Overall, the last week saw a total of {reviewed} posts, with "
         f"{voted} of them rewarded through an upvote by @utopian-io.<br>"
         "* In total, Utopian.io distributed an approximate of "
-        f"{utopian_total:.2f} SBD to contributors.<br>"
+        f"{utopian_total:.2f} STU to contributors.<br>"
         "* The highest payout seen on any Utopian.io contribution this week "
-        f"was {highest_payout['total_payout']} SBD, with a total of "
+        f"was {highest_payout['total_payout']} STU, with a total of "
         f"{highest_payout['total_votes']} votes received from the community."
         "<br>* The contribution that attracted the most engagement was "
         f"&lt;a href='{most_engagement['url']}'&gt;{title}&lt;/a&gt;, with no "
         f"less than {most_engagement['total_comments']} comments in its "
         "comment threads.<br>"
         f"* The average vote given by Utopian.io was worth {average_vote:.2f} "
-        "SBD.<br><br># Category Statistics<br><br>"
+        "STU.<br><br># Category Statistics<br><br>"
         "|Category|Reviewed|Rewarded|Total rewards|Top contributor|<br>"
         "|:-|:-|:-|-:|:-|<br>"
     )
@@ -468,7 +468,7 @@ def post_statistics_section(categories, contributions):
 
         # Add the row
         section += (
-            f"|{category}|{reviewed}|{rewarded}|{rewards} SBD|{author}|<br>")
+            f"|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|<br>")
 
     return section
 
