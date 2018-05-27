@@ -41,7 +41,10 @@ def contribution(row, status):
     url = row[2]
 
     total_payout = 0
-    comment = Comment(url)
+    try:
+        comment = Comment(url)
+    except Exception:
+        return
     # Calculate total (pending) payout of contribution
     if (datetime.now() - review_date).days > 7:
         total_payout = Amount(comment.json()["total_payout_value"]).amount
@@ -122,7 +125,8 @@ def update_posts():
     contributions = DB.contributions
 
     for post in reviewed + unreviewed:
-        contributions.replace_one({"url": post["url"]}, post, True)
+        if post:
+            contributions.replace_one({"url": post["url"]}, post, True)
 
 
 def main():
