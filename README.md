@@ -16,7 +16,7 @@ and install all the Python packages using
 
 ```
 $ cd utopian
-$ pip install requirements.txt
+$ pip install -r requirements.txt
 ```
 
 Once you have a MongoDB instance running you can use the following script to populate the database
