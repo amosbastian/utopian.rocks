@@ -511,11 +511,11 @@ def queue():
 
     for contribution in pending:
         if (datetime.now() - timedelta(days=1)) > contribution["created"]:
-            invalid.append(contribution)
-            contribution["valid_age"] = False
-        else:
             valid.append(contribution)
             contribution["valid_age"] = True
+        else:
+            invalid.append(contribution)
+            contribution["valid_age"] = False
 
     recent = sorted(
         pending, key=lambda x: x["created"], reverse=True)[0]["created"]
