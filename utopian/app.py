@@ -55,6 +55,7 @@ def index():
     """
     contributions = DB.contributions
     unreviewed = contributions.find({"status": "unreviewed"})
+    unreviewed = [contribution for contribution in unreviewed]
     return render_template("index.html", contributions=unreviewed)
 
 
@@ -528,5 +529,4 @@ def main():
 
 
 if __name__ == '__main__':
-    print(DIR_PATH)
     main()

@@ -1,3 +1,22 @@
 <header class="header">
-  Utopian.info
+  <div class="header-buttons">
+    {% if active_page == "index" %}
+    <a class="header__button header__button--active" href="/">
+      Feed
+    </a>
+    {% else %}
+    <a class="header__button" href="/">
+      Feed
+    </a>
+    {% endif %}
+    {% if active_page == "queue" %}
+    <a class="header__button header__button--active" href="/queue">
+      Queue
+    </a>
+    {% else %}
+    <a class="header__button" href="/queue">
+      Queue
+    </a>
+    {% endif %}
+  </div>
 </header>

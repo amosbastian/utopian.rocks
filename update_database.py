@@ -38,16 +38,13 @@ def contribution(row, status):
     except Exception:
         review_date = datetime(1970, 1, 1)
 
-    # If post > 7 days old don't check
-    if (datetime.now() - review_date).days > 7:
+    # If post > 7 days old don't check unless unreviewed
+    if (datetime.now() - review_date).days > 7 and status != "unreviewed":
         return
     url = row[2]
 
     total_payout = 0
-    try:
-        comment = Comment(url)
-    except Exception:
-        return
+    comment = Comment(url)
 
     # Calculate total (pending) payout of contribution
     if comment.time_elapsed() > timedelta(days=7):
@@ -106,6 +103,7 @@ def contribution(row, status):
         "created": comment["created"],
         "title": comment.title
     }
+
     return new_contribution
 
 

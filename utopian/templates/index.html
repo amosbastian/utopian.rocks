@@ -1,54 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-
-.warning {
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  color: red;
-  font-weight: 900;
-  height: 100px;
-}
-</style>
-</head>
-<body>
-<div class="warning">
-  UTOPIAN.ROCKS UPDATES EVERY 5 MINUTES
-</div>
-<table>
-  <tr>
-    <th>Author</th>
-    <th>URL</th> 
-    <th>Repository</th>
-    <th>Category</th>
-  </tr>
-  <!-- Show all unreviewed contributions for worried contributors :) -->
+{% extends "base.html" %}
+{% set active_page = "index" %}
+{% block content %}
+<div class="contributions">
+  <div class="statistics">
+    Waiting for review: {{contributions|length}}
+  </div>
   {% for contribution in contributions %}
-  <tr>
-    <td>{{contribution.author}}</td>
-    <td><a href="{{contribution.url}}">{{contribution.url|truncate(75)}}</a></td>
-    <td><a href="{{contribution.repository}}">{{contribution.repository|truncate(75)}}</a></td>
-    <td>{{contribution.category}}</td>
-  </tr>
+  <div class="contribution">
+    <div class="position position">
+      {{loop.index}}
+    </div>
+    <div class="content">
+      <div class="author">
+        <a href="https://steemit.com/@{{contribution.author}}">@{{contribution.author}}</a>
+      </div>
+      <div class="url">
+        <a href="{{contribution.url}}">{{contribution.url}}</a>
+      </div>
+      <div class="category category--{{contribution.category}}">
+        {{contribution.category}}
+      </div>
+    </div>
+  </div>
   {% endfor %}
-</table>
-</body>
-</html>
+</div>
+{% endblock %}
