@@ -517,14 +517,10 @@ def queue():
             invalid.append(contribution)
             contribution["valid_age"] = False
 
-    recent = sorted(
-        pending, key=lambda x: x["created"], reverse=True)[0]["created"]
-
     valid = sorted(valid, key=lambda x: x["score"], reverse=True)
     invalid = sorted(invalid, key=lambda x: x["score"], reverse=True)
 
-    return render_template(
-        "queue.html", contributions=(valid + invalid), last_updated=recent)
+    return render_template("queue.html", contributions=(valid + invalid))
 
 
 def main():
