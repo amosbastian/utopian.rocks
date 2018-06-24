@@ -506,20 +506,25 @@ def queue():
     pending = [contribution for contribution in
                contributions.find({"status": "pending"})]
 
+    valid = []
+    invalid = []
+
     for contribution in pending:
         if (datetime.now() - timedelta(days=1)) > contribution["created"]:
+            invalid.append(contribution)
             contribution["valid_age"] = False
         else:
+            valid.append(contribution)
             contribution["valid_age"] = True
 
-    last_updated = sorted(
+    recent = sorted(
         pending, key=lambda x: x["created"], reverse=True)[0]["created"]
 
-    pending = sorted(
-        pending, key=lambda x: x["score"], reverse=True)
+    valid = sorted(valid, key=lambda x: x["score"], reverse=True)
+    invalid = sorted(invalid, key=lambda x: x["score"], reverse=True)
 
     return render_template(
-        "queue.html", contributions=pending, last_updated=last_updated)
+        "queue.html", contributions=(valid + invalid), last_updated=recent)
 
 
 def main():
