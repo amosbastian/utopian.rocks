@@ -4,7 +4,7 @@ import os
 from beem.amount import Amount
 from beem.comment import Comment
 from beem.vote import Vote
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from dateutil.parser import parse
 from oauth2client.service_account import ServiceAccountCredentials
 from pymongo import MongoClient
@@ -38,6 +38,9 @@ def contribution(row, status):
     except Exception:
         review_date = datetime(1970, 1, 1)
 
+    # If post > 7 days old don't check
+    if (datetime.now() - review_date).days > 7:
+        return
     url = row[2]
 
     total_payout = 0
@@ -45,8 +48,9 @@ def contribution(row, status):
         comment = Comment(url)
     except Exception:
         return
+
     # Calculate total (pending) payout of contribution
-    if (datetime.now() - review_date).days > 7:
+    if comment.time_elapsed() > timedelta(days=7):
         total_payout = Amount(comment.json()["total_payout_value"]).amount
     else:
         total_payout = Amount(comment.json()["pending_payout_value"]).amount
@@ -98,7 +102,9 @@ def contribution(row, status):
         "total_payout": total_payout,
         "total_votes": votes,
         "total_comments": comments,
-        "utopian_vote": utopian_vote
+        "utopian_vote": utopian_vote,
+        "created": comment["created"],
+        "title": comment.title
     }
     return new_contribution
 

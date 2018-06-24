@@ -500,6 +500,28 @@ def weekly():
     return render_template("weekly.html", body=(staff_section + post_section))
 
 
+@app.route("/queue")
+def queue():
+    contributions = DB.contributions
+    pending = [contribution for contribution in
+               contributions.find({"status": "pending"})]
+
+    for contribution in pending:
+        if (datetime.now() - timedelta(days=1)) > contribution["created"]:
+            contribution["valid_age"] = False
+        else:
+            contribution["valid_age"] = True
+
+    last_updated = sorted(
+        pending, key=lambda x: x["created"], reverse=True)[0]["created"]
+
+    pending = sorted(
+        pending, key=lambda x: x["score"], reverse=True)
+
+    return render_template(
+        "queue.html", contributions=pending, last_updated=last_updated)
+
+
 def main():
     app.run(host="0.0.0.0")
 
