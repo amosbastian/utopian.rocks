@@ -12,14 +12,21 @@
     </div>
     <div class="content">
       <div class="author">
+        <img class="author-avatar" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
         <a href="https://steemit.com/@{{contribution.author}}">@{{contribution.author}}</a>
       </div>
       <div class="url">
         <a href="{{contribution.url}}">{{contribution.url}}</a>
       </div>
+      {% if "task" in contribution.category %}
+      <div class="category category--{{contribution.category.split('task-')[1]}}">
+        {{contribution.category}}
+      </div>
+      {% else %}
       <div class="category category--{{contribution.category}}">
         {{contribution.category}}
       </div>
+      {% endif %}
     </div>
     {% if contribution.valid_age %}
     <div class="status status--valid-age">
