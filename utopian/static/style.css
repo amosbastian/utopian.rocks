@@ -25,6 +25,21 @@ body {
   margin-bottom: 10rem;
 }
 
+.moderators {
+  display: grid;
+  grid-template-columns: 3fr 2fr 3fr;
+  margin-bottom: 10rem;
+}
+
+.points {
+  display: grid;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 2rem;
+  min-width: 5rem;
+  height: 100%;
+}
+
 .statistics {
   display: grid;
   grid-column: 2;

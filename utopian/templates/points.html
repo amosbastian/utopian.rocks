@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% set active_page = "points" %}
+{% block content %}
+<div class="statistics">
+  {{this_week}} - {{next_week}}
+</div>
+<div class="moderators">
+  {% for moderator in moderators %}
+    <div class="contribution">
+      <div class="position position--{{loop.index}}">
+        {{loop.index}}
+      </div>
+      <div class="content">
+        <div class="author">
+          <img class="author-avatar" src="https://steemitimages.com/u/{{moderator.account}}/avatar" alt="">
+          <a href="https://steemit.com/@{{moderator.account}}">@{{moderator.account}}</a>
+        </div>
+        <div class="points">
+          {{moderator.points}}
+        </div>
+      </div>
+      {% if moderator.manager %}
+      <div class="status status--valid-age">
+      </div>
+      {% else %}
+      <div class="status status--invalid-age">
+      </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

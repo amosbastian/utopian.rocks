@@ -4,7 +4,7 @@ import os
 from beem.comment import Comment
 from bson import json_util
 from collections import Counter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from dateutil.parser import parse
 from flask import Flask, jsonify, render_template, abort
 from flask_restful import Resource, Api
@@ -522,6 +522,40 @@ def queue():
     invalid = sorted(invalid, key=lambda x: x["score"], reverse=True)
 
     return render_template("queue.html", contributions=(valid + invalid))
+
+
+@app.route("/points")
+def points():
+    today = date.today()
+    offset = (today.weekday() - 3) % 7
+    this_week = today - timedelta(days=offset)
+    next_week = this_week + timedelta(days=7)
+    with open(f"{DIR_PATH}/static/{this_week}.json") as fp:
+        data = json.load(fp)
+
+    moderators = CLIENT.utopian.moderators
+    moderator_data = []
+    for moderator in moderators.find():
+        try:
+            account = moderator["account"]
+            if moderator["supermoderator"]:
+                manager = True
+            else:
+                manager = False
+            moderator_data.append({
+                "account": account,
+                "points": data[account],
+                "manager": manager
+            })
+        except KeyError:
+            continue
+
+    moderator_data = sorted(
+        moderator_data, key=lambda x: x["points"], reverse=True)
+
+    return render_template(
+        "points.html", moderators=moderator_data, this_week=this_week,
+        next_week=next_week)
 
 
 def main():
