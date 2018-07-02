@@ -44,7 +44,12 @@ def contribution(row, status):
     url = row[2]
 
     total_payout = 0
-    comment = Comment(url)
+    
+    # Check if post deleted
+    try:
+        comment = Comment(url)
+    except Exception:
+        return
 
     # Calculate total (pending) payout of contribution
     if comment.time_elapsed() > timedelta(days=7):
