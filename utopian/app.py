@@ -538,17 +538,24 @@ def points():
     for moderator in moderators.find():
         try:
             account = moderator["account"]
-            if moderator["supermoderator"]:
-                manager = True
-            else:
-                manager = False
-            moderator_data.append({
-                "account": account,
-                "points": data[account],
-                "manager": manager
-            })
         except KeyError:
             continue
+
+        if moderator["supermoderator"]:
+            manager = True
+        else:
+            manager = False
+
+        try:
+            points = data[account]
+        except KeyError:
+            points = 0
+
+        moderator_data.append({
+            "account": account,
+            "points": points,
+            "manager": manager
+        })
 
     moderator_data = sorted(
         moderator_data, key=lambda x: x["points"], reverse=True)

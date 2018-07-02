@@ -44,7 +44,7 @@ def contribution(row, status):
     url = row[2]
 
     total_payout = 0
-    
+
     # Check if post deleted
     try:
         comment = Comment(url)
