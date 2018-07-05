@@ -57,12 +57,10 @@ def contribution(row, status):
     else:
         total_payout = Amount(comment.json()["pending_payout_value"]).amount
 
-    # Get votes and comments
+    # Get votes, comments and author
     votes = comment.json()["net_votes"]
     comments = comment.json()["children"]
-
-    # Get the author by splitting
-    author = url.split("/")[4][1:]
+    author = comment.author
 
     # Add status for unvoted and pending
     if row[9] == "Unvoted":
