@@ -84,7 +84,11 @@ def contribution(row, status):
     if row[5] == "":
         score = None
     else:
-        score = float(row[5])
+        try:
+            score = float(row[5])
+        except Exception:
+            score = None
+            print(row)
 
     # Create contribution dictionary and return it
     new_contribution = {
