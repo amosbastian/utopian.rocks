@@ -88,7 +88,6 @@ def contribution(row, status):
             score = float(row[5])
         except Exception:
             score = None
-            print(row)
 
     # Create contribution dictionary and return it
     new_contribution = {
