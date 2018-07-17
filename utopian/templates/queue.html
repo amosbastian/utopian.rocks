@@ -5,6 +5,16 @@
   <div class="statistics">
     In queue: {{contributions|length}}
   </div>
+  <div class="recharge">
+    <div class="recharge-text">
+      <p>Current voting power: </p>
+      <span class="{{recharge_class}}">{{current_vp}}%</span>
+    </div>
+    <div class="recharge-text">
+      <p>Time until next vote: </p>
+      <span class="{{recharge_class}}">{{recharge_time}}</span>
+    </div>
+  </div>
   {% for contribution in contributions %}
   <div class="contribution">
     <div class="position position--{{loop.index}}">

@@ -1,6 +1,7 @@
 import gspread
 import json
 import os
+from beem.account import Account
 from beem.amount import Amount
 from beem.comment import Comment
 from beem.vote import Vote
@@ -139,9 +140,36 @@ def update_posts():
             contributions.replace_one({"url": post["url"]}, post, True)
 
 
+def update_account():
+    account = Account("utopian-io")
+    current_vp = account.get_voting_power()
+    recharge_time = account.get_recharge_time_str(99.75)
+    recharge_timedelta = account.get_recharge_timedelta(99.75)
+
+    if recharge_timedelta > timedelta(hours=1):
+        recharge_class = "recharge--high"
+    elif (recharge_timedelta < timedelta(hours=1) and
+          recharge_timedelta > timedelta(minutes=30)):
+        recharge_class = "recharge--average"
+    else:
+        recharge_class = "recharge--low"
+
+    accounts = DB.accounts
+    accounts.replace_one(
+        {"account": "utopian-io"},
+        {
+            "account": "utopian-io",
+            "current_vp": current_vp,
+            "recharge_time": recharge_time,
+            "recharge_class": recharge_class,
+            "updated": datetime.now()
+        }
+    )
+
+
 def main():
     update_posts()
+    update_account()
 
 if __name__ == '__main__':
     main()
-    contributions = DB.contributions

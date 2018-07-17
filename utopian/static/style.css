@@ -51,6 +51,35 @@ body {
   color: #E2E5E8;
 }
 
+.recharge {
+  display: grid;
+  grid-column: 2;
+  justify-content: center;
+  align-items: center;
+  color: #E2E5E8;
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.recharge-text {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-gap: 2rem;
+  justify-content: space-between;
+}
+
+.recharge--high {
+  color: #db524c;
+}
+
+.recharge--average {
+  color: orange;
+}
+
+.recharge--low {
+  color: #2ECC40;
+}
+
 .contribution {
   display: grid;
   grid-template-columns: 5rem 1fr min-content;

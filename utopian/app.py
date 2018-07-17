@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from beem.comment import Comment
+from beem.account import Account
 from bson import json_util
 from collections import Counter
 from datetime import datetime, timedelta, date
@@ -501,6 +502,34 @@ def weekly():
     return render_template("weekly.html", body=(staff_section + post_section))
 
 
+def update_vp(current_vp, updated, recharge_time):
+    seconds = (datetime.now() - updated).total_seconds()
+    regenerated_vp = seconds * 10000 / 86400 / 5 / 100
+
+    # Update recharge_time
+    recharge_time = parse(recharge_time)
+    recharge_time = timedelta(
+        hours=recharge_time.hour,
+        minutes=recharge_time.minute,
+        seconds=recharge_time.second)
+    recharge_time = recharge_time - timedelta(seconds=seconds)
+    if recharge_time < timedelta(seconds=1):
+        recharge_time = "0:00:00"
+
+    return (f"{(current_vp + regenerated_vp):.2f}",
+            str(recharge_time).split(".")[0])
+
+def account_information():
+    accounts = DB.accounts
+    account = accounts.find_one({"account": "utopian-io"})
+    updated = account["updated"]
+    current_vp, recharge_time = update_vp(
+        account["current_vp"], updated, account["recharge_time"])
+    
+    return (
+        current_vp, recharge_time, account["recharge_class"])
+
+
 @app.route("/queue")
 def queue():
     contributions = DB.contributions
@@ -521,7 +550,11 @@ def queue():
     valid = sorted(valid, key=lambda x: x["score"], reverse=True)
     invalid = sorted(invalid, key=lambda x: x["score"], reverse=True)
 
-    return render_template("queue.html", contributions=(valid + invalid))
+    current_vp, recharge_time, recharge_class = account_information()
+
+    return render_template(
+        "queue.html", contributions=(valid + invalid), current_vp=current_vp,
+        recharge_time=recharge_time, recharge_class=recharge_class)
 
 
 @app.route("/points")
