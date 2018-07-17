@@ -516,8 +516,10 @@ def update_vp(current_vp, updated, recharge_time):
     if recharge_time < timedelta(seconds=1):
         recharge_time = "0:00:00"
 
-    return (f"{(current_vp + regenerated_vp):.2f}",
-            str(recharge_time).split(".")[0])
+    current_vp += regenerated_vp
+    current_vp = 100 if current_vp > 100 else f"{current_vp:.2f}"
+
+    return (current_vp, str(recharge_time).split(".")[0])
 
 def account_information():
     accounts = DB.accounts
@@ -547,8 +549,8 @@ def queue():
             invalid.append(contribution)
             contribution["valid_age"] = False
 
-    valid = sorted(valid, key=lambda x: x["score"], reverse=True)
-    invalid = sorted(invalid, key=lambda x: x["score"], reverse=True)
+    valid = sorted(valid, key=lambda x: x["created"])
+    invalid = sorted(invalid, key=lambda x: x["created"])
 
     current_vp, recharge_time, recharge_class = account_information()
 
