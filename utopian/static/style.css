@@ -37,6 +37,7 @@ body {
   align-items: center;
   font-size: 2rem;
   min-width: 5rem;
+  padding-right: 2rem;
   height: 100%;
 }
 
@@ -117,6 +118,14 @@ body {
   justify-content: center;
   align-items: center;
   grid-template-columns: 1fr 5fr 1fr;
+  font-size: 1.4rem;
+}
+
+.moderator-content {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: 1fr 5fr auto;
   font-size: 1.4rem;
 }
 
@@ -226,7 +235,7 @@ a:hover {
 .header-buttons {
   display: grid;
   grid-column: 2;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 4fr 1fr 4fr;
   grid-gap: 2rem;
 }
 
@@ -253,12 +262,54 @@ a:hover {
   margin-right: 1rem;
 }
 
+.moderators-icon {
+  font-size: 4rem;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+}
+
+.weeks {
+  display: grid;
+  grid-column: 2;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 1600px) {
+  .weeks {
+    grid-template-columns: 1fr 1fr;
+  }
+  .wrapper {
+    grid-template-columns: 1fr 4fr 1fr;
+  }
+}
+
+@media only screen and (max-width: 1050px) {
+  .weeks {
+    grid-template-columns: 1fr;
+  }
+  .wrapper {
+    grid-template-columns: 1fr 5fr 1fr;
+  }
+  .moderators {
+    grid-template-columns: 1fr 5fr 1fr;
+  }
+}
+
 @media only screen and (max-width: 800px) {
   html {
     font-size: 50%;
   }
   .contributions {
     grid-template-columns: 1fr;
+    margin-bottom: 2rem;
+  }
+
+  .moderators {
     margin-bottom: 2rem;
   }
 
@@ -286,5 +337,14 @@ a:hover {
 @media only screen and (max-width: 500px) {
   html {
     font-size: 40%;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  html {
+    font-size: 30%;
+  }
+  author {
+    padding: none;
   }
 }

@@ -2,7 +2,7 @@
 {% set active_page = "points" %}
 {% block content %}
 <div class="statistics">
-  {{this_week}} - {{next_week}}
+  {{this_week}} to {{next_week}}
 </div>
 <div class="moderators">
   {% for moderator in moderators %}
@@ -10,7 +10,7 @@
       <div class="position position--{{loop.index}}">
         {{loop.index}}
       </div>
-      <div class="content">
+      <div class="moderator-content">
         <div class="author">
           <img class="author-avatar" src="https://steemitimages.com/u/{{moderator.account}}/avatar" alt="">
           <a href="https://steemit.com/@{{moderator.account}}">@{{moderator.account}}</a>
@@ -28,5 +28,20 @@
       {% endif %}
     </div>
   {% endfor %}
+</div>
+<div class="wrapper">
+  <div class="weeks">
+    {% for week in week_list %}
+      {% if week.active %}
+        <a href="/points/{{week.this_week}}" class="header__button header__button--active">
+          {{week.this_week}} to {{week.next_week}}
+        </a>
+      {% else %}
+        <a href="/points/{{week.this_week}}" class="header__button">
+          {{week.this_week}} to {{week.next_week}}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

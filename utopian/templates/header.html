@@ -1,24 +1,34 @@
 <header class="header">
-  {% if active_page != "points" %}
-    <div class="header-buttons">
-      {% if active_page == "index" %}
-      <a class="header__button header__button--active" href="/">
-        Feed
-      </a>
-      {% else %}
-      <a class="header__button" href="/">
-        Feed
-      </a>
-      {% endif %}
-      {% if active_page == "queue" %}
-      <a class="header__button header__button--active" href="/queue">
-        Queue
-      </a>
-      {% else %}
-      <a class="header__button" href="/queue">
-        Queue
-      </a>
-      {% endif %}
-    </div>
-  {% endif %}
+  <div class="header-buttons">
+    {% if active_page == "index" %}
+    <a class="header__button header__button--active" href="/">
+      Feed
+    </a>
+    {% else %}
+    <a class="header__button" href="/">
+      Feed
+    </a>
+    {% endif %}
+    
+    {% if active_page == "points" %}
+    <a href="/points" class="header__button header__button--active">
+      <i class="material-icons moderators-icon">people</i>
+    </a>
+    {% else %}
+    <a href="/points" class="header__button">
+      <i class="material-icons ">people</i>
+    </a>
+    {% endif %}
+
+
+    {% if active_page == "queue" %}
+    <a class="header__button header__button--active" href="/queue">
+      Queue
+    </a>
+    {% else %}
+    <a class="header__button" href="/queue">
+      Queue
+    </a>
+    {% endif %}
+  </div>
 </header>
