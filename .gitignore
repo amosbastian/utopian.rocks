@@ -23,5 +23,5 @@ test.html
 .vscode/
 node_modules/
 
-client_secret.json
+*.json
 *.log
