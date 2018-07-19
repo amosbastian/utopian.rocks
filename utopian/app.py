@@ -507,14 +507,17 @@ def update_vp(current_vp, updated, recharge_time):
     regenerated_vp = seconds * 10000 / 86400 / 5 / 100
 
     # Update recharge_time
-    recharge_time = parse(recharge_time)
-    recharge_time = timedelta(
-        hours=recharge_time.hour,
-        minutes=recharge_time.minute,
-        seconds=recharge_time.second)
-    recharge_time = recharge_time - timedelta(seconds=seconds)
-    if recharge_time < timedelta(seconds=1):
-        recharge_time = "0:00:00"
+    try:
+        recharge_time = parse(recharge_time)
+        recharge_time = timedelta(
+            hours=recharge_time.hour,
+            minutes=recharge_time.minute,
+            seconds=recharge_time.second)
+        recharge_time = recharge_time - timedelta(seconds=seconds)
+        if recharge_time < timedelta(seconds=1):
+            recharge_time = "0:00:00"
+    except ValueError:
+        pass
 
     current_vp += regenerated_vp
     current_vp = 100 if current_vp > 100 else f"{current_vp:.2f}"
