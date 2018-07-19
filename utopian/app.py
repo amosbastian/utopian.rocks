@@ -519,7 +519,7 @@ def update_vp(current_vp, updated, recharge_time):
     current_vp += regenerated_vp
     current_vp = 100 if current_vp > 100 else f"{current_vp:.2f}"
 
-    return (current_vp, str(recharge_time).split(".")[0])
+    return float(current_vp) - 0.01, str(recharge_time).split(".")[0]
 
 def account_information():
     accounts = DB.accounts
