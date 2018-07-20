@@ -210,7 +210,7 @@ def category_statistics(contributions):
             if contribution["status"] == "unvoted":
                 categories[category]["unvoted"] += 1
                 categories[category]["not_voted"] += 1
-            elif contribution["voted_on"]:
+            elif score > MIN_SCORE:
                 categories[category]["voted"] += 1
             else:
                 categories[category]["not_voted"] += 1
