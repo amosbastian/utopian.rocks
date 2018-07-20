@@ -221,7 +221,7 @@ def category_statistics(contributions):
             categories[category]["total_payout"] += total_payout
             categories[category]["utopian_total"].append(utopian_vote)
 
-            if score > 0:
+            if score > MIN_SCORE:
                 categories[category]["rewarded_contributors"].append(author)
 
     category_list = []
