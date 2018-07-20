@@ -27,6 +27,9 @@ def contribution(row, status):
     """
     Convert row to dictionary, only selecting values we want.
     """
+    if row[2] == "":
+        return
+
     # Check if contribution was staff picked
     if row[6].lower() == "yes":
         staff_picked = True
