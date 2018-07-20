@@ -254,6 +254,10 @@ a:hover {
   border-bottom: .5rem solid #70a2ff;
 }
 
+.header__button:hover {
+  background-color: rgb(194, 197, 201);
+}
+
 .author-avatar {
   display: grid;
   width: 3.5rem;

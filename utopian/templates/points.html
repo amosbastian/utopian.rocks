@@ -3,6 +3,9 @@
 {% block content %}
 <div class="statistics">
   {{this_week}} to {{next_week}}
+  <a href="/json/{{this_week}}" class="header__button" style="border-bottom: none;">
+    JSON
+  </a>
 </div>
 <div class="moderators">
   {% for moderator in moderators %}
