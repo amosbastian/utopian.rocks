@@ -592,13 +592,9 @@ def points(week):
 
     moderators = CLIENT.utopian.moderators
     moderator_data = []
-    for moderator in moderators.find():
-        try:
-            account = moderator["account"]
-        except KeyError:
-            continue
-
-        if moderator["supermoderator"]:
+    for account in data.keys():
+        moderator = moderators.find_one({"account": account})
+        if moderator and moderator["supermoderator"]:
             manager = True
         else:
             manager = False
