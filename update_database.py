@@ -1,51 +1,36 @@
-import gspread
+import constants
 import json
-import os
 from beem.account import Account
 from beem.amount import Amount
 from beem.comment import Comment
 from beem.vote import Vote
+from contribution import Contribution
 from datetime import datetime, date, timedelta
 from dateutil.parser import parse
-from oauth2client.service_account import ServiceAccountCredentials
-from pymongo import MongoClient
-
-
-CLIENT = MongoClient()
-DB = CLIENT.utempian
-
-DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-SCOPE = ["https://spreadsheets.google.com/feeds",
-         "https://www.googleapis.com/auth/drive"]
-CREDENTIALS = ServiceAccountCredentials.from_json_keyfile_name(
-    f"{DIR_PATH}/client_secret.json", SCOPE)
-GSPREAD_CLIENT = gspread.authorize(CREDENTIALS)
-SHEET = GSPREAD_CLIENT.open("Utopian Reviews")
 
 
 def contribution(row, status):
     """
     Convert row to dictionary, only selecting values we want.
     """
-    if row[2] == "":
+    contribution = Contribution(row)
+    url = contribution.url
+
+    if url == "":
         return
 
-    # Check if contribution was staff picked
-    if row[6].lower() == "yes":
+    if contribution.staff_pick.lower() == "yes":
         staff_picked = True
     else:
         staff_picked = False
 
-    # Try and get date, since some people don't enter it correctly
     try:
-        review_date = parse(row[1])
+        review_date = parse(contribution.review_date)
     except Exception:
         review_date = datetime(1970, 1, 1)
 
-    # If post > 7 days old don't check unless unreviewed
     if (datetime.now() - review_date).days > 7 and status != "unreviewed":
         return
-    url = row[2]
 
     total_payout = 0
 
@@ -67,13 +52,13 @@ def contribution(row, status):
     author = comment.author
 
     # Add status for unvoted and pending
-    if row[9] == "Unvoted":
+    if contribution.vote_status == "Unvoted":
         status = "unvoted"
-    elif row[9] == "Pending":
+    elif contribution.vote_status == "Pending":
         status = "pending"
 
     # Check if contribution was voted on
-    if row[9] == "Yes":
+    if contribution.vote_status == "Yes":
         voted_on = True
         try:
             utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
@@ -85,24 +70,24 @@ def contribution(row, status):
         utopian_vote = 0
 
     # Check for when contribution not reviewed
-    if row[5] == "":
+    if contribution.score == "":
         score = None
     else:
         try:
-            score = float(row[5])
+            score = float(contribution.score)
         except Exception:
             score = None
 
     # Create contribution dictionary and return it
     new_contribution = {
-        "moderator": row[0].strip(),
+        "moderator": contribution.moderator.strip(),
         "author": author,
         "review_date": review_date,
         "url": url,
-        "repository": row[3],
-        "category": row[4],
+        "repository": contribution.repository,
+        "category": contribution.category,
         "staff_picked": staff_picked,
-        "picked_by": row[8],
+        "picked_by": contribution.picked_by,
         "status": status,
         "score": score,
         "voted_on": voted_on,
@@ -117,6 +102,24 @@ def contribution(row, status):
     return new_contribution
 
 
+def get_reviewed():
+    """
+    Return all the rows in the most recent two review worksheets.
+    """
+    previous = constants.PREVIOUS_REVIEWED.get_all_values()
+    current = constants.CURRENT_REVIEWED.get_all_values()
+    reviewed = previous[1:] + current[1:]
+    return reviewed
+
+
+def get_unreviewed():
+    """
+    Return all the rows in the unreviewed worksheet.
+    """
+    unreviewed = constants.UNREVIEWED.get_all_values()
+    return unreviewed[1:]
+
+
 def update_posts():
     """
     Adds all reviewed and unreviewed contributions to the database.
@@ -125,18 +128,15 @@ def update_posts():
     unreviewed = []
 
     # Iterate over all worksheets in the spreadsheet
-    for worksheet in SHEET.worksheets():
-        if worksheet.title.startswith("Reviewed"):
-            reviewed += worksheet.get_all_values()[1:]
-        elif worksheet.title.startswith("Unreviewed"):
-            unreviewed += worksheet.get_all_values()[1:]
+    reviewed = get_reviewed()
+    unreviewed = get_unreviewed()
 
     # Convert row to dictionary
     reviewed = [contribution(x, "reviewed") for x in reviewed]
     unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
 
     # Lazy so drop database and replace
-    contributions = DB.contributions
+    contributions = constants.DB.contributions
 
     for post in reviewed + unreviewed:
         if post:
@@ -157,7 +157,7 @@ def update_account():
     else:
         recharge_class = "recharge--low"
 
-    accounts = DB.accounts
+    accounts = constants.DB.accounts
     accounts.replace_one(
         {"account": "utopian-io"},
         {
