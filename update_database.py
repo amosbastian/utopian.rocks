@@ -149,15 +149,12 @@ def update_account():
     recharge_time = account.get_recharge_time_str(99.75)
     recharge_timedelta = account.get_recharge_timedelta(99.75)
 
-    try:
-        if recharge_timedelta > timedelta(hours=1):
-            recharge_class = "recharge--high"
-        elif (recharge_timedelta < timedelta(hours=1) and
-            recharge_timedelta > timedelta(minutes=30)):
-            recharge_class = "recharge--average"
-        else:
-            recharge_class = "recharge--low"
-    except TypeError:
+    if recharge_timedelta > timedelta(hours=1):
+        recharge_class = "recharge--high"
+    elif (recharge_timedelta < timedelta(hours=1) and
+          recharge_timedelta > timedelta(minutes=30)):
+        recharge_class = "recharge--average"
+    else:
         recharge_class = "recharge--low"
 
     accounts = constants.DB.accounts
