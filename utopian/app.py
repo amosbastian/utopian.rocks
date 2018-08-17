@@ -8,6 +8,7 @@ from collections import Counter
 from datetime import datetime, timedelta, date
 from dateutil.parser import parse
 from flask import Flask, jsonify, render_template, abort
+from flask_cors import CORS
 from flask_restful import Resource, Api
 from pymongo import MongoClient
 from statistics import mean
@@ -32,6 +33,7 @@ LOGGER.addHandler(FH)
 CLIENT = MongoClient()
 DB = CLIENT.utempian
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 
