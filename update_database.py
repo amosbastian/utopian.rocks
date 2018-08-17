@@ -9,6 +9,14 @@ from datetime import datetime, date, timedelta
 from dateutil.parser import parse
 
 
+class User():
+    def __init__(self, row):
+        self.name = row[0]
+        self.ban_length = float(row[1])
+        self.ban_start = parse(row[2])
+        self.banned = row[3]
+
+
 def contribution(row, status):
     """
     Convert row to dictionary, only selecting values we want.
@@ -143,6 +151,26 @@ def update_posts():
             contributions.replace_one({"url": post["url"]}, post, True)
 
 
+def update_banned():
+    users = constants.DB.users
+
+    for user in constants.BANNED_USERS.get_all_values()[1:]:
+        try:
+            user = User(user)
+        except ValueError:
+            continue
+
+        banned_until = user.ban_start + timedelta(days=user.ban_length)
+        user.banned_until = banned_until
+
+        if user.banned == "Yes":
+            user.banned = True
+        else:
+            user.banned = False
+
+        users.update({"name": user.name}, user.__dict__, upsert=True)
+
+
 def update_account():
     account = Account("utopian-io")
     current_vp = account.get_voting_power()
@@ -173,6 +201,7 @@ def update_account():
 def main():
     update_posts()
     update_account()
+    update_banned()
 
 if __name__ == '__main__':
     main()
