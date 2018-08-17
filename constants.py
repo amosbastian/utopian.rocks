@@ -31,3 +31,5 @@ CURRENT_REVIEWED = SHEET.worksheet(TITLE_CURRENT)
 # Unreviewed
 TITLE_UNREVIEWED = f"Unreviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
 UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
+
+BANNED_USERS = SHEET.worksheet("Banned users")
