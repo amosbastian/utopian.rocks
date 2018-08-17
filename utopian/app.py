@@ -92,6 +92,22 @@ class ContributionResource(Resource):
         return jsonify(contributions)
 
 
+class BannedUsersResource(Resource):
+    """
+    Endpoint for banned users in the spreadsheet.
+    """
+    query_parameters = {
+        "name": fields.Str(),
+        "banned": fields.Bool()
+    }
+
+    @use_args(query_parameters)
+    def get(self, query_parameters):
+        banned_users = [json.loads(json_util.dumps(user))
+                        for user in DB.users.find(query_parameters)]
+        return jsonify(banned_users)
+
+
 def string_to_date(input):
     """
     Converts a given string to a date.
@@ -373,6 +389,7 @@ class WeeklyResource(Resource):
 
 
 api.add_resource(WeeklyResource, "/api/statistics/<string:date>")
+api.add_resource(BannedUsersResource, "/api/bannedUsers")
 api.add_resource(ContributionResource, "/api/posts")
 
 
@@ -526,13 +543,14 @@ def update_vp(current_vp, updated, recharge_time):
 
     return float(current_vp) - 0.01, str(recharge_time).split(".")[0]
 
+
 def account_information():
     accounts = DB.accounts
     account = accounts.find_one({"account": "utopian-io"})
     updated = account["updated"]
     current_vp, recharge_time = update_vp(
         account["current_vp"], updated, account["recharge_time"])
-    
+
     return (
         current_vp, recharge_time, account["recharge_class"])
 
@@ -577,7 +595,6 @@ def points(week):
         this_week = today - timedelta(days=offset)
     next_week = this_week + timedelta(days=7)
 
-
     week_list = []
     for week in weeks:
         until = parse(week).date() + timedelta(days=7)
@@ -618,6 +635,7 @@ def points(week):
     return render_template(
         "points.html", moderators=moderator_data, this_week=this_week,
         next_week=next_week, week_list=week_list)
+
 
 @app.context_processor
 def inject_last_updated():
