@@ -11,7 +11,7 @@ from dateutil.parser import parse
 
 class User():
     def __init__(self, row):
-        self.name = row[0]
+        self.name = row[0].rstrip()
         self.ban_length = float(row[1])
         self.ban_start = parse(row[2])
         self.banned = row[3]
