@@ -565,12 +565,14 @@ def queue():
     invalid = []
 
     for contribution in pending:
-        if (datetime.now() - timedelta(days=1)) > contribution["created"]:
-            valid.append(contribution)
-            contribution["valid_age"] = True
-        else:
-            invalid.append(contribution)
-            contribution["valid_age"] = False
+        valid.append(contribution)
+        contribution["valid_age"] = True
+        # if (datetime.now() - timedelta(days=1)) > contribution["created"]:
+        #     valid.append(contribution)
+        #     contribution["valid_age"] = True
+        # else:
+        #     invalid.append(contribution)
+        #     contribution["valid_age"] = False
 
     valid = sorted(valid, key=lambda x: x["created"])
     invalid = sorted(invalid, key=lambda x: x["created"])
