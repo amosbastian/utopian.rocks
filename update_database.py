@@ -200,10 +200,25 @@ def update_account():
     )
 
 
+def update_moderators():
+    """Update moderators who reviewed something in the last 2 weeks."""
+    reviewed = get_reviewed()
+    accounts = set([row[0] for row in reviewed])
+    moderators = constants.DB.moderators
+
+    for account in accounts:
+        if account.upper() not in ["BANNED", "IGNORED", "IGNORE",
+                                   "IRRELEVANT"]:
+            moderators.update(
+                {"account": account.lower()},
+                {"account": account.lower()}, upsert=True)
+
+
 def main():
     update_posts()
     update_account()
     update_banned()
+    update_moderators()
 
 if __name__ == '__main__':
     main()

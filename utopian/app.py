@@ -37,6 +37,12 @@ CORS(app)
 api = Api(app)
 
 
+@app.route("/api/moderators")
+def moderaors():
+    moderators = [moderator["account"] for moderator in DB.moderators.find()]
+    return jsonify(moderators)
+
+
 @app.route("/json/<json_file>")
 def rewards(json_file):
     """
