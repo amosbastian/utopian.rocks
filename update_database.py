@@ -177,7 +177,7 @@ def update_account():
     recharge_time = account.get_recharge_time_str(99.75)
     recharge_timedelta = account.get_recharge_timedelta(99.75)
 
-    if recharge_time == 0:
+    if recharge_time == 0 or recharge_timedelta == 0:
         recharge_class = "recharge--low"
     elif recharge_timedelta > timedelta(hours=1):
         recharge_class = "recharge--high"
