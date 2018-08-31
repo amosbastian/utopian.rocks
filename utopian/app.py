@@ -166,19 +166,24 @@ def moderator_statistics(contributions):
             moderator, {
                 "moderator": moderator,
                 "category": [],
-                "average_score": []
+                "average_score": [],
+                "average_without_0": []
             }
         )
 
         # Append scores and categories
         moderators[moderator]["average_score"].append(contribution["score"])
         moderators[moderator]["category"].append(contribution["category"])
+        if contribution["score"] > 0:
+            moderators[moderator]["average_without_0"].append(
+                contribution["score"])
 
     moderator_list = []
     for moderator, value in moderators.items():
         # Set new keys and append value to list
         value["category"] = Counter(value["category"]).most_common()
         value["average_score"] = average(value["average_score"])
+        value["average_without_0"] = average(value["average_without_0"])
         moderator_list.append(value)
 
     return {"moderators": moderator_list}
@@ -193,6 +198,7 @@ def category_statistics(contributions):
         "all", {
             "category": "all",
             "average_score": [],
+            "average_without_0": [],
             "voted": 0,
             "not_voted": 0,
             "unvoted": 0,
@@ -219,6 +225,7 @@ def category_statistics(contributions):
             category, {
                 "category": category,
                 "average_score": [],
+                "average_without_0": [],
                 "voted": 0,
                 "not_voted": 0,
                 "unvoted": 0,
@@ -245,6 +252,9 @@ def category_statistics(contributions):
             categories[category]["total_payout"] += total_payout
             categories[category]["utopian_total"].append(utopian_vote)
 
+            if score > 0:
+                categories[category]["average_without_0"].append(score)
+
             if score > MIN_SCORE:
                 categories[category]["rewarded_contributors"].append(author)
 
@@ -253,6 +263,7 @@ def category_statistics(contributions):
         # Set new keys and append value to list
         value["reviewed"] = value["voted"] + value["not_voted"]
         value["average_score"] = average(value["average_score"])
+        value["average_without_0"] = average(value["average_without_0"])
         value["moderators"] = Counter(value["moderators"]).most_common()
         value["rewarded_contributors"] = Counter(
             value["rewarded_contributors"]).most_common()
@@ -286,6 +297,7 @@ def project_statistics(contributions):
             project, {
                 "project": project,
                 "average_score": [],
+                "average_without_0": [],
                 "voted": 0,
                 "not_voted": 0,
                 "unvoted": 0,
@@ -316,11 +328,16 @@ def project_statistics(contributions):
         projects[project]["total_payout"] += contribution["total_payout"]
         projects[project]["utopian_total"].append(utopian_vote)
 
+        if contribution["score"] > 0:
+            projects[project]["average_without_0"].append(
+                contribution["score"])
+
     project_list = []
     for project, value in projects.items():
         # Set new keys and append value to list
         value["reviewed"] = value["voted"] + value["not_voted"]
         value["average_score"] = average(value["average_score"])
+        value["average_without_0"] = average(value["average_without_0"])
         value["average_payout"] = value["total_payout"] / value["reviewed"]
         value["moderators"] = Counter(value["moderators"]).most_common()
         value["pct_voted"] = percentage(value["reviewed"], value["voted"])
