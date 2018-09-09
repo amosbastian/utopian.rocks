@@ -607,61 +607,6 @@ def queue():
         recharge_time=recharge_time, recharge_class=recharge_class)
 
 
-@app.route("/points", defaults={"week": None})
-@app.route("/points/<week>")
-def points(week):
-    weeks = [f.split(".")[0] for f in os.listdir(f"{DIR_PATH}/static/") 
-             if f.endswith(".json")]
-    if week and week in weeks:
-        this_week = parse(week).date()
-    else:
-        today = date.today()
-        offset = (today.weekday() - 3) % 7
-        this_week = today - timedelta(days=offset)
-    next_week = this_week + timedelta(days=7)
-
-    week_list = []
-    for week in weeks:
-        until = parse(week).date() + timedelta(days=7)
-        active = True if str(week) == str(this_week) else False
-        week_list.append({
-            "this_week": week,
-            "next_week": until,
-            "active": active
-        })
-
-    week_list = sorted(week_list, key=lambda x: x["next_week"], reverse=True)
-    with open(f"{DIR_PATH}/static/{this_week}.json") as fp:
-        data = json.load(fp)
-
-    moderators = CLIENT.utopian.moderators
-    moderator_data = []
-    for account in data.keys():
-        moderator = moderators.find_one({"account": account})
-        if moderator and moderator["supermoderator"]:
-            manager = True
-        else:
-            manager = False
-
-        try:
-            points = data[account]
-        except KeyError:
-            points = 0
-
-        moderator_data.append({
-            "account": account,
-            "points": points,
-            "manager": manager
-        })
-
-    moderator_data = sorted(
-        moderator_data, key=lambda x: x["points"], reverse=True)
-
-    return render_template(
-        "points.html", moderators=moderator_data, this_week=this_week,
-        next_week=next_week, week_list=week_list)
-
-
 @app.context_processor
 def inject_last_updated():
     account = DB.accounts.find_one({"account": "utopian-io"})
