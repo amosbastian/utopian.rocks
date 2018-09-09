@@ -4,7 +4,7 @@
 <div class="contributions">
   {% for contribution in contributions %}
   <div class="contribution">
-    <div class="contribution__author">
+    <div class="contribution__author" title="@{{contribution.author}}">
       <a class="author-url" href="https://steemit.com/@{{contribution.author}}">
         <img class="contribution-avatar" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
       </a>
@@ -12,23 +12,16 @@
     <div class="contribution__body">
       <div class="body-half">
         <a href="{{contribution.url}}" class="contribution-url">
-          {{contribution.url}}
+          {{contribution.title}}
         </a>
       </div>
       <div class="body-half">
         <a href="{{contribution.repository}}" class="contribution-repository">
-          {{contribution.repository}}
+          {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
         <span class="contribution-submitted">
-          · submitted days ago
+          · submitted {{contribution.created|timeago}}
         </span>
-      </div>
-    </div>
-    <div class="contribution__status">
-      <div class="contribution__category">
-        <svg class="category-icon">
-          <use xlink:href="../static/img/sprite.svg#icon-notification"></use>
-        </svg>
       </div>
     </div>
     {% if "task" in contribution.category %}
@@ -42,6 +35,13 @@
       <svg class="category-icon">
         <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category}}"></use>
       </svg>
+    </div>
+    {% endif %}
+    {% if contribution.moderator %}
+    <div class="contribution__status contribution__status--under-review" title="under review">
+    </div>
+    {% else %}
+    <div class="contribution__status contribution__status--not-under-review" title="not under review">
     </div>
     {% endif %}
   </div>

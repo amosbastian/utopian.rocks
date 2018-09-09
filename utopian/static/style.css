@@ -10,18 +10,20 @@
   --color-contribution-url-hover: #0366d6;
   --color-contribution-repository: #586069;
   --color-link: #1e7be4;
-  --color-suggestions: #54d2a0;
+  --color-not-under-review: #FF4136;
+  --color-under-review: #2ECC40;
+  --color-ideas: #54d2a0;
   --color-development: #000;
   --color-bug-hunting: #d9534f;
   --color-translations: #ffce3d;
   --color-graphics: #f6a623;
   --color-analysis: #164265;
-  --color-visibility: #7ec2f3;
+  --color-social: #7ec2f3;
   --color-documentation: #b1b1b1;
   --color-tutorials: #782c51;
   --color-video-tutorials: #ec3324;
   --color-copywriting: teal;
-  --color-blogs: #0275d8;
+  --color-blog: #0275d8;
   --color-accepted: #2ecc71;
   --color-rejected: #e74c3c; }
 
@@ -69,7 +71,7 @@ body {
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: max-content max-content max-content;
   grid-gap: 1.5rem;
   align-items: center; }
   .header-center--link {
@@ -88,15 +90,15 @@ body {
   margin-top: 5rem; }
 
 .contributions > :first-child {
-  border-radius: .25rem .25rem 0 0;
+  border-radius: .25rem .0 0 0;
   border: 1px solid var(--color-contribution-border); }
 
 .contributions > :last-child {
-  border-radius: 0 0 .25rem .25rem; }
+  border-radius: 0 0 0 .25rem; }
 
 .contribution {
   display: grid;
-  grid-template-columns: 5rem 1fr 5rem 5rem;
+  grid-template-columns: 5rem 1fr 5rem .5rem;
   background-color: #ffffff;
   border-bottom: 1px solid var(--color-contribution-border);
   border-left: 1px solid var(--color-contribution-border);
@@ -104,9 +106,16 @@ body {
   height: 6.4rem;
   padding-left: .8rem; }
   .contribution__status {
+    cursor: pointer;
     display: grid;
     justify-content: center;
-    align-items: center; }
+    align-items: center;
+    border-left: 1px solid var(--color-contribution-border);
+    border-bottom: 1px solid var(--color-contribution-border); }
+  .contribution__status--under-review {
+    background-color: var(--color-under-review); }
+  .contribution__status--not-under-review {
+    background-color: var(--color-not-under-review); }
   .contribution__body {
     display: grid;
     padding-top: 1rem;
@@ -153,15 +162,102 @@ body {
   border-radius: 100%; }
 
 .contribution-submitted {
+  padding-left: .3rem;
   font-size: 1.2rem;
   color: var(--color-contribution-repository); }
 
 .category-icon {
   cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  fill: currentColor; }
+
+.status-icon {
+  cursor: pointer;
   width: 2rem;
-  height: 2rem; }
+  height: 2rem;
+  fill: currentColor; }
 
 .author-url {
   display: grid;
   justify-content: center;
   align-items: center; }
+
+.category--analysis {
+  color: var(--color-analysis); }
+
+.category--blog {
+  color: var(--color-blog); }
+
+.category--bug-hunting {
+  color: var(--color-bug-hunting); }
+
+.category--copywriting {
+  color: var(--color-copywriting); }
+
+.category--development {
+  color: var(--color-development); }
+
+.category--documentation {
+  color: var(--color-documentation); }
+
+.category--graphics {
+  color: var(--color-graphics); }
+
+.category--ideas {
+  color: var(--color-ideas); }
+
+.category--translations {
+  color: var(--color-translations); }
+
+.category--tutorials {
+  color: var(--color-tutorials); }
+
+.category--video-tutorials {
+  color: var(--color-video-tutorials); }
+
+.category--social {
+  color: var(--color-social); }
+
+.footer {
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  grid-column: center-start / center-end;
+  padding: 1.2rem 1.6rem;
+  border-top: 1px solid var(--color-grey-light-3);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 1.2rem; }
+  .footer__amosbastian {
+    display: flex;
+    justify-content: start;
+    align-items: center; }
+  .footer__link:link, .footer__link:visited {
+    text-decoration: none;
+    color: var(--color-link); }
+  .footer__image {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin-right: .5rem; }
+  .footer__github {
+    display: grid;
+    justify-content: center;
+    align-items: center; }
+  .footer__github-link:link, .footer__github-link:visited {
+    transition: all .3s ease;
+    outline: none;
+    text-decoration: none;
+    color: var(--color-grey-dark-3); }
+  .footer__github-link:hover {
+    color: var(--color-grey-dark-2); }
+  .footer__icon {
+    width: 2rem;
+    height: 2rem;
+    fill: currentColor; }
+  .footer__updated {
+    cursor: pointer;
+    display: grid;
+    justify-content: end;
+    align-items: center;
+    color: var(--color-link); }

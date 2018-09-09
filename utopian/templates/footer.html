@@ -1,11 +1,18 @@
-<div class="footer">
-  <div style="display: grid; justify-content: center;">
-    Last updated - {{last_updated}} UTC
-  </div>
-  <br>
-  <div style="display: grid; justify-content: center;">
-    <a href="https://steemit.com/@amosbastian" class="nav__link">
-      By @amosbastian with ❤
+<footer class="footer">
+  <div class="footer__amosbastian">
+    <img src="https://steemitimages.com/u/amosbastian/avatar" alt="" class="footer__image">
+    <a href="https://utopian.io/@amosbastian" class="footer__link">
+      @amosbastian
     </a>
   </div>
-</div>
+  <div class="footer__github">
+    <a href="https://github.com/amosbastian/utopian" class="footer__github-link">
+      <svg class="footer__icon">
+        <use xlink:href="../static/img/sprite.svg#icon-github"></use>
+      </svg>
+    </a>
+  </div>
+  <div class="footer__updated" title="last updated">
+    {{last_updated}} UTC
+  </div>
+</footer>

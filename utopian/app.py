@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import timeago
 from beem.comment import Comment
 from beem.account import Account
 from bson import json_util
@@ -35,6 +36,11 @@ DB = CLIENT.utempian
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+
+@app.template_filter("timeago")
+def time_ago(date):
+    return timeago.format(date)
 
 
 @app.route("/api/moderators")

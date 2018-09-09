@@ -18,7 +18,7 @@
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: max-content max-content max-content;
   grid-gap: 1.5rem;
   align-items: center;
 
