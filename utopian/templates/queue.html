@@ -2,7 +2,7 @@
 {% set active_page = "queue" %}
 {% block content %}
 <div class="contributions">
-  <div class="statistics">
+  <!-- <div class="statistics">
     Contributions: {{contributions|length}}
   </div>
   <div class="recharge">
@@ -14,7 +14,7 @@
       <p>Time until next vote: </p>
       <span class="{{recharge_class}}" id="time">{{recharge_time}}</span>
     </div>
-  </div>
+  </div> -->
   {% for contribution in contributions %}
   <div class="contribution">
     <div class="position position--{{loop.index}}">

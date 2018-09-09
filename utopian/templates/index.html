@@ -2,32 +2,48 @@
 {% set active_page = "index" %}
 {% block content %}
 <div class="contributions">
-  <div class="statistics">
-    Contributions: {{contributions|length}}
-  </div>
   {% for contribution in contributions %}
   <div class="contribution">
-    <div class="position position">
-      {{loop.index}}
+    <div class="contribution__author">
+      <a class="author-url" href="https://steemit.com/@{{contribution.author}}">
+        <img class="contribution-avatar" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
+      </a>
     </div>
-    <div class="content">
-      <div class="author">
-        <img class="author-avatar" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
-        <a href="https://steemit.com/@{{contribution.author}}">@{{contribution.author}}</a>
+    <div class="contribution__body">
+      <div class="body-half">
+        <a href="{{contribution.url}}" class="contribution-url">
+          {{contribution.url}}
+        </a>
       </div>
-      <div class="url">
-        <a href="{{contribution.url}}">{{contribution.url}}</a>
+      <div class="body-half">
+        <a href="{{contribution.repository}}" class="contribution-repository">
+          {{contribution.repository}}
+        </a>
+        <span class="contribution-submitted">
+          · submitted days ago
+        </span>
       </div>
-      {% if "task" in contribution.category %}
-      <div class="category category--{{contribution.category.split('task-')[1]}}">
-        {{contribution.category}}
-      </div>
-      {% else %}
-      <div class="category category--{{contribution.category}}">
-        {{contribution.category}}
-      </div>
-      {% endif %}
     </div>
+    <div class="contribution__status">
+      <div class="contribution__category">
+        <svg class="category-icon">
+          <use xlink:href="../static/img/sprite.svg#icon-notification"></use>
+        </svg>
+      </div>
+    </div>
+    {% if "task" in contribution.category %}
+    <div class="contribution__category category--{{contribution.category.split('task-')[1]}}" title="{{contribution.category}}">
+      <svg class="category-icon">
+        <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category.split('task-')[1]}}"></use>
+      </svg>
+    </div>
+    {% else %}
+    <div class="contribution__category category--{{contribution.category}}" title="{{contribution.category}}">
+      <svg class="category-icon">
+        <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category}}"></use>
+      </svg>
+    </div>
+    {% endif %}
   </div>
   {% endfor %}
 </div>

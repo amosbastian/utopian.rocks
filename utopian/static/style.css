@@ -1,16 +1,15 @@
 :root {
-  --color-primary: #8e44ad;
-  --color-primary-lighter: #d6b7e3;
-  --color-primary-light: #a562c1;
-  --color-primary-dark: #66317c;
   --color-grey-light-1: #faf9f9;
   --color-grey-light-2: #f4f2f2;
   --color-grey-light-3: #f0eeee;
   --color-grey-light-4: #ccc;
-  --color-grey-dark-1: #24292f;
-  --color-grey-dark-2: #777;
-  --color-grey-dark-3: #999;
-  --color-link: #0095dd;
+  --color-header: #24292f;
+  --color-background: #f6f8fa;
+  --color-contribution-border: #e1e4e8;
+  --color-contribution-url: #24292e;
+  --color-contribution-url-hover: #0366d6;
+  --color-contribution-repository: #586069;
+  --color-link: #1e7be4;
   --color-suggestions: #54d2a0;
   --color-development: #000;
   --color-bug-hunting: #d9534f;
@@ -42,12 +41,14 @@ html {
 body {
   font-family: 'Lato', sans-serif;
   font-weight: 400;
-  line-height: 1.6; }
+  line-height: 1.6;
+  outline: none; }
 
 .container {
   display: grid;
   grid-template-rows: min-content 1fr min-content;
-  grid-template-columns: [sidebar-start] 16rem [sidebar-end full-start] minmax(6rem, 1fr) [center-start] repeat(8, [col-start] minmax(min-content, 14rem) [col-end]) [center-end] minmax(6rem, 1fr) [full-end]; }
+  grid-template-columns: [full-start] 3fr [center-start] 7.5fr [center-end] 3fr [full-end];
+  background-color: var(--color-background); }
 
 .container-div {
   grid-column: full-start / full-end;
@@ -56,17 +57,111 @@ body {
   padding: 2rem 3rem; }
 
 .header {
-  background-color: var(--color-grey-dark-1);
+  background-color: var(--color-header);
   grid-column: full-start / full-end;
   display: grid;
   grid-template-columns: [header-start] minmax(6rem, 1fr) [header-center-start] 3fr [header-center-end] minmax(6rem, 1fr) [header-end];
   padding: 1.25rem 2rem;
   color: var(--color-grey-light-1);
-  font-size: 2rem; }
+  font-size: 2rem;
+  height: 6rem; }
 
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: min-content min-content;
+  grid-template-columns: max-content max-content;
   grid-gap: 1.5rem;
+  align-items: center; }
+  .header-center--link {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.4rem;
+    line-height: 2.1rem;
+    color: var(--color-grey-light-1);
+    display: inline-block; }
+  .header-center--link:hover {
+    color: var(--color-grey-light-4); }
+
+.contributions {
+  display: grid;
+  grid-column: center-start / center-end;
+  margin-top: 5rem; }
+
+.contributions > :first-child {
+  border-radius: .25rem .25rem 0 0;
+  border: 1px solid var(--color-contribution-border); }
+
+.contributions > :last-child {
+  border-radius: 0 0 .25rem .25rem; }
+
+.contribution {
+  display: grid;
+  grid-template-columns: 5rem 1fr 5rem 5rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-contribution-border);
+  border-left: 1px solid var(--color-contribution-border);
+  border-right: 1px solid var(--color-contribution-border);
+  height: 6.4rem;
+  padding-left: .8rem; }
+  .contribution__status {
+    display: grid;
+    justify-content: center;
+    align-items: center; }
+  .contribution__body {
+    display: grid;
+    padding-top: 1rem;
+    padding-left: .8rem;
+    padding-bottom: 1rem;
+    grid-gap: .5rem;
+    height: inherit;
+    grid-template-rows: 1fr 1fr; }
+  .contribution__author {
+    display: grid;
+    justify-content: center;
+    align-items: center; }
+  .contribution__category {
+    display: grid;
+    justify-content: center;
+    align-items: center; }
+
+.body-half {
+  display: flex;
+  align-items: center; }
+
+.contribution-url:link,
+.contribution-url:visited {
+  color: var(--color-contribution-url);
+  text-decoration: none;
+  line-height: 1.5;
+  font-weight: 600;
+  font-size: 1.4rem; }
+
+.contribution-repository:link,
+.contribution-repository:visited {
+  color: var(--color-link);
+  text-decoration: none;
+  font-size: 1.2rem; }
+
+.contribution-url:hover,
+.contribution-repository:hover {
+  color: var(--color-contribution-url-hover);
+  text-decoration: underline; }
+
+.contribution-avatar {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 100%; }
+
+.contribution-submitted {
+  font-size: 1.2rem;
+  color: var(--color-contribution-repository); }
+
+.category-icon {
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem; }
+
+.author-url {
+  display: grid;
+  justify-content: center;
   align-items: center; }
