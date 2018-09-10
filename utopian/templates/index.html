@@ -13,7 +13,7 @@
   {% for contribution in contributions %}
   <div class="contribution">
     <div class="contribution__author--queue" title="@{{contribution.author}}">
-      <a class="author-url" href="https://steemit.com/@{{contribution.author}}">
+      <a class="author-url" href="https://steemit.com/@{{contribution.author}}" target="_blank">
         <div class="contribution-avatar">
           <img class="contribution-avatar--image" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
         </div>
@@ -21,13 +21,13 @@
     </div>
     <div class="contribution__body">
       <div class="body-half">
-        <a href="{{contribution.url}}" class="contribution-url">
+        <a href="{{contribution.url}}" class="contribution-url" target="_blank">
           {{contribution.title}}
         </a>
       </div>
       <div class="body-half">
         {% if contribution.repository %}
-        <a href="{{contribution.repository}}" class="contribution-repository">
+        <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
         <span class="contribution-submitted">
