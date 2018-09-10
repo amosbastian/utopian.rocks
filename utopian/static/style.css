@@ -83,7 +83,7 @@ body {
   grid-template-columns: max-content max-content max-content;
   grid-gap: 1.5rem;
   align-items: center; }
-  .header-center--link {
+  .header-center--link:link, .header-center--link:visited {
     text-decoration: none;
     font-weight: 600;
     font-size: 1.4rem;
@@ -92,6 +92,8 @@ body {
     display: inline-block; }
   .header-center--link:hover {
     color: var(--color-grey-light-4); }
+  .header-center--link--active {
+    color: var(--color-grey-light-4) !important; }
 
 .contributions {
   display: grid;

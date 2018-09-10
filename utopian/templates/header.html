@@ -5,12 +5,24 @@
     </div>
   </span>
   <div class="header-center">
+    {% if active_page == "index" %}
+    <a href="/" class="header-center--link header-center--link--active">
+      Waiting for review
+    </a>
+    {% else %}
     <a href="/" class="header-center--link">
       Waiting for review
     </a>
+    {% endif %}
+    {% if active_page == "queue" %}
+    <a href="/queue" class="header-center--link header-center--link--active">
+      Waiting for upvote
+    </a>
+    {% else %}
     <a href="/queue" class="header-center--link">
       Waiting for upvote
     </a>
+    {% endif %}
     <a href="https://github.com/amosbastian/utopian.rocks/blob/master/FAQ.md" class="header-center--link">
       FAQ
     </a>
