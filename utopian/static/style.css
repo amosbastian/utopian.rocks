@@ -183,6 +183,7 @@ body {
   border-radius: 100%; }
 
 .contribution-submitted {
+  cursor: pointer;
   padding-left: .3rem;
   font-size: 1.2rem;
   color: var(--color-contribution-repository); }

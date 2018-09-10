@@ -47,12 +47,12 @@
         <a href="{{contribution.repository}}" class="contribution-repository">
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
-        <span class="contribution-submitted">
-          · submitted {{contribution.created|timeago}}
+        <span class="contribution-submitted" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
+          · will be upvoted {{contribution.vote_time|timeago}}
         </span>
         {% else %}
-        <span class="contribution-submitted contribution-submitted--nopadding">
-          submitted {{contribution.created|timeago}}
+        <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
+          will be upvoted {{contribution.vote_time|timeago}}
         </span>
         {% endif %}
       </div>

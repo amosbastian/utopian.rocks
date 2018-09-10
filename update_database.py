@@ -216,10 +216,10 @@ def update_moderators():
 
 
 def main():
-    # update_posts()
+    update_posts()
     update_account()
-    # update_banned()
-    # update_moderators()
+    update_banned()
+    update_moderators()
 
 if __name__ == '__main__':
     main()

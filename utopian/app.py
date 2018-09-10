@@ -589,6 +589,39 @@ def account_information():
         current_vp, recharge_time, account["recharge_class"])
 
 
+MAX_VOTE = {
+    "ideas": 20.0,
+    "development": 55.0,
+    "bug-hunting": 13.0,
+    "translations": 35.0,
+    "graphics": 40.0,
+    "analysis": 45.0,
+    "social": 30.0,
+    "documentation": 30.0,
+    "tutorials": 30.0,
+    "video-tutorials": 35.0,
+    "copywriting": 30.0,
+    "blog": 30.0,
+}
+MAX_TASK_REQUEST = 6.0
+EXP_POWER = 2.1
+
+
+def exponential_vote(score, category):
+    """Calculates the exponential vote for the bot."""
+    try:
+        max_vote = MAX_VOTE[category]
+    except:
+        max_vote = MAX_TASK_REQUEST
+
+    power = EXP_POWER
+    weight = pow(
+        score / 100.0,
+        power - (score / 100.0 * (power - 1.0))) * max_vote
+
+    return weight
+
+
 @app.route("/queue")
 def queue():
     contributions = DB.contributions
@@ -612,6 +645,21 @@ def queue():
     invalid = sorted(invalid, key=lambda x: x["created"])
 
     current_vp, recharge_time, recharge_class = account_information()
+
+    for i, contribution in enumerate((valid + invalid)):
+        if i == 0:
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            vote_time = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
+            contribution["vote_time"] = vote_time
+            continue
+        score = contribution["score"]
+        category = contribution["category"]
+        missing_vp = 2 * exponential_vote(score, category) / 100.0
+        recharge_seconds = missing_vp * 100 * 432000 / 10000
+        vote_time = vote_time + timedelta(seconds=recharge_seconds)
+        contribution["vote_time"] = vote_time
 
     return render_template(
         "queue.html", contributions=(valid + invalid), current_vp=current_vp,
