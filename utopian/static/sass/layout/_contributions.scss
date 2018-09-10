@@ -106,7 +106,14 @@
 .contribution-avatar {
   height: 3rem;
   width: 3rem;
-  border-radius: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+
+  &--image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .contribution-submitted {
