@@ -43,12 +43,18 @@
         </a>
       </div>
       <div class="body-half">
+        {% if contribution.repository %}
         <a href="{{contribution.repository}}" class="contribution-repository">
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
         <span class="contribution-submitted">
           · submitted {{contribution.created|timeago}}
         </span>
+        {% else %}
+        <span class="contribution-submitted contribution-submitted--nopadding">
+          submitted {{contribution.created|timeago}}
+        </span>
+        {% endif %}
       </div>
     </div>
     {% if "task" in contribution.category %}
