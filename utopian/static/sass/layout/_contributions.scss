@@ -149,6 +149,9 @@
   grid-template-columns: repeat(3, max-content);
   font-size: 1.6rem;
   background-color: var(--color-background);
+  &--singular {
+    grid-template-columns: max-content;
+  }
 }
 
 .statistics-element {
