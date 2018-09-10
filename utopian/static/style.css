@@ -53,6 +53,10 @@ body {
   grid-template-columns: [full-start] 3fr [center-start] 7.5fr [center-end] 3fr [full-end];
   background-color: var(--color-background); }
 
+@media screen and (max-width: 420px) {
+  html {
+    font-size: 30%; } }
+
 .container-div {
   grid-column: full-start / full-end;
   grid-row: 2 / -2;
@@ -86,11 +90,12 @@ body {
   grid-column: header-center-start / header-center-end;
   grid-template-columns: max-content max-content max-content;
   grid-gap: 1.5rem;
-  align-items: center; }
+  align-items: center;
+  font-size: 1.4rem; }
   .header-center--link:link, .header-center--link:visited {
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.4rem;
+    font-size: inherit;
     line-height: 2.1rem;
     color: var(--color-grey-light-1);
     display: inline-block; }
@@ -98,6 +103,54 @@ body {
     color: var(--color-grey-light-4); }
   .header-center--link--active {
     color: var(--color-grey-light-4) !important; }
+
+@media screen and (max-width: 1024px) {
+  .header {
+    height: 12rem; }
+  .header-center {
+    font-size: 2.4rem; }
+  .header-center {
+    grid-gap: 3rem; }
+  .header-image {
+    margin-left: 4rem; }
+    .header-image > a {
+      height: 9rem;
+      width: 9rem; }
+      .header-image > a > img {
+        height: 9rem;
+        width: 9rem; } }
+
+@media screen and (max-width: 768px) {
+  .header {
+    height: 24rem; }
+  .header-center {
+    font-size: 4.4rem; }
+  .header-center {
+    grid-gap: 6rem; }
+  .header-image {
+    margin-left: 8rem; }
+    .header-image > a {
+      height: 18rem;
+      width: 18rem; }
+      .header-image > a > img {
+        height: 18rem;
+        width: 18rem; } }
+
+@media screen and (max-width: 420px) {
+  .header {
+    height: 24rem; }
+  .header-center {
+    font-size: 6rem; }
+  .header-center {
+    grid-gap: 6rem; }
+  .header-image {
+    margin-left: 8rem; }
+    .header-image > a {
+      height: 18rem;
+      width: 18rem; }
+      .header-image > a > img {
+        height: 18rem;
+        width: 18rem; } }
 
 .contributions {
   display: grid;
@@ -164,13 +217,19 @@ body {
   text-decoration: none;
   line-height: 1.5;
   font-weight: 600;
-  font-size: 1.4rem; }
+  font-size: 1.4rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden; }
 
 .contribution-repository:link,
 .contribution-repository:visited {
   color: var(--color-link);
   text-decoration: none;
-  font-size: 1.2rem; }
+  font-size: 1.2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden; }
 
 .contribution-url:hover,
 .contribution-repository:hover {
@@ -239,6 +298,111 @@ body {
   margin-bottom: .35rem;
   cursor: pointer; }
 
+@media screen and (max-width: 1024px) {
+  .contribution-repository:link,
+  .contribution-repository:visited {
+    font-size: 2rem; }
+  .contribution-url:link,
+  .contribution-url:visited {
+    font-size: 2.4rem; }
+  .contribution-avatar {
+    height: 6rem;
+    width: 6rem;
+    margin-left: 6rem; }
+  .contribution {
+    height: 12rem;
+    grid-gap: 1rem; }
+    .contribution__body {
+      padding-left: 6rem; }
+  .category-icon {
+    width: 5rem;
+    height: 5rem;
+    margin-right: 6rem; }
+  .contribution-submitted {
+    font-size: 2rem; }
+  .statistics {
+    justify-content: center;
+    grid-gap: 4rem;
+    font-size: 3rem; }
+  .statistics-element {
+    grid-gap: 1rem; }
+  .contribution-header-icon {
+    width: 3rem;
+    height: 3rem;
+    fill: currentColor; } }
+
+@media screen and (max-width: 768px) {
+  .contribution-repository:link,
+  .contribution-repository:visited {
+    font-size: 4rem; }
+  .contribution-url:link,
+  .contribution-url:visited {
+    max-width: 220rem;
+    font-size: 4.4rem; }
+  .contribution-avatar {
+    height: 12rem;
+    width: 12rem;
+    margin-left: 12rem; }
+  .contribution {
+    height: 24rem;
+    grid-gap: 2rem; }
+    .contribution__body {
+      padding-left: 12rem;
+      padding-right: 10rem; }
+  .category-icon {
+    width: 10rem;
+    height: 10rem;
+    margin-right: 8rem; }
+  .contribution-submitted {
+    font-size: 4rem; }
+  .statistics {
+    justify-content: center;
+    grid-gap: 8rem;
+    font-size: 6rem; }
+  .statistics-element {
+    grid-gap: 2rem; }
+  .contribution-header-icon {
+    width: 6rem;
+    height: 6rem;
+    fill: currentColor; } }
+
+@media screen and (max-width: 420px) {
+  .contribution-repository:link,
+  .contribution-repository:visited {
+    font-size: 6rem;
+    max-width: 80rem; }
+  .contribution-url:link,
+  .contribution-url:visited {
+    font-size: 8rem;
+    max-width: 120rem; }
+  .contribution-avatar {
+    height: 18rem;
+    width: 18rem;
+    margin-left: 18rem; }
+  .contribution {
+    height: 36rem;
+    grid-gap: 4rem; }
+    .contribution__body {
+      grid-gap: 0rem;
+      padding-left: 18rem;
+      padding-right: 10rem; }
+  .category-icon {
+    width: 12rem;
+    height: 12rem;
+    margin-right: 12rem; }
+  .contribution-submitted {
+    font-size: 5rem; }
+  .statistics {
+    justify-content: center;
+    grid-gap: 16rem;
+    font-size: 12rem; }
+  .statistics-element {
+    grid-gap: 4rem; }
+  .contribution-header-icon {
+    width: 6rem;
+    height: 6rem;
+    fill: currentColor; } }
+
 .footer {
   margin-top: 5rem;
   margin-bottom: 2rem;
@@ -281,6 +445,45 @@ body {
     justify-content: end;
     align-items: center;
     color: var(--color-link); }
+
+@media screen and (max-width: 1024px) {
+  .footer {
+    padding-left: 8rem;
+    padding-right: 8rem;
+    font-size: 3rem; }
+    .footer__icon {
+      width: 3.5rem;
+      height: 3.5rem; }
+    .footer__image {
+      width: 3.5rem;
+      height: 3.5rem;
+      margin-right: 2rem; } }
+
+@media screen and (max-width: 768px) {
+  .footer {
+    padding-left: 12rem;
+    padding-right: 12rem;
+    font-size: 4.5rem; }
+    .footer__icon {
+      width: 5rem;
+      height: 5rem; }
+    .footer__image {
+      width: 5rem;
+      height: 5rem;
+      margin-right: 2rem; } }
+
+@media screen and (max-width: 420px) {
+  .footer {
+    padding-left: 18rem;
+    padding-right: 18rem;
+    font-size: 7rem; }
+    .footer__icon {
+      width: 8rem;
+      height: 8rem; }
+    .footer__image {
+      width: 8rem;
+      height: 8rem;
+      margin-right: 2rem; } }
 
 .category--analysis {
   color: var(--color-analysis); }

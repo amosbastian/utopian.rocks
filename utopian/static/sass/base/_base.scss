@@ -68,3 +68,9 @@ body {
     [full-end];
   background-color: var(--color-background);
 }
+
+@media screen and (max-width: 420px) {
+  html {
+    font-size: 30%;
+  }
+}
