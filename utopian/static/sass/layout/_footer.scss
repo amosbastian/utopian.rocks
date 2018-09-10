@@ -1,41 +1,118 @@
 .footer {
-  font-size: 1.4rem;
-  background-color: var(--color-grey-light-2);
-  grid-column: full-start / full-end;
-  padding: 1.5rem;
-  border-top: 1px solid var(--color-grey-dark-3);
-}
-
-.nav {
-  font-size: inherit;
-  list-style: none;
-
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  grid-column: center-start / center-end;
+  padding: 1.2rem 1.6rem;
+  border-top: 1px solid var(--color-grey-light-3);
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-gap: 1rem;
-  justify-content: center;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 1.2rem;
+
+  &__amosbastian {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+  }
 
   &__link:link,
   &__link:visited {
-    color: var(--color-grey-dark-1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     text-decoration: none;
-
-    transition: all .2s;
+    color: var(--color-link);
   }
 
-  &__link:hover,
-  &__link:active {
-    transform: translateY(-.5rem);
+  &__image {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin-right: .5rem;
+  }
+
+  &__github {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__github-link:link,
+  &__github-link:visited {
+    transition: all .3s ease;
+    outline: none;
+    text-decoration: none;
+    color: var(--color-grey-dark-3);
+  }
+
+  &__github-link:hover {
+    color: var(--color-grey-dark-2);
   }
 
   &__icon {
-    width: 1.75rem;
-    height: 1.75rem;
-    margin-right: .3rem;
+    width: 2rem;
+    height: 2rem;
     fill: currentColor;
+  }
+
+  &__updated {
+    cursor: pointer;
+    display: grid;
+    justify-content: end;
+    align-items: center;
+    color: var(--color-link);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .footer {
+    padding-left: 8rem;
+    padding-right: 8rem;
+    font-size: 3rem;
+
+    &__icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    &__image {
+      width: 3.5rem;
+      height: 3.5rem;
+      margin-right: 2rem;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .footer {
+    padding-left: 12rem;
+    padding-right: 12rem;
+    font-size: 4.5rem;
+
+    &__icon {
+      width: 5rem;
+      height: 5rem;
+    }
+
+    &__image {
+      width: 5rem;
+      height: 5rem;
+      margin-right: 2rem;
+    }
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .footer {
+    padding-left: 18rem;
+    padding-right: 18rem;
+    font-size: 7rem;
+
+    &__icon {
+      width: 8rem;
+      height: 8rem;
+    }
+
+    &__image {
+      width: 8rem;
+      height: 8rem;
+      margin-right: 2rem;
+    }
   }
 }

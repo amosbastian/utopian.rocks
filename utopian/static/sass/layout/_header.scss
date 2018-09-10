@@ -1,9 +1,132 @@
 .header {
-  background-color: var(--color-grey-light-1);
-  grid-column: 1 / full-end;
-
-  padding: .75rem;
+  background-color: var(--color-header);
+  grid-column: full-start / full-end;
+  display: grid;
+  grid-template-columns: [header-start]
+    3fr
+    [header-center-start]
+    7.5fr
+    [header-center-end]
+    3fr 
+    [header-end];
+  color: var(--color-grey-light-1);
   font-size: 2rem;
-  font-weight: 700;
-  border-bottom: 1px solid var(--color-grey-dark-3);
+  height: 6rem;
+}
+
+.header-image {
+  display: grid;
+  height: 100%;
+  margin-left: 2rem;
+  align-items: center;
+
+  & > a {
+    display: inline-block;
+    height: 4.5rem;
+    width: 4.5rem;
+
+    & > img {
+      height: 4.5rem;
+      width: 4.5rem;
+    }
+  }
+}
+
+.header-center {
+  display: grid;
+  grid-column: header-center-start / header-center-end;
+  grid-template-columns: max-content max-content max-content;
+  grid-gap: 1.5rem;
+  align-items: center;
+  font-size: 1.4rem;
+  &--link:link,
+  &--link:visited {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: inherit;
+    line-height: 2.1rem;
+    color: var(--color-grey-light-1);
+    display: inline-block;
+  }
+
+  &--link:hover {
+    color: var(--color-grey-light-4);
+  }
+
+  &--link--active {
+    color: var(--color-grey-light-4) !important;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .header {
+    height: 12rem;
+  }
+  .header-center {
+    font-size: 2.4rem;
+  }
+  .header-center {
+    grid-gap: 3rem;
+  }
+
+  .header-image {
+    margin-left: 4rem;
+    & > a {
+      height: 9rem;
+      width: 9rem;
+  
+      & > img {
+        height: 9rem;
+        width: 9rem;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    height: 24rem;
+  }
+  .header-center {
+    font-size: 4.4rem;
+  }
+  .header-center {
+    grid-gap: 6rem;
+  }
+  .header-image {
+    margin-left: 8rem;
+    & > a {
+      height: 18rem;
+      width: 18rem;
+  
+      & > img {
+        height: 18rem;
+        width: 18rem;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .header {
+    height: 24rem;
+  }
+  .header-center {
+    font-size: 6rem;
+  }
+  .header-center {
+    grid-gap: 6rem;
+  }
+  .header-image {
+    margin-left: 8rem;
+    & > a {
+      height: 18rem;
+      width: 18rem;
+  
+      & > img {
+        height: 18rem;
+        width: 18rem;
+      }
+    }
+  }
 }

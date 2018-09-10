@@ -4,19 +4,22 @@
   "description": "A web application showing additional information about Utopian.io.",
   "main": "index.js",
   "scripts": {
-    "watch:sass": "node-sass utopian/static/sass/main.scss utopian/static/style.css -w"
+    "watch:sass": "node-sass utopian/static/sass/main.scss utopian/static/style.css -w",
+    "gunicorn": "gunicorn wsgi:app",
+    "start": "npm-run-all --parallel gunicorn watch:sass"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/amosbastian/utopian.git"
+    "url": "git+https://github.com/amosbastian/utopian.rocks.git"
   },
   "author": "Amos Bastian",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/amosbastian/utopian/issues"
+    "url": "https://github.com/amosbastian/utopian.rocks/issues"
   },
-  "homepage": "https://github.com/amosbastian/utopian#readme",
+  "homepage": "https://github.com/amosbastian/utopian.rocks#readme",
   "devDependencies": {
-    "node-sass": "^4.8.3"
+    "node-sass": "^4.8.3",
+    "npm-run-all": "^4.1.2"
   }
 }

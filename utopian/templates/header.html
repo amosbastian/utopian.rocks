@@ -1,34 +1,32 @@
 <header class="header">
-  <div class="header-buttons">
+  <span>
+    <div class="header-image">
+      <a href="/">
+        <img src="{{ url_for('static', filename='utopian_mascot.png') }}" alt="Utopian.rocks">
+      </a>
+    </div>
+  </span>
+  <div class="header-center">
     {% if active_page == "index" %}
-    <a class="header__button header__button--active" href="/">
+    <a href="/" class="header-center--link header-center--link--active">
       Waiting for review
     </a>
     {% else %}
-    <a class="header__button" href="/">
+    <a href="/" class="header-center--link">
       Waiting for review
     </a>
     {% endif %}
-    
-    {% if active_page == "points" %}
-    <a href="/points" class="header__button header__button--active">
-      <i class="material-icons moderators-icon">people</i>
-    </a>
-    {% else %}
-    <a href="/points" class="header__button">
-      <i class="material-icons ">people</i>
-    </a>
-    {% endif %}
-
-
     {% if active_page == "queue" %}
-    <a class="header__button header__button--active" href="/queue">
+    <a href="/queue" class="header-center--link header-center--link--active">
       Waiting for upvote
     </a>
     {% else %}
-    <a class="header__button" href="/queue">
+    <a href="/queue" class="header-center--link">
       Waiting for upvote
     </a>
     {% endif %}
+    <a href="https://github.com/amosbastian/utopian.rocks/blob/master/FAQ.md" class="header-center--link">
+      FAQ
+    </a>
   </div>
 </header>

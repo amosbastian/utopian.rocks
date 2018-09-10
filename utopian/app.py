@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import timeago
 from beem.comment import Comment
 from beem.account import Account
 from bson import json_util
@@ -35,6 +36,16 @@ DB = CLIENT.utempian
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+
+@app.template_filter("timeago")
+def time_ago(date):
+    return timeago.format(date)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 
 @app.route("/api/moderators")
@@ -578,6 +589,39 @@ def account_information():
         current_vp, recharge_time, account["recharge_class"])
 
 
+MAX_VOTE = {
+    "ideas": 20.0,
+    "development": 55.0,
+    "bug-hunting": 13.0,
+    "translations": 35.0,
+    "graphics": 40.0,
+    "analysis": 45.0,
+    "social": 30.0,
+    "documentation": 30.0,
+    "tutorials": 30.0,
+    "video-tutorials": 35.0,
+    "copywriting": 30.0,
+    "blog": 30.0,
+}
+MAX_TASK_REQUEST = 6.0
+EXP_POWER = 2.1
+
+
+def exponential_vote(score, category):
+    """Calculates the exponential vote for the bot."""
+    try:
+        max_vote = MAX_VOTE[category]
+    except:
+        max_vote = MAX_TASK_REQUEST
+
+    power = EXP_POWER
+    weight = pow(
+        score / 100.0,
+        power - (score / 100.0 * (power - 1.0))) * max_vote
+
+    return weight
+
+
 @app.route("/queue")
 def queue():
     contributions = DB.contributions
@@ -602,64 +646,24 @@ def queue():
 
     current_vp, recharge_time, recharge_class = account_information()
 
+    for i, contribution in enumerate((valid + invalid)):
+        if i == 0:
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            vote_time = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
+            contribution["vote_time"] = vote_time
+            continue
+        score = contribution["score"]
+        category = contribution["category"]
+        missing_vp = 2 * exponential_vote(score, category) / 100.0
+        recharge_seconds = missing_vp * 100 * 432000 / 10000
+        vote_time = vote_time + timedelta(seconds=recharge_seconds)
+        contribution["vote_time"] = vote_time
+
     return render_template(
         "queue.html", contributions=(valid + invalid), current_vp=current_vp,
         recharge_time=recharge_time, recharge_class=recharge_class)
-
-
-@app.route("/points", defaults={"week": None})
-@app.route("/points/<week>")
-def points(week):
-    weeks = [f.split(".")[0] for f in os.listdir(f"{DIR_PATH}/static/") 
-             if f.endswith(".json")]
-    if week and week in weeks:
-        this_week = parse(week).date()
-    else:
-        today = date.today()
-        offset = (today.weekday() - 3) % 7
-        this_week = today - timedelta(days=offset)
-    next_week = this_week + timedelta(days=7)
-
-    week_list = []
-    for week in weeks:
-        until = parse(week).date() + timedelta(days=7)
-        active = True if str(week) == str(this_week) else False
-        week_list.append({
-            "this_week": week,
-            "next_week": until,
-            "active": active
-        })
-
-    week_list = sorted(week_list, key=lambda x: x["next_week"], reverse=True)
-    with open(f"{DIR_PATH}/static/{this_week}.json") as fp:
-        data = json.load(fp)
-
-    moderators = CLIENT.utopian.moderators
-    moderator_data = []
-    for account in data.keys():
-        moderator = moderators.find_one({"account": account})
-        if moderator and moderator["supermoderator"]:
-            manager = True
-        else:
-            manager = False
-
-        try:
-            points = data[account]
-        except KeyError:
-            points = 0
-
-        moderator_data.append({
-            "account": account,
-            "points": points,
-            "manager": manager
-        })
-
-    moderator_data = sorted(
-        moderator_data, key=lambda x: x["points"], reverse=True)
-
-    return render_template(
-        "points.html", moderators=moderator_data, this_week=this_week,
-        next_week=next_week, week_list=week_list)
 
 
 @app.context_processor
