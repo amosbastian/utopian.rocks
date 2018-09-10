@@ -20,9 +20,15 @@
   margin-left: 2rem;
   align-items: center;
 
-  & > img {
+  & > a {
+    display: inline-block;
     height: 4.5rem;
     width: 4.5rem;
+
+    & > img {
+      height: 4.5rem;
+      width: 4.5rem;
+    }
   }
 }
 

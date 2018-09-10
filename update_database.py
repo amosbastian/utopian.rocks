@@ -188,7 +188,7 @@ def update_account():
         recharge_class = "recharge--low"
 
     accounts = constants.DB.accounts
-    accounts.replace_one(
+    accounts.update(
         {"account": "utopian-io"},
         {
             "account": "utopian-io",
@@ -196,7 +196,8 @@ def update_account():
             "recharge_time": recharge_time,
             "recharge_class": recharge_class,
             "updated": datetime.now()
-        }
+        },
+        upsert=True
     )
 
 
@@ -215,10 +216,10 @@ def update_moderators():
 
 
 def main():
-    update_posts()
+    # update_posts()
     update_account()
-    update_banned()
-    update_moderators()
+    # update_banned()
+    # update_moderators()
 
 if __name__ == '__main__':
     main()

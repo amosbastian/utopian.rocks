@@ -73,9 +73,13 @@ body {
   height: 100%;
   margin-left: 2rem;
   align-items: center; }
-  .header-image > img {
+  .header-image > a {
+    display: inline-block;
     height: 4.5rem;
     width: 4.5rem; }
+    .header-image > a > img {
+      height: 4.5rem;
+      width: 4.5rem; }
 
 .header-center {
   display: grid;
@@ -200,42 +204,6 @@ body {
   justify-content: center;
   align-items: center; }
 
-.category--analysis {
-  color: var(--color-analysis); }
-
-.category--blog {
-  color: var(--color-blog); }
-
-.category--bug-hunting {
-  color: var(--color-bug-hunting); }
-
-.category--copywriting {
-  color: var(--color-copywriting); }
-
-.category--development {
-  color: var(--color-development); }
-
-.category--documentation {
-  color: var(--color-documentation); }
-
-.category--graphics {
-  color: var(--color-graphics); }
-
-.category--ideas {
-  color: var(--color-ideas); }
-
-.category--translations {
-  color: var(--color-translations); }
-
-.category--tutorials {
-  color: var(--color-tutorials); }
-
-.category--video-tutorials {
-  color: var(--color-video-tutorials); }
-
-.category--social {
-  color: var(--color-social); }
-
 .statistics {
   margin-top: 5rem;
   padding-left: .5rem;
@@ -310,3 +278,51 @@ body {
     justify-content: end;
     align-items: center;
     color: var(--color-link); }
+
+.category--analysis {
+  color: var(--color-analysis); }
+
+.category--blog {
+  color: var(--color-blog); }
+
+.category--bug-hunting {
+  color: var(--color-bug-hunting); }
+
+.category--copywriting {
+  color: var(--color-copywriting); }
+
+.category--development {
+  color: var(--color-development); }
+
+.category--documentation {
+  color: var(--color-documentation); }
+
+.category--graphics {
+  color: var(--color-graphics); }
+
+.category--ideas {
+  color: var(--color-ideas); }
+
+.category--translations {
+  color: var(--color-translations); }
+
+.category--tutorials {
+  color: var(--color-tutorials); }
+
+.category--video-tutorials {
+  color: var(--color-video-tutorials); }
+
+.category--social {
+  color: var(--color-social); }
+
+.error-page {
+  display: grid;
+  grid-column: center-start / center-end;
+  justify-content: center;
+  align-items: center; }
+  .error-page > img {
+    width: 50rem; }
+
+.error-text {
+  font-size: 5rem;
+  text-align: center; }

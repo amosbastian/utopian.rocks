@@ -129,56 +129,6 @@
   align-items: center;
 }
 
-.category {
-  &--analysis {
-    color: var(--color-analysis);
-  }
-
-  &--blog {
-    color: var(--color-blog);
-  }
-
-  &--bug-hunting {
-    color: var(--color-bug-hunting);
-  }
-
-  &--copywriting {
-    color: var(--color-copywriting);
-  }
-
-  &--development {
-    color: var(--color-development);
-  }
-
-  &--documentation {
-    color: var(--color-documentation);
-  }
-
-  &--graphics {
-    color: var(--color-graphics);
-  }
-
-  &--ideas {
-    color: var(--color-ideas);
-  }
-
-  &--translations {
-    color: var(--color-translations);
-  }
-
-  &--tutorials {
-    color: var(--color-tutorials);
-  }
-
-  &--video-tutorials {
-    color: var(--color-video-tutorials);
-  }
-
-  &--social {
-    color: var(--color-social);
-  }
-}
-
 .statistics {
   margin-top: 5rem;
   padding-left: .5rem;
