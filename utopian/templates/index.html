@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% set active_page = "index" %}
 {% block content %}
-<div class="statistics">
+<div class="statistics statistics--singular">
   <div class="statistics-element">
     <svg class="contribution-header-icon">
       <use xlink:href="../static/img/sprite.svg#icon-pencil"></use>
@@ -12,7 +12,7 @@
 <div class="contributions">
   {% for contribution in contributions %}
   <div class="contribution">
-    <div class="contribution__author" title="@{{contribution.author}}">
+    <div class="contribution__author--queue" title="@{{contribution.author}}">
       <a class="author-url" href="https://steemit.com/@{{contribution.author}}">
         <img class="contribution-avatar" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
       </a>
@@ -29,11 +29,11 @@
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
         <span class="contribution-submitted">
-          · submitted {{contribution.created|timeago}}
+          · {{contribution.created|timeago}}
         </span>
         {% else %}
         <span class="contribution-submitted contribution-submitted--nopadding">
-          submitted {{contribution.created|timeago}}
+          {{contribution.created|timeago}}
         </span>
         {% endif %}
       </div>
