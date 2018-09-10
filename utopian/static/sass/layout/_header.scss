@@ -3,16 +3,27 @@
   grid-column: full-start / full-end;
   display: grid;
   grid-template-columns: [header-start]
-    minmax(6rem, 1fr)
-    [header-center-start]
     3fr
+    [header-center-start]
+    7.5fr
     [header-center-end]
-    minmax(6rem, 1fr) 
+    3fr 
     [header-end];
-  padding: 1.25rem 2rem;
   color: var(--color-grey-light-1);
   font-size: 2rem;
   height: 6rem;
+}
+
+.header-image {
+  display: grid;
+  height: 100%;
+  margin-left: 2rem;
+  align-items: center;
+
+  & > img {
+    height: 4.5rem;
+    width: 4.5rem;
+  }
 }
 
 .header-center {

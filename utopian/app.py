@@ -43,6 +43,11 @@ def time_ago(date):
     return timeago.format(date)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+
 @app.route("/api/moderators")
 def moderaors():
     moderators = [moderator["account"] for moderator in DB.moderators.find()]

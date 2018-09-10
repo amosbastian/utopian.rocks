@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% set active_page = "index" %}
 {% block content %}
+<div class="statistics">
+  <div class="statistics-element">
+    <svg class="contribution-header-icon">
+      <use xlink:href="../static/img/sprite.svg#icon-pencil"></use>
+    </svg>
+    {{contributions|length}}
+  </div>
+</div>
 <div class="contributions">
   {% for contribution in contributions %}
   <div class="contribution">
@@ -38,7 +46,7 @@
     </div>
     {% endif %}
     {% if contribution.moderator %}
-    <div class="contribution__status contribution__status--under-review" title="under review">
+    <div class="contribution__status contribution__status--under-review" title="under review by @{{contribution.moderator}}">
     </div>
     {% else %}
     <div class="contribution__status contribution__status--not-under-review" title="not under review">

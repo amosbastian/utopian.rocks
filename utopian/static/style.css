@@ -5,6 +5,7 @@
   --color-grey-light-4: #ccc;
   --color-header: #24292f;
   --color-background: #f6f8fa;
+  --color-contribution: #ffffff;
   --color-contribution-border: #e1e4e8;
   --color-contribution-url: #24292e;
   --color-contribution-url-hover: #0366d6;
@@ -62,11 +63,19 @@ body {
   background-color: var(--color-header);
   grid-column: full-start / full-end;
   display: grid;
-  grid-template-columns: [header-start] minmax(6rem, 1fr) [header-center-start] 3fr [header-center-end] minmax(6rem, 1fr) [header-end];
-  padding: 1.25rem 2rem;
+  grid-template-columns: [header-start] 3fr [header-center-start] 7.5fr [header-center-end] 3fr [header-end];
   color: var(--color-grey-light-1);
   font-size: 2rem;
   height: 6rem; }
+
+.header-image {
+  display: grid;
+  height: 100%;
+  margin-left: 2rem;
+  align-items: center; }
+  .header-image > img {
+    height: 4.5rem;
+    width: 4.5rem; }
 
 .header-center {
   display: grid;
@@ -86,8 +95,7 @@ body {
 
 .contributions {
   display: grid;
-  grid-column: center-start / center-end;
-  margin-top: 5rem; }
+  grid-column: center-start / center-end; }
 
 .contributions > :first-child {
   border-radius: .25rem .0 0 0;
@@ -99,7 +107,7 @@ body {
 .contribution {
   display: grid;
   grid-template-columns: 5rem 1fr 5rem .5rem;
-  background-color: #ffffff;
+  background-color: var(--color-contribution);
   border-bottom: 1px solid var(--color-contribution-border);
   border-left: 1px solid var(--color-contribution-border);
   border-right: 1px solid var(--color-contribution-border);
@@ -128,6 +136,13 @@ body {
     display: grid;
     justify-content: center;
     align-items: center; }
+    .contribution__author--queue {
+      display: grid;
+      padding-left: .5rem;
+      justify-content: center;
+      align-items: center;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: .5rem; }
   .contribution__category {
     display: grid;
     justify-content: center;
@@ -218,6 +233,38 @@ body {
 
 .category--social {
   color: var(--color-social); }
+
+.statistics {
+  margin-top: 5rem;
+  padding-left: .5rem;
+  display: grid;
+  grid-column: center-start / center-end;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(3, max-content);
+  font-size: 1.6rem;
+  background-color: var(--color-background); }
+
+.statistics-element {
+  display: grid;
+  grid-template-columns: min-content min-content;
+  grid-gap: .5rem;
+  align-items: center;
+  justify-content: center; }
+
+.recharge--high {
+  color: #db524c; }
+
+.recharge--average {
+  color: orange; }
+
+.recharge--low {
+  color: #2ECC40; }
+
+.contribution-header-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-bottom: .35rem;
+  cursor: pointer; }
 
 .footer {
   margin-top: 5rem;
