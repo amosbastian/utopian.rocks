@@ -17,7 +17,6 @@ $ git clone https://github.com/amosbastian/utopian.git
 and install all the Python packages using
 
 ```
-$ cd utopian
 $ pip install -r requirements.txt
 ```
 
