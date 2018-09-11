@@ -646,6 +646,9 @@ def queue():
 
     current_vp, recharge_time, recharge_class = account_information()
 
+    if not recharge_time:
+        recharge_time = "0:0:0"
+
     for i, contribution in enumerate((valid + invalid)):
         if i == 0:
             hours, minutes, seconds = [int(x) for x in
