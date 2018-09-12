@@ -671,8 +671,12 @@ def queue():
 
 @app.context_processor
 def inject_last_updated():
+    categories = sorted(["analysis", "tutorials", "graphics", "copywriting",
+                         "development", "blog", "ideas", "social",
+                         "bug-hunting", "video-tutorials"])
     account = DB.accounts.find_one({"account": "utopian-io"})
-    return dict(last_updated=account["updated"].strftime("%H:%M %Z"))
+    return dict(last_updated=account["updated"].strftime("%H:%M %Z"),
+                categories=categories)
 
 
 def main():

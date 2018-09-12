@@ -8,6 +8,15 @@
     </svg>
     {{contributions|length}}
   </div>
+  <div class="category-filter">
+    {% for category in categories %}
+    <div class="filter-button">
+      <svg class="category-icon category--{{category}}">
+        <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
+      </svg>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 <div class="contributions">
   {% for contribution in contributions %}
