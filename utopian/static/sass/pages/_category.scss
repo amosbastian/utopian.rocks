@@ -1,4 +1,7 @@
 .category {
+  &--all {
+    color: var(--color-all);
+  }
   &--analysis {
     color: var(--color-analysis);
   }

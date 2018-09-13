@@ -13,6 +13,7 @@
   --color-link: #1e7be4;
   --color-not-under-review: #FF4136;
   --color-under-review: #2ECC40;
+  --color-all: #4786ff;
   --color-ideas: #54d2a0;
   --color-development: #000;
   --color-bug-hunting: #d9534f;
@@ -292,7 +293,7 @@ body {
 
 .category-filter {
   display: grid;
-  grid-template-columns: repeat(10, max-content);
+  grid-template-columns: repeat(11, max-content);
   align-items: center;
   justify-content: flex-end;
   grid-gap: 2rem; }
@@ -509,6 +510,9 @@ body {
       width: 8rem;
       height: 8rem;
       margin-right: 2rem; } }
+
+.category--all {
+  color: var(--color-all); }
 
 .category--analysis {
   color: var(--color-analysis); }

@@ -11,7 +11,7 @@
   <div class="category-filter">
     {% for category in categories %}
     <div class="filter-button">
-      <svg class="category-icon category--{{category}}">
+      <svg class="category-icon category--{{category}}" title="{{category}}">
         <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
       </svg>
     </div>
