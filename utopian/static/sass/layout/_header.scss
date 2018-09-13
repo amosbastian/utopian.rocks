@@ -35,7 +35,7 @@
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: max-content max-content max-content;
+  grid-template-columns: repeat(4, max-content);
   grid-gap: 1.5rem;
   align-items: center;
   font-size: 1.4rem;
@@ -45,16 +45,16 @@
     font-weight: 600;
     font-size: inherit;
     line-height: 2.1rem;
-    color: var(--color-grey-light-1);
+    color: var(--color-grey-light-4);
     display: inline-block;
   }
 
   &--link:hover {
-    color: var(--color-grey-light-4);
+    color: var(--color-grey-light-1);
   }
 
   &--link--active {
-    color: var(--color-grey-light-4) !important;
+    color: var(--color-grey-light-1) !important;
   }
 }
 
