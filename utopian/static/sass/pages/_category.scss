@@ -1,4 +1,7 @@
 .category {
+  &--inactive {
+    color: var(--color-grey-light-5) !important;
+  }
   &--all {
     color: var(--color-all);
   }

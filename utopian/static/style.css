@@ -3,6 +3,7 @@
   --color-grey-light-2: #f4f2f2;
   --color-grey-light-3: #f0eeee;
   --color-grey-light-4: #ccc;
+  --color-grey-light-5: #afa6a6;
   --color-header: #24292f;
   --color-background: #f6f8fa;
   --color-contribution: #ffffff;
@@ -510,6 +511,9 @@ body {
       width: 8rem;
       height: 8rem;
       margin-right: 2rem; } }
+
+.category--inactive {
+  color: var(--color-grey-light-5) !important; }
 
 .category--all {
   color: var(--color-all); }

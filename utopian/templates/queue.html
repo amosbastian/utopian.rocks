@@ -26,11 +26,19 @@
   </div>
   <div class="category-filter">
     {% for category in categories %}
-    <div class="filter-button">
-      <svg class="category-icon category--{{category}}" onclick="filterContributions('{{category}}')">
-        <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
-      </svg>
-    </div>
+      {% if category == "all" %}
+      <div class="filter-button category--{{category}}">
+        <svg class="category-icon" onclick="filterContributions('{{category}}')">
+          <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
+        </svg>
+      </div>
+      {% else %}
+      <div class="filter-button category--{{category}} category--inactive">
+        <svg class="category-icon" onclick="filterContributions('{{category}}')">
+          <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
+        </svg>
+      </div>
+      {% endif %}
     {% endfor %}
   </div>
 </div>
@@ -144,14 +152,28 @@
 
   function filterContributions(category) {
     let contributions = document.getElementsByClassName('contribution');
-    if (category === 'all') category = '';
+    let temporaryCategory = category;
+    if (temporaryCategory === 'all') { 
+      temporaryCategory = '';
+    }
     for (let contribution of contributions) {
       contribution.classList.remove('show');
-      if (contribution.className.indexOf(category) > -1) {
+      if (contribution.className.indexOf(temporaryCategory) > -1) {
         contribution.classList.add('show');
       }
     }
+
+    let filterButtons = document.getElementsByClassName('filter-button');
+    for (let button of filterButtons) {
+      if (!button.classList.contains('category--inactive')) {
+        button.classList.add('category--inactive');
+      }
+
+      if (button.classList.contains('category--' + category)) {
+        button.classList.remove('category--inactive');
+      }
+    }
   }
-  filterContributions('');
+  filterContributions('all');
 </script>
 {% endblock %}
