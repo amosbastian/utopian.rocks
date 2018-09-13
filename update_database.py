@@ -48,6 +48,18 @@ def contribution(row, status):
     except Exception:
         return
 
+    if contribution.review_status == "Pending":
+        for reply in comment.get_replies():
+            if reply.author == contribution.moderator:
+                review_date = reply["created"]
+                comment_url = reply.permlink
+                break
+        else:
+            review_date = datetime(1970, 1, 1)
+            comment_url = ""
+    else:
+        comment_url = ""
+
     # Calculate total (pending) payout of contribution
     if comment.time_elapsed() > timedelta(days=7):
         total_payout = Amount(comment.json()["total_payout_value"]).amount
@@ -104,7 +116,9 @@ def contribution(row, status):
         "total_comments": comments,
         "utopian_vote": utopian_vote,
         "created": comment["created"],
-        "title": comment.title
+        "title": comment.title,
+        "review_status": contribution.review_status.lower(),
+        "comment_url": comment_url
     }
 
     return new_contribution
