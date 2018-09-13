@@ -705,16 +705,20 @@ def moderator_comments():
 
     contributions = estimate_vote_time(pending_contributions, recharge_time)
 
-    for comment, contribution in zip_longest((valid + invalid), contributions):
+    comments = [c for c in sorted((valid + invalid),
+                key=lambda x: x["review_date"])
+                if c["moderator"] not in ["ignore", "irrelevant", "banned"] or
+                c["comment_url"] != ""]
+
+    for comment, contribution in zip_longest(comments, contributions):
         if contribution:
             comment["vote_time"] = contribution["vote_time"]
         else:
             comment["vote_time"] = "TBD"
 
     return render_template(
-        "comments.html", contributions=(valid + invalid),
-        current_vp=current_vp, recharge_time=recharge_time,
-        recharge_class=recharge_class)
+        "comments.html", contributions=comments, current_vp=current_vp,
+        recharge_time=recharge_time, recharge_class=recharge_class)
 
 
 @app.context_processor
