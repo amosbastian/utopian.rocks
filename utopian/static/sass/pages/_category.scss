@@ -1,4 +1,10 @@
 .category {
+  &--inactive {
+    color: var(--color-grey-light-5) !important;
+  }
+  &--all {
+    color: var(--color-all);
+  }
   &--analysis {
     color: var(--color-analysis);
   }
@@ -45,5 +51,9 @@
 
   &--social {
     color: var(--color-social);
+  }
+
+  &--iamutopian {
+    color: var(--color-iamutopian);
   }
 }

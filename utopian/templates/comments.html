@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set active_page = "queue" %}
+{% set active_page = "comments" %}
 {% block content %}
 <div class="statistics">
   <div class="statistics-element">
@@ -45,20 +45,20 @@
 <div class="contributions">
   {% for contribution in contributions %}
   <div class="contribution {{contribution.category}}">
-    <div class="contribution__author--queue" title="@{{contribution.author}}">
+    <div class="contribution__author--queue" title="@{{contribution.moderator}}">
       <div>
         {{loop.index}}.
       </div>
-      <a class="author-url" href="https://steemit.com/@{{contribution.author}}" target="_blank">
+      <a class="author-url" href="https://steemit.com/@{{contribution.moderator}}" target="_blank">
         <div class="contribution-avatar">
-          <img class="contribution-avatar--image" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
+          <img class="contribution-avatar--image" src="https://steemitimages.com/u/{{contribution.moderator}}/avatar" alt="">
         </div>
       </a>
     </div>
     <div class="contribution__body">
       <div class="body-half">
-        <a href="{{contribution.url}}" class="contribution-url" target="_blank">
-          {{contribution.title|truncate(110)}}
+        <a href="{{contribution.url}}#@{{contribution.moderator}}/{{contribution.comment_url}}" class="contribution-url" target="_blank">
+          {{contribution.comment_url|truncate(110)}}
         </a>
       </div>
       <div class="body-half">
@@ -66,13 +66,25 @@
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
-        <span class="contribution-submitted" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
-          · upvote {{contribution.vote_time|timeago}}
-        </span>
+          {% if contribution.vote_time == "TBD" %}
+          <span class="contribution-submitted" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
+          · {{contribution.vote_time}}
+          </span>
+          {% else %}
+          <span class="contribution-submitted" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
+          · {{contribution.vote_time|timeago}}
+          </span>
+          {% endif %}
         {% else %}
-        <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
-          upvote {{contribution.vote_time|timeago}}
-        </span>
+          {% if contribution.vote_time == "TBD" %}
+          <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
+            {{contribution.vote_time}}
+          </span>
+          {% else %}
+          <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
+            {{contribution.vote_time|timeago}}
+          </span>
+          {% endif %}
         {% endif %}
       </div>
     </div>

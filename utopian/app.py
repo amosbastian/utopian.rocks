@@ -11,6 +11,7 @@ from dateutil.parser import parse
 from flask import Flask, jsonify, render_template, abort
 from flask_cors import CORS
 from flask_restful import Resource, Api
+from itertools import zip_longest
 from pymongo import MongoClient
 from statistics import mean
 from webargs import fields, validate
@@ -622,6 +623,25 @@ def exponential_vote(score, category):
     return weight
 
 
+def estimate_vote_time(contributions, recharge_time):
+    """Estimates the vote time of the given contributions."""
+    for i, contribution in enumerate(contributions):
+        if i == 0:
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            vote_time = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
+            contribution["vote_time"] = vote_time
+            continue
+        score = contribution["score"]
+        category = contribution["category"]
+        missing_vp = 2 * exponential_vote(score, category) / 100.0
+        recharge_seconds = missing_vp * 100 * 432000 / 10000
+        vote_time = vote_time + timedelta(seconds=recharge_seconds)
+        contribution["vote_time"] = vote_time
+    return contributions
+
+
 @app.route("/queue")
 def queue():
     contributions = DB.contributions
@@ -649,30 +669,66 @@ def queue():
     if not recharge_time:
         recharge_time = "0:0:0"
 
-    for i, contribution in enumerate((valid + invalid)):
-        if i == 0:
-            hours, minutes, seconds = [int(x) for x in
-                                       recharge_time.split(":")]
-            vote_time = datetime.now() + timedelta(
-                hours=hours, minutes=minutes, seconds=seconds)
-            contribution["vote_time"] = vote_time
-            continue
-        score = contribution["score"]
-        category = contribution["category"]
-        missing_vp = 2 * exponential_vote(score, category) / 100.0
-        recharge_seconds = missing_vp * 100 * 432000 / 10000
-        vote_time = vote_time + timedelta(seconds=recharge_seconds)
-        contribution["vote_time"] = vote_time
+    contributions = estimate_vote_time((valid + invalid), recharge_time)
 
     return render_template(
-        "queue.html", contributions=(valid + invalid), current_vp=current_vp,
+        "queue.html", contributions=contributions, current_vp=current_vp,
+        recharge_time=recharge_time, recharge_class=recharge_class)
+
+
+@app.route("/comments")
+def moderator_comments():
+    contributions = DB.contributions
+    pending_comments = [contribution for contribution in
+                        contributions.find({"review_status": "pending"})]
+    pending_contributions = [contribution for contribution in
+                             contributions.find({"status": "pending"})]
+
+    valid = []
+    invalid = []
+
+    for contribution in pending_comments:
+        if (datetime.now() - timedelta(days=2)) > contribution["review_date"]:
+            valid.append(contribution)
+            contribution["valid_age"] = True
+        else:
+            invalid.append(contribution)
+            contribution["valid_age"] = False
+
+    valid = sorted(valid, key=lambda x: x["created"])
+    invalid = sorted(invalid, key=lambda x: x["created"])
+
+    current_vp, recharge_time, recharge_class = account_information()
+
+    if not recharge_time:
+        recharge_time = "0:0:0"
+
+    contributions = estimate_vote_time(pending_contributions, recharge_time)
+
+    comments = [c for c in sorted((valid + invalid),
+                key=lambda x: x["review_date"])
+                if c["moderator"] not in ["ignore", "irrelevant", "banned"] or
+                c["comment_url"] != ""]
+
+    for comment, contribution in zip_longest(comments, contributions):
+        if contribution:
+            comment["vote_time"] = contribution["vote_time"]
+        else:
+            comment["vote_time"] = "TBD"
+
+    return render_template(
+        "comments.html", contributions=comments, current_vp=current_vp,
         recharge_time=recharge_time, recharge_class=recharge_class)
 
 
 @app.context_processor
 def inject_last_updated():
+    categories = sorted(["analysis", "tutorials", "graphics", "copywriting",
+                         "development", "blog", "ideas", "social", "all",
+                         "bug-hunting", "video-tutorials"])
     account = DB.accounts.find_one({"account": "utopian-io"})
-    return dict(last_updated=account["updated"].strftime("%H:%M %Z"))
+    return dict(last_updated=account["updated"].strftime("%H:%M %Z"),
+                categories=categories)
 
 
 def main():

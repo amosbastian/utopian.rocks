@@ -3,6 +3,7 @@
   --color-grey-light-2: #f4f2f2;
   --color-grey-light-3: #f0eeee;
   --color-grey-light-4: #ccc;
+  --color-grey-light-5: #afa6a6;
   --color-header: #24292f;
   --color-background: #f6f8fa;
   --color-contribution: #ffffff;
@@ -13,6 +14,7 @@
   --color-link: #1e7be4;
   --color-not-under-review: #FF4136;
   --color-under-review: #2ECC40;
+  --color-all: #4786ff;
   --color-ideas: #54d2a0;
   --color-development: #000;
   --color-bug-hunting: #d9534f;
@@ -25,6 +27,7 @@
   --color-video-tutorials: #ec3324;
   --color-copywriting: teal;
   --color-blog: #0275d8;
+  --color-iamutopian: #B10DC9;
   --color-accepted: #2ecc71;
   --color-rejected: #e74c3c; }
 
@@ -45,7 +48,8 @@ body {
   font-family: 'Lato', sans-serif;
   font-weight: 400;
   line-height: 1.6;
-  outline: none; }
+  outline: none;
+  overflow-y: overlay; }
 
 .container {
   display: grid;
@@ -88,7 +92,7 @@ body {
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: max-content max-content max-content;
+  grid-template-columns: repeat(4, max-content);
   grid-gap: 1.5rem;
   align-items: center;
   font-size: 1.4rem; }
@@ -97,12 +101,12 @@ body {
     font-weight: 600;
     font-size: inherit;
     line-height: 2.1rem;
-    color: var(--color-grey-light-1);
+    color: var(--color-grey-light-4);
     display: inline-block; }
   .header-center--link:hover {
-    color: var(--color-grey-light-4); }
+    color: var(--color-grey-light-1); }
   .header-center--link--active {
-    color: var(--color-grey-light-4) !important; }
+    color: var(--color-grey-light-1) !important; }
 
 @media screen and (max-width: 1024px) {
   .header {
@@ -157,14 +161,10 @@ body {
   grid-column: center-start / center-end; }
 
 .contributions > :first-child {
-  border-radius: .25rem .0 0 0;
   border: 1px solid var(--color-contribution-border); }
 
-.contributions > :last-child {
-  border-radius: 0 0 0 .25rem; }
-
 .contribution {
-  display: grid;
+  display: none;
   grid-template-columns: 5rem 1fr 5rem .5rem;
   background-color: var(--color-contribution);
   border-bottom: 1px solid var(--color-contribution-border);
@@ -206,6 +206,9 @@ body {
     display: grid;
     justify-content: center;
     align-items: center; }
+
+.show {
+  display: grid; }
 
 .body-half {
   display: flex;
@@ -258,7 +261,8 @@ body {
   cursor: pointer;
   width: 2.5rem;
   height: 2.5rem;
-  fill: currentColor; }
+  fill: currentColor;
+  display: grid; }
 
 .status-icon {
   cursor: pointer;
@@ -273,15 +277,15 @@ body {
 
 .statistics {
   margin-top: 5rem;
-  padding-left: .5rem;
+  padding: .5rem;
   display: grid;
   grid-column: center-start / center-end;
   grid-gap: 2rem;
-  grid-template-columns: repeat(3, max-content);
+  grid-template-columns: repeat(3, max-content) 1fr;
   font-size: 1.6rem;
   background-color: var(--color-background); }
   .statistics--singular {
-    grid-template-columns: max-content; }
+    grid-template-columns: max-content 1fr; }
 
 .statistics-element {
   display: grid;
@@ -289,6 +293,13 @@ body {
   grid-gap: .5rem;
   align-items: center;
   justify-content: center; }
+
+.category-filter {
+  display: grid;
+  grid-template-columns: repeat(11, max-content);
+  align-items: center;
+  justify-content: flex-end;
+  grid-gap: 2rem; }
 
 .recharge--high {
   color: #db524c; }
@@ -300,10 +311,15 @@ body {
   color: #2ECC40; }
 
 .contribution-header-icon {
+  display: grid;
   width: 1.6rem;
   height: 1.6rem;
   margin-bottom: .35rem;
   cursor: pointer; }
+
+.contribution-header-text {
+  display: grid;
+  text-align: center; }
 
 @media screen and (max-width: 1024px) {
   .contribution-repository:link,
@@ -498,6 +514,12 @@ body {
       height: 8rem;
       margin-right: 2rem; } }
 
+.category--inactive {
+  color: var(--color-grey-light-5) !important; }
+
+.category--all {
+  color: var(--color-all); }
+
 .category--analysis {
   color: var(--color-analysis); }
 
@@ -533,6 +555,9 @@ body {
 
 .category--social {
   color: var(--color-social); }
+
+.category--iamutopian {
+  color: var(--color-iamutopian); }
 
 .error-page {
   display: grid;
