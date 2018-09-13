@@ -9,18 +9,26 @@
     {{contributions|length}}
   </div>
   <div class="category-filter">
-    {% for category in categories %}
-    <div class="filter-button">
-      <svg class="category-icon category--{{category}}" title="{{category}}">
-        <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
-      </svg>
+      {% for category in categories %}
+        {% if category == "all" %}
+        <div class="filter-button category--{{category}}">
+          <svg class="category-icon" onclick="filterContributions('{{category}}')">
+            <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
+          </svg>
+        </div>
+        {% else %}
+        <div class="filter-button category--{{category}} category--inactive">
+          <svg class="category-icon" onclick="filterContributions('{{category}}')">
+            <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
+          </svg>
+        </div>
+        {% endif %}
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 </div>
 <div class="contributions">
   {% for contribution in contributions %}
-  <div class="contribution">
+  <div class="contribution {{contribution.category}}">
     <div class="contribution__author--queue" title="@{{contribution.author}}">
       <a class="author-url" href="https://steemit.com/@{{contribution.author}}" target="_blank">
         <div class="contribution-avatar">
@@ -72,4 +80,7 @@
   </div>
   {% endfor %}
 </div>
+<script>
+  filterContributions('all');
+</script>
 {% endblock %}
