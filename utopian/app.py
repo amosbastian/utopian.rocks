@@ -84,7 +84,15 @@ def without_score(contribution):
     """
     Returns a contribution without the score.
     """
-    return {x: contribution[x] for x in contribution if x != "score"}
+    new_contribution = {}
+    for key, value in contribution.items():
+        if key == "score":
+            continue
+        if key == "_id" or key == "review_date" or key == "created":
+            value = str(value)
+        new_contribution[key] = value
+
+    return new_contribution
 
 
 class ContributionResource(Resource):
