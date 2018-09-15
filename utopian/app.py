@@ -96,7 +96,8 @@ class ContributionResource(Resource):
         "status": fields.Str(),
         "author": fields.Str(),
         "moderator": fields.Str(),
-        "staff_picked": fields.Bool()
+        "staff_picked": fields.Bool(),
+        "review_status": fields.Str()
     }
 
     @use_args(query_parameters)
