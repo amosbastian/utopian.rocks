@@ -234,10 +234,14 @@ def update_moderators():
 
 
 def main():
-    update_posts()
-    update_account()
-    update_banned()
-    update_moderators()
+    if constants.CONTRIBUTING:
+        update_posts(True)
+        update_account()
+    else:
+        update_posts()
+        update_account()
+        update_banned()
+        update_moderators()
 
 if __name__ == '__main__':
     main()
