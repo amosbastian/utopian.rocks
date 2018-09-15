@@ -1,17 +1,22 @@
-Utopian.rocks
--------------
+<p align="center">
+  <a href="https://utopian.rocks">
+    <img src="https://i.imgur.com/DeVHydb.png?1">
+  </a>
+</p>
 
-Utopian.rocks is a Flask application that includes a table showing the contributions that are currently in the unreviewed worksheet, so users can check if their contribution was added succesfully. It also includes some endpoints to retrieve contributions, statistics and a weekly template for one of Utopian's posts.
+<h3 align="center">Utopian.rocks</h3>
 
-https://utopian.rocks/ currently updates every 5 minutes!
+Utopian.rocks is a Flask application that shows unreviewed or pending contributions, and pending moderator comments. It also includes some endpoints to retrieve contributions, statistics and a weekly template for one of Utopian's posts.
+
+https://utopian.rocks/ currently updates every 4 minutes!
 
 Usage
 -----
 
-To run this locally you must have MongoDB and Python3.6 installed. After this you can clone this repository with
+To run this locally you must have MongoDB and Python3.6 installed (and optionally Node.js). After this you can clone this repository with
 
 ```
-$ git clone https://github.com/amosbastian/utopian.git
+$ git clone https://github.com/amosbastian/utopian.rocks.git
 ```
 
 and install all the Python packages using
@@ -20,7 +25,7 @@ and install all the Python packages using
 $ pip install -r requirements.txt
 ```
 
-Once you have a MongoDB instance running you can use the following script to populate the database
+Since the spreadsheet is only available for Utopian moderators I have prepared a [JSON file with contributions](https://gist.github.com/amosbastian/93a2babf4f2bde17e0767560d592246c), so that you can use that instead. Download it and extract it in your utopian.rocks folder. Once you have done this you should change the constant `CONTRIBUTING` in constants.py to `True`. Finally, if have a MongoDB instance running you can use the following script to populate the database.
 
 ```
 $ python update_database.py
@@ -37,6 +42,13 @@ or
 ```
 $ gunicorn wsgi:app
 ```
+
+or
+
+```
+$ npm start
+```
+For the command above you must first run `npm install`. This command automatically compiles the SCSS to CSS, but you will still need to restart it every time you make changes to files that aren't CSS files (CTRL + C to stop, then run the command again).
 
 Features
 --------
