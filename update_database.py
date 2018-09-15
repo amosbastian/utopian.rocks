@@ -1,5 +1,6 @@
 import constants
 import json
+import requests
 from beem.account import Account
 from beem.amount import Amount
 from beem.comment import Comment
@@ -142,25 +143,28 @@ def get_unreviewed():
     return unreviewed[1:]
 
 
-def update_posts():
+def update_posts(local=False):
     """
     Adds all reviewed and unreviewed contributions to the database.
     """
-    reviewed = []
-    unreviewed = []
-
-    # Iterate over all worksheets in the spreadsheet
-    reviewed = get_reviewed()
-    unreviewed = get_unreviewed()
-
-    # Convert row to dictionary
-    reviewed = [contribution(x, "reviewed") for x in reviewed]
-    unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
-
-    # Lazy so drop database and replace
     contributions = constants.DB.contributions
+    if local:
+        with open(f"{constants.DIR_PATH}/contributions.json") as json_data:
+            posts = json.load(json_data)
 
-    for post in reviewed + unreviewed:
+        for post in posts:
+            if "created" in post.keys():
+                post["created"] = parse(post["created"])
+            if "review_date" in post.keys():
+                post["review_date"] = parse(post["review_date"])
+    else:
+        reviewed = get_reviewed()
+        unreviewed = get_unreviewed()
+        reviewed = [contribution(x, "reviewed") for x in reviewed]
+        unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
+        posts = reviewed + unreviewed
+
+    for post in posts:
         if post:
             contributions.replace_one({"url": post["url"]}, post, True)
 

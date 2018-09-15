@@ -84,15 +84,7 @@ def without_score(contribution):
     """
     Returns a contribution without the score.
     """
-    new_contribution = {}
-    for key, value in contribution.items():
-        if key == "score":
-            continue
-        if key == "_id" or key == "review_date" or key == "created":
-            value = str(value)
-        new_contribution[key] = value
-
-    return new_contribution
+    return {x: contribution[x] for x in contribution if x != "score"}
 
 
 class ContributionResource(Resource):
@@ -635,6 +627,8 @@ def exponential_vote(score, category):
 def estimate_vote_time(contributions, recharge_time):
     """Estimates the vote time of the given contributions."""
     for i, contribution in enumerate(contributions):
+        if not "score" in contribution.keys():
+            continue
         if i == 0:
             hours, minutes, seconds = [int(x) for x in
                                        recharge_time.split(":")]
@@ -721,6 +715,8 @@ def moderator_comments():
 
     for comment, contribution in zip_longest(comments, contributions):
         if contribution:
+            if "vote_time" not in contribution.keys():
+                continue
             comment["vote_time"] = contribution["vote_time"]
         else:
             comment["vote_time"] = "TBD"

@@ -66,13 +66,25 @@
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
-        <span class="contribution-submitted" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
-          · upvote {{contribution.vote_time|timeago}}
-        </span>
+          {% if contribution.vote_time %}
+          <span class="contribution-submitted" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
+            · upvote {{contribution.vote_time|timeago}}
+          </span>
+          {% else %}
+          <span class="contribution-submitted">
+            · upvote in 1 hour
+          </span>
+          {% endif %}
         {% else %}
-        <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
-          upvote {{contribution.vote_time|timeago}}
-        </span>
+          {% if contribution.vote_time %}
+          <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
+            upvote {{contribution.vote_time|timeago}}
+          </span>
+          {% else %}
+          <span class="contribution-submitted contribution-submitted--nopadding">
+            upvote in 1 hour
+          </span>
+          {% endif %}
         {% endif %}
       </div>
     </div>

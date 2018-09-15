@@ -66,7 +66,11 @@
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
           {{contribution.repository.split('https://github.com/')[-1]}}
         </a>
-          {% if contribution.vote_time == "TBD" %}
+          {% if not contribution.vote_time %}
+          <span class="contribution-submitted contribution-submitted--nopadding">
+            {{contribution.vote_time}}
+          </span>
+          {% elif contribution.vote_time == "TBD" %}
           <span class="contribution-submitted" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
           · {{contribution.vote_time}}
           </span>
@@ -76,8 +80,12 @@
           </span>
           {% endif %}
         {% else %}
-          {% if contribution.vote_time == "TBD" %}
-          <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
+          {% if not contribution.vote_time %}
+          <span class="contribution-submitted contribution-submitted--nopadding">
+            in 1 hour
+          </span>
+          {% elif contribution.vote_time == "TBD" %}
+          <span class="contribution-submitted contribution-submitted--nopadding">
             {{contribution.vote_time}}
           </span>
           {% else %}
