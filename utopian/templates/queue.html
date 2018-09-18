@@ -102,7 +102,7 @@
     </div>
     {% endif %}
     {% if contribution.nearing_expiration %}
-    <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - in last 12 hours before payout ({{contribution.until_expiration|timeago}})">
+    <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - payout {{contribution.until_expiration|timeago}}">
     </div>
     {% elif contribution.valid_age %}
     <div class="contribution__status contribution__status--under-review" title="age is valid">
