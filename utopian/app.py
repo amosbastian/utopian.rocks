@@ -714,6 +714,8 @@ def moderator_comments():
                 c["comment_url"] != ""]
 
     for comment, contribution in zip_longest(comments, contributions):
+        if not comment:
+            continue
         if contribution:
             if "vote_time" not in contribution.keys():
                 continue
