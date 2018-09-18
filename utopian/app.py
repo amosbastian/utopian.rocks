@@ -663,6 +663,7 @@ def queue():
         time_until_expiration = timedelta(days=6, hours=12) - created
         if time_until_expiration < timedelta(hours=12):
             contribution["nearing_expiration"] = True
+            contribution["until_expiration"] = time_until_expiration
         # if (datetime.now() - timedelta(days=1)) > contribution["created"]:
         #     valid.append(contribution)
         #     contribution["valid_age"] = True
