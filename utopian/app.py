@@ -97,7 +97,9 @@ class ContributionResource(Resource):
         "author": fields.Str(),
         "moderator": fields.Str(),
         "staff_picked": fields.Bool(),
-        "review_status": fields.Str()
+        "review_status": fields.Str(),
+        "url": fields.Str(),
+        "voted_on": fields.Bool()
     }
 
     @use_args(query_parameters)
@@ -627,7 +629,7 @@ def exponential_vote(score, category):
 def estimate_vote_time(contributions, recharge_time):
     """Estimates the vote time of the given contributions."""
     for i, contribution in enumerate(contributions):
-        if not "score" in contribution.keys():
+        if "score" not in contribution.keys():
             continue
         if i == 0:
             hours, minutes, seconds = [int(x) for x in
