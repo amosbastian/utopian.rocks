@@ -29,7 +29,8 @@
   --color-blog: #0275d8;
   --color-iamutopian: #B10DC9;
   --color-accepted: #2ecc71;
-  --color-rejected: #e74c3c; }
+  --color-rejected: #e74c3c;
+  --color-nearing-expiration: #FF851B; }
 
 * {
   margin: 0;
@@ -179,6 +180,8 @@ body {
     align-items: center;
     border-left: 1px solid var(--color-contribution-border);
     border-bottom: 1px solid var(--color-contribution-border); }
+  .contribution__status--nearing-expiration {
+    background-color: var(--color-nearing-expiration); }
   .contribution__status--under-review {
     background-color: var(--color-under-review); }
   .contribution__status--not-under-review {

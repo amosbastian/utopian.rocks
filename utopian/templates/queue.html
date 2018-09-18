@@ -101,7 +101,10 @@
       </svg>
     </div>
     {% endif %}
-    {% if contribution.valid_age %}
+    {% if contribution.nearing_expiration %}
+    <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - in last 12 hours before payout">
+    </div>
+    {% elif contribution.valid_age %}
     <div class="contribution__status contribution__status--under-review" title="age is valid">
     </div>
     {% else %}

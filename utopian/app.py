@@ -659,6 +659,10 @@ def queue():
     for contribution in pending:
         valid.append(contribution)
         contribution["valid_age"] = True
+        created = datetime.now() - contribution["created"]
+        time_until_expiration = timedelta(days=6, hours=12) - created
+        if time_until_expiration < timedelta(hours=12):
+            contribution["nearing_expiration"] = True
         # if (datetime.now() - timedelta(days=1)) > contribution["created"]:
         #     valid.append(contribution)
         #     contribution["valid_age"] = True
