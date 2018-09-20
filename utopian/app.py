@@ -411,7 +411,7 @@ class WeeklyResource(Resource):
         pipeline = [
             {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
         contributions = [json.loads(json_util.dumps(c))
-                            for c in contributions.aggregate(pipeline)]
+                         for c in contributions.aggregate(pipeline)]
 
         moderators = moderator_statistics(contributions)
         categories = category_statistics(contributions)
@@ -527,6 +527,7 @@ def post_statistics_section(categories, contributions):
             f"|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|<br>")
 
     return section
+
 
 @app.route("/weekly", defaults={"date": "today"})
 @app.route("/weekly/<date>")
@@ -661,7 +662,8 @@ def queue():
         print(time_until_expiration)
         if time_until_expiration < timedelta(hours=12):
             contribution["nearing_expiration"] = True
-            contribution["until_expiration"] = datetime.now() + time_until_expiration
+            until_expiration = datetime.now() + time_until_expiration
+            contribution["until_expiration"] = until_expiration
         # if (datetime.now() - timedelta(days=1)) > contribution["created"]:
         #     valid.append(contribution)
         #     contribution["valid_age"] = True
@@ -731,6 +733,29 @@ def moderator_comments():
     return render_template(
         "comments.html", contributions=comments, current_vp=current_vp,
         recharge_time=recharge_time, recharge_class=recharge_class)
+
+
+@app.route("/iamutopian")
+def i_am_utopian():
+    contributions = DB.contributions
+    iamutopian_contributions = [
+        contribution for contribution in contributions.find({
+            "voted_on": False, "category": "iamutopian"})]
+
+    for contribution in iamutopian_contributions:
+        contribution["valid_age"] = True
+        created = datetime.now() - contribution["created"]
+        time_until_expiration = timedelta(days=6, hours=12) - created
+        if time_until_expiration < timedelta(hours=12):
+            contribution["nearing_expiration"] = True
+            until_expiration = datetime.now() + time_until_expiration
+            contribution["until_expiration"] = until_expiration
+
+    contributions = sorted(iamutopian_contributions,
+                           key=lambda x: x["created"])
+
+    return render_template(
+        "iamutopian.html", contributions=contributions)
 
 
 @app.context_processor

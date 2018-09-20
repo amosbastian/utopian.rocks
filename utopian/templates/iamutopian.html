@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% set active_page = "iamutopian" %}
+{% block content %}
+<div class="statistics statistics--singular">
+  <div class="statistics-element">
+    <svg class="contribution-header-icon">
+      <use xlink:href="../static/img/sprite.svg#icon-pencil"></use>
+    </svg>
+    {{contributions|length}}
+  </div>
+  <div class="category-filter">
+  </div>
+</div>
+<div class="contributions">
+  {% for contribution in contributions %}
+  <div class="contribution {{contribution.category}}">
+    <div class="contribution__author--queue" title="@{{contribution.author}}">
+      <a class="author-url" href="https://steemit.com/@{{contribution.author}}" target="_blank">
+        <div class="contribution-avatar">
+          <img class="contribution-avatar--image" src="https://steemitimages.com/u/{{contribution.author}}/avatar" alt="">
+        </div>
+      </a>
+    </div>
+    <div class="contribution__body">
+      <div class="body-half">
+        <a href="{{contribution.url}}" class="contribution-url" target="_blank">
+          {{contribution.title|truncate(110)}}
+        </a>
+      </div>
+      <div class="body-half">
+        {% if contribution.repository %}
+        <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
+          {{contribution.repository.split('https://github.com/')[-1]}}
+        </a>
+        <span class="contribution-submitted">
+          · {{contribution.created|timeago}}
+        </span>
+        {% else %}
+        <span class="contribution-submitted contribution-submitted--nopadding">
+          {{contribution.created|timeago}}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+    {% if "task" in contribution.category %}
+    <div class="contribution__category category--{{contribution.category.split('task-')[1]}}" title="{{contribution.category}}">
+      <svg class="category-icon">
+        <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category.split('task-')[1]}}"></use>
+      </svg>
+    </div>
+    {% else %}
+    <div class="contribution__category category--{{contribution.category}}" title="{{contribution.category}}">
+      <svg class="category-icon">
+        <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category}}"></use>
+      </svg>
+    </div>
+    {% endif %}
+    {% if contribution.nearing_expiration %}
+    <div class="contribution__status contribution__status--nearing-expiration" title="payout {{contribution.until_expiration|timeago}}">
+    </div>
+    {% else %}
+    <div class="contribution__status contribution__status--under-review">
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+<script>
+  filterContributions('all');
+</script>
+{% endblock %}
