@@ -134,10 +134,10 @@ def string_to_date(input):
     Converts a given string to a date.
     """
     if input == "today":
-        return datetime.now()
+        today_date = date.today()
+        return datetime(today_date.year, today_date.month, today_date.day)
     try:
-        date = parse(input)
-        return date
+        return parse(input)
     except Exception as error:
         abort(422, errors=str(error))
 
@@ -401,29 +401,26 @@ class WeeklyResource(Resource):
     """
     def get(self, date):
         LOGGER.info(f"Retrieving for {date}")
-        try:
-            # Get date for retrieving posts
-            date = string_to_date(date)
-            week_ago = date - timedelta(days=7)
+        # Get date for retrieving posts
+        date = string_to_date(date)
+        week_ago = date - timedelta(days=7)
 
-            # Retrieve contributions made in week before the given date
-            contributions = DB.contributions
-            print(week_ago, date)
-            pipeline = [
-                {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
-            contributions = [json.loads(json_util.dumps(c))
-                             for c in contributions.aggregate(pipeline)]
+        # Retrieve contributions made in week before the given date
+        contributions = DB.contributions
+        print(week_ago, date)
+        pipeline = [
+            {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
+        contributions = [json.loads(json_util.dumps(c))
+                            for c in contributions.aggregate(pipeline)]
 
-            moderators = moderator_statistics(contributions)
-            categories = category_statistics(contributions)
-            projects = project_statistics(contributions)
-            staff_picks = staff_pick_statistics(contributions)
-            task_requests = task_request_statistics(contributions)
+        moderators = moderator_statistics(contributions)
+        categories = category_statistics(contributions)
+        projects = project_statistics(contributions)
+        staff_picks = staff_pick_statistics(contributions)
+        task_requests = task_request_statistics(contributions)
 
-            return jsonify(
-                [moderators, categories, projects, staff_picks, task_requests])
-        except Exception as error:
-            LOGGER.error(error)
+        return jsonify(
+            [moderators, categories, projects, staff_picks, task_requests])
 
 
 api.add_resource(WeeklyResource, "/api/statistics/<string:date>")
@@ -537,7 +534,8 @@ def weekly():
     """
     Returns weekly statistics in a format that can be posted on Steemit.
     """
-    today = datetime.now()
+    today_date = date.today()
+    today = datetime(today_date.year, today_date.month, today_date.day)
     week_ago = today - timedelta(days=7)
     contributions = DB.contributions
     pipeline = [

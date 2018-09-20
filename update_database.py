@@ -79,7 +79,8 @@ def contribution(row, status):
         status = "pending"
 
     # Check if contribution was voted on
-    if contribution.vote_status == "Yes":
+    if (contribution.vote_status == "Yes" or
+            contribution.category == "iamutopian"):
         voted_on = True
         try:
             utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
