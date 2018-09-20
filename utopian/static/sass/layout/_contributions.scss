@@ -136,6 +136,11 @@
   height: 2.5rem;
   fill: currentColor;
   display: grid;
+
+  &--utopian-io {
+    width: 4rem;
+    height: 4rem;
+  }
 }
 
 .status-icon {

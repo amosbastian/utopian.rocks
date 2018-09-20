@@ -266,6 +266,9 @@ body {
   height: 2.5rem;
   fill: currentColor;
   display: grid; }
+  .category-icon--utopian-io {
+    width: 4rem;
+    height: 4rem; }
 
 .status-icon {
   cursor: pointer;

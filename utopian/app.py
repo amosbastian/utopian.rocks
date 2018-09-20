@@ -407,7 +407,6 @@ class WeeklyResource(Resource):
 
         # Retrieve contributions made in week before the given date
         contributions = DB.contributions
-        print(week_ago, date)
         pipeline = [
             {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
         contributions = [json.loads(json_util.dumps(c))
@@ -659,7 +658,6 @@ def queue():
         contribution["valid_age"] = True
         created = datetime.now() - contribution["created"]
         time_until_expiration = timedelta(days=6, hours=12) - created
-        print(time_until_expiration)
         if time_until_expiration < timedelta(hours=12):
             contribution["nearing_expiration"] = True
             until_expiration = datetime.now() + time_until_expiration
