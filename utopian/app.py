@@ -528,14 +528,13 @@ def post_statistics_section(categories, contributions):
 
     return section
 
-
-@app.route("/weekly")
-def weekly():
+@app.route("/weekly", defaults={"date": "today"})
+@app.route("/weekly/<date>")
+def weekly(date):
     """
     Returns weekly statistics in a format that can be posted on Steemit.
     """
-    today_date = date.today()
-    today = datetime(today_date.year, today_date.month, today_date.day)
+    today = string_to_date(date)
     week_ago = today - timedelta(days=7)
     contributions = DB.contributions
     pipeline = [
