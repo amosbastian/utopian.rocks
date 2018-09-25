@@ -511,6 +511,7 @@ body {
 
 @media screen and (max-width: 1024px) {
   .footer {
+    width: 100vw;
     padding-left: 8rem;
     padding-right: 8rem;
     font-size: 3rem; }
@@ -524,29 +525,31 @@ body {
 
 @media screen and (max-width: 768px) {
   .footer {
-    padding-left: 12rem;
-    padding-right: 12rem;
-    font-size: 4.5rem; }
+    width: 100vw;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 3rem; }
     .footer__icon {
-      width: 5rem;
-      height: 5rem; }
+      width: 4rem;
+      height: 4rem; }
     .footer__image {
-      width: 5rem;
-      height: 5rem;
-      margin-right: 2rem; } }
+      width: 4rem;
+      height: 4rem;
+      margin-right: 1.4rem; } }
 
 @media screen and (max-width: 420px) {
   .footer {
-    padding-left: 18rem;
-    padding-right: 18rem;
-    font-size: 7rem; }
+    width: 100vw;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    font-size: 3rem; }
     .footer__icon {
-      width: 8rem;
-      height: 8rem; }
+      width: 4rem;
+      height: 4rem; }
     .footer__image {
-      width: 8rem;
-      height: 8rem;
-      margin-right: 2rem; } }
+      width: 4rem;
+      height: 4rem;
+      margin-right: 1rem; } }
 
 .category--inactive {
   color: var(--color-grey-light-5) !important; }
