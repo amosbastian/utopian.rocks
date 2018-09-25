@@ -468,8 +468,8 @@ body {
       padding-left: 0rem;
       font-size: 3rem; }
   .category-icon {
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
     margin-right: 0rem; }
   .contribution-submitted {
     font-size: 2rem; }
@@ -558,8 +558,8 @@ body {
 @media screen and (max-width: 420px) {
   .footer {
     width: 100vw;
-    padding-left: 0.2rem;
-    padding-right: 0.2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     font-size: 3rem; }
     .footer__icon {
       width: 4rem;
