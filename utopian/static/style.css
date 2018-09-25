@@ -111,45 +111,73 @@ body {
 
 @media screen and (max-width: 1024px) {
   .header {
-    height: 12rem; }
+    width: 100vw;
+    height: 12rem;
+    grid-template-columns: [header-start] 2fr [header-center-start] 3fr [header-center-end] 3fr [header-end]; }
   .header-center {
-    font-size: 2.4rem; }
+    font-size: 2.2rem; }
+    .header-center--link:link, .header-center--link:visited {
+      width: 10rem;
+      text-align: center; }
   .header-center {
     grid-gap: 3rem; }
-  .header-image {
-    margin-left: 4rem; }
-    .header-image > a {
+  .header-image > a {
+    height: 9rem;
+    width: 9rem; }
+    .header-image > a > img {
       height: 9rem;
-      width: 9rem; }
-      .header-image > a > img {
-        height: 9rem;
-        width: 9rem; } }
+      width: 9rem; } }
 
 @media screen and (max-width: 768px) {
   .header {
-    height: 24rem; }
+    width: 100vw;
+    height: 27rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: 20rem 5rem;
+    grid-template-areas: "title" "nav"; }
   .header-center {
-    font-size: 4.4rem; }
+    grid-area: nav;
+    font-size: 1.4rem;
+    display: flex;
+    justify-content: space-around; }
+    .header-center--link:link, .header-center--link:visited {
+      width: 7rem;
+      text-align: center; }
   .header-center {
-    grid-gap: 6rem; }
+    grid-gap: 1rem; }
+  .header-image--container {
+    grid-area: title;
+    width: 100%;
+    display: flex;
+    justify-content: center; }
   .header-image {
-    margin-left: 8rem; }
+    margin-left: 0rem; }
     .header-image > a {
-      height: 18rem;
-      width: 18rem; }
+      height: 17rem;
+      width: 17rem; }
       .header-image > a > img {
-        height: 18rem;
-        width: 18rem; } }
+        height: 17rem;
+        width: 17rem; } }
 
 @media screen and (max-width: 420px) {
   .header {
-    height: 24rem; }
+    width: 100vw;
+    height: 47rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: 20rem 25rem;
+    grid-template-areas: "title" "nav"; }
   .header-center {
-    font-size: 6rem; }
+    font-size: 3rem;
+    display: flex;
+    flex-direction: column; }
   .header-center {
     grid-gap: 6rem; }
+    .header-center--link:link, .header-center--link:visited {
+      width: 100%;
+      text-align: center;
+      padding: 1rem 0; }
   .header-image {
-    margin-left: 8rem; }
+    margin-left: 0rem; }
     .header-image > a {
       height: 18rem;
       width: 18rem; }
