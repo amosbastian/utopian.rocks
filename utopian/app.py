@@ -556,7 +556,10 @@ def weekly(date):
         LOGGER.info((staff_section + post_section))
     except Exception as error:
         LOGGER.error(error)
-    return render_template("weekly.html", body=(staff_section + post_section))
+        body = f"No statistics to show for this week ({week_ago:%B} {week_ago.day} - {today:%B} {today.day})."
+    else:
+        body = (staff_section + post_section)
+    return render_template("weekly.html", body=body)
 
 
 def update_vp(current_vp, updated, recharge_time):
