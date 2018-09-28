@@ -282,7 +282,10 @@ def category_statistics(contributions):
         value["moderators"] = Counter(value["moderators"]).most_common()
         value["rewarded_contributors"] = Counter(
             value["rewarded_contributors"]).most_common()
-        value["average_payout"] = value["total_payout"] / value["reviewed"]
+        try:
+            value["average_payout"] = value["total_payout"] / value["reviewed"]
+        except ZeroDivisionError:
+            value["average_payout"] = 0
         value["pct_voted"] = percentage(value["reviewed"], value["voted"])
 
         # Add Utopian.io's vote statistics
