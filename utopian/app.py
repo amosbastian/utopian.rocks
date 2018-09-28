@@ -282,7 +282,10 @@ def category_statistics(contributions):
         value["moderators"] = Counter(value["moderators"]).most_common()
         value["rewarded_contributors"] = Counter(
             value["rewarded_contributors"]).most_common()
-        value["average_payout"] = value["total_payout"] / value["reviewed"]
+        try:
+            value["average_payout"] = value["total_payout"] / value["reviewed"]
+        except ZeroDivisionError:
+            value["average_payout"] = 0
         value["pct_voted"] = percentage(value["reviewed"], value["voted"])
 
         # Add Utopian.io's vote statistics
@@ -427,12 +430,42 @@ api.add_resource(BannedUsersResource, "/api/bannedUsers")
 api.add_resource(ContributionResource, "/api/posts")
 
 
+def intro_section(first_day, last_day):
+    """
+    Creates the introduction section / headline for the Utopian weekly post.
+    
+    The week is defined by the first and last days of the week.
+    """
+    LOGGER.info("Generating post introduction section...")
+    section = (
+        f"# Weekly Top of Utopian.io: {first_day:%B} {first_day.day} - {last_day:%B} {last_day.day}"
+        "<br><br>[Introduction (summary of the week)]"
+    )
+    return section
+
+
+def footer_section():
+    """
+    Creates the footer section for the Utopian weekly post.
+    """
+    LOGGER.info("Generating post footer section...")
+    section = (
+        "![divider](https://cdn.steemitimages.com/DQmWQWnJf7s671sHmGdzZVQMqEv7DyXL9qknT67vyQdAHfL/utopian_divider.png)"
+        "<br><br>## First Time Contributing in [Utopian.io](https://join.utopian.io/)?"
+        "<br><br>&lt;a href=&quot;https://join.utopian.io/guidelines&quot;&gt;Learn how to contribute on our website&lt;/a&gt;"
+        "<br><br>&lt;center&gt;&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/8S1AtrzYY1Q&quot; frameborder=&quot;0&quot; allow=&quot;autoplay; encrypted-media&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/center&gt;"
+        "<br><br>## Utopian Witness<br><br>[Vote for our witness!](https://steemconnect.com/sign/account-witness-vote?witness=utopian-io&approve=1)"
+        "<br><br>&lt;center&gt;&lt;a href=&quot;https://discord.gg/h52nFrV&quot;&gt;&lt;img src=&quot;https://cdn.discordapp.com/attachments/396653220702978049/452918421235957763/footer_558.png&quot; /&gt;&lt;/a&gt;&lt;/center&gt;"
+    )
+    return section
+
+
 def staff_pick_section(staff_picks):
     """
     Creates the staff pick section for the Utopian weekly post.
     """
     LOGGER.info("Generating staff pick statistics section...")
-    section = ""
+    section = "## Staff Picks"
     for staff_pick in staff_picks["staff_picks"]:
         url = staff_pick["url"]
         post = Comment(url)
@@ -446,12 +479,12 @@ def staff_pick_section(staff_picks):
 
         # Add staff pick to the string
         section += (
-            f"&lt;a href='{url}'&gt;{title}&lt;/a&gt; by @{author} "
-            f"[{category}]<br>[Image (contributor profile image / image from "
+            f"<br><br>### &lt;a href='{url}'&gt;{title}&lt;/a&gt; by @{author} "
+            f"[{category}]<br><br>[Image (contributor profile image / image from "
             "the post)]<br><br>[Paragraph: Background info on project etc.]"
             "<br><br>[Paragraph: CM review, including etc.]<br><br>"
             f"Total payout: {staff_pick['total_payout']:.2f} STU<br>"
-            f"Number of votes: {staff_pick['total_votes']}<br><br>"
+            f"Number of votes: {staff_pick['total_votes']}"
         )
 
     return section
@@ -463,7 +496,7 @@ def post_statistics_section(categories, contributions):
     """
     LOGGER.info("Generating post statistics section...")
     section = (
-        "<br><br># Utopian.io Post Statistics<br><br>"
+        "## Utopian.io Post Statistics<br><br>"
         "The staff picked contributions are only a small (but exceptional) "
         "example of the mass of contributions reviewed and rewarded by "
         "Utopian.io.<br><br>"
@@ -548,12 +581,17 @@ def weekly(date):
 
     # Get each section of the post
     try:
+        post_intro_section = intro_section(week_ago, today)
         staff_section = staff_pick_section(staff_picks)
         post_section = post_statistics_section(categories, contributions)
-        LOGGER.info((staff_section + post_section))
+        post_footer_section = footer_section()
     except Exception as error:
         LOGGER.error(error)
-    return render_template("weekly.html", body=(staff_section + post_section))
+        body = f"No statistics to show for this week ({week_ago:%B} {week_ago.day} - {today:%B} {today.day})."
+    else:
+        body = "<br><br>".join([post_intro_section, staff_section, post_section, post_footer_section])
+        LOGGER.info(body)
+    return render_template("weekly.html", body=body)
 
 
 def update_vp(current_vp, updated, recharge_time):
