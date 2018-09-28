@@ -532,7 +532,7 @@ def post_statistics_section(categories, contributions):
         f"less than {most_engagement['total_comments']} comments in its "
         "comment threads.<br>"
         f"* The average vote given by Utopian.io was worth {average_vote:.2f} "
-        "STU.<br><br># Category Statistics<br><br>"
+        "STU.<br><br>## Category Statistics<br><br>"
         "|Category|Reviewed|Rewarded|Total rewards|Top contributor|<br>"
         "|:-|:-|:-|-:|:-|<br>"
     )
