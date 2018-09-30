@@ -193,8 +193,9 @@ def update_banned():
 def update_account():
     account = Account("utopian-io")
     current_vp = account.get_voting_power()
-    recharge_time = account.get_recharge_time_str(99.75)
-    recharge_timedelta = account.get_recharge_timedelta(99.75)
+    recharge_time = account.get_recharge_time_str(constants.VOTE_THRESHOLD)
+    recharge_timedelta = account.get_recharge_timedelta(
+        constants.VOTE_THRESHOLD)
 
     if recharge_time == 0 or recharge_timedelta == 0:
         recharge_class = "recharge--low"
