@@ -8,7 +8,7 @@ CLIENT = MongoClient()
 DB = CLIENT.utempian
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-VOTE_THRESHOLD = 97.0
+VOTE_THRESHOLD = 99.75
 CONTRIBUTING = False
 
 if not CONTRIBUTING:
