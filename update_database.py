@@ -38,7 +38,8 @@ def contribution(row, status):
     except Exception:
         review_date = datetime(1970, 1, 1)
 
-    if (datetime.now() - review_date).days > 7 and status != "unreviewed":
+    if ((datetime.now() - review_date).seconds > 561600 and
+            status != "unreviewed"):
         return
 
     total_payout = 0
