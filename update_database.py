@@ -78,18 +78,16 @@ def contribution(row, status):
     elif contribution.vote_status == "Pending":
         status = "pending"
 
-    # Check if contribution was voted on
-    if (contribution.vote_status == "Yes" or
-            contribution.category == "iamutopian"):
-        voted_on = True
-        try:
-            utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
-        except Exception:
-            voted_on = False
-            utopian_vote = 0
-    else:
+    try:
+        utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
+    except Exception:
         voted_on = False
         utopian_vote = 0
+
+    if utopian_vote:
+        voted_on = True
+    else:
+        voted_on = False
 
     # Check for when contribution not reviewed
     if contribution.score == "":
