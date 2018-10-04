@@ -798,7 +798,8 @@ def i_am_utopian():
 def inject_last_updated():
     categories = sorted(["analysis", "tutorials", "graphics", "copywriting",
                          "development", "blog", "ideas", "social", "all",
-                         "bug-hunting", "video-tutorials"])
+                         "bug-hunting", "video-tutorials", "translations",
+                         "anti-abuse"])
     account = DB.accounts.find_one({"account": "utopian-io"})
     return dict(last_updated=account["updated"].strftime("%H:%M %Z"),
                 categories=categories)

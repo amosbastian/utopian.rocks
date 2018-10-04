@@ -28,6 +28,7 @@
   --color-copywriting: teal;
   --color-blog: #0275d8;
   --color-iamutopian: #B10DC9;
+  --color-anti-abuse: maroon;
   --color-accepted: #2ecc71;
   --color-rejected: #e74c3c;
   --color-nearing-expiration: #FF851B; }
@@ -330,7 +331,7 @@ body {
 
 .category-filter {
   display: grid;
-  grid-template-columns: repeat(11, max-content);
+  grid-template-columns: repeat(13, max-content);
   align-items: center;
   justify-content: flex-end;
   grid-gap: 2rem; }
@@ -613,6 +614,9 @@ body {
 
 .category--iamutopian {
   color: var(--color-iamutopian); }
+
+.category--anti-abuse {
+  color: var(--color-anti-abuse); }
 
 .error-page {
   display: grid;
