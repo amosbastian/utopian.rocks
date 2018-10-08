@@ -433,7 +433,7 @@ api.add_resource(ContributionResource, "/api/posts")
 def intro_section(first_day, last_day):
     """
     Creates the introduction section / headline for the Utopian weekly post.
-    
+
     The week is defined by the first and last days of the week.
     """
     LOGGER.info("Generating post introduction section...")
@@ -454,8 +454,8 @@ def footer_section():
         "<br><br>## First Time Contributing in [Utopian.io](https://join.utopian.io/)?"
         "<br><br>&lt;a href=&quot;https://join.utopian.io/guidelines&quot;&gt;Learn how to contribute on our website&lt;/a&gt;"
         "<br><br>&lt;center&gt;&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/8S1AtrzYY1Q&quot; frameborder=&quot;0&quot; allow=&quot;autoplay; encrypted-media&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/center&gt;"
-        "<br><br>## Utopian Witness<br><br>[Vote for our witness!](https://steemconnect.com/sign/account-witness-vote?witness=utopian-io&approve=1)"
         "<br><br>&lt;center&gt;&lt;a href=&quot;https://discord.gg/h52nFrV&quot;&gt;&lt;img src=&quot;https://cdn.discordapp.com/attachments/396653220702978049/452918421235957763/footer_558.png&quot; /&gt;&lt;/a&gt;&lt;/center&gt;"
+        "<br><br>&lt;center&gt;&lt;h4&gt;&lt;a href=&quot;https://steemconnect.com/sign/account-witness-vote?witness=utopian-io&amp;approve=1&quot;&gt;Vote for the Utopian Witness&lt;/a&gt;&lt;/h4&gt;&lt;/center&gt;"
     )
     return section
 
@@ -534,7 +534,7 @@ def post_statistics_section(categories, contributions):
         f"* The average vote given by Utopian.io was worth {average_vote:.2f} "
         "STU.<br><br>## Category Statistics<br><br>"
         "|Category|Reviewed|Rewarded|Total rewards|Top contributor|<br>"
-        "|:-|:-|:-|-:|:-|<br>"
+        "|:-|:-|:-|-:|:-|"
     )
 
     # Create the table with category statistics
@@ -556,7 +556,7 @@ def post_statistics_section(categories, contributions):
 
         # Add the row
         section += (
-            f"|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|<br>")
+            f"<br>|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|")
 
     return section
 
