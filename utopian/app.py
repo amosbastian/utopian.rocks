@@ -534,7 +534,7 @@ def post_statistics_section(categories, contributions):
         f"* The average vote given by Utopian.io was worth {average_vote:.2f} "
         "STU.<br><br>## Category Statistics<br><br>"
         "|Category|Reviewed|Rewarded|Total rewards|Top contributor|<br>"
-        "|:-|:-|:-|-:|:-|<br>"
+        "|:-|:-|:-|-:|:-|"
     )
 
     # Create the table with category statistics
@@ -556,7 +556,7 @@ def post_statistics_section(categories, contributions):
 
         # Add the row
         section += (
-            f"|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|<br>")
+            f"<br>|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|")
 
     return section
 
