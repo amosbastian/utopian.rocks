@@ -73,6 +73,7 @@ body {
     3fr
     [full-end];
   background-color: var(--color-background);
+  overflow-x: hidden;
 }
 
 @media screen and (max-width: 420px) {

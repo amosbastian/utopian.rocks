@@ -57,7 +57,8 @@ body {
   display: grid;
   grid-template-rows: min-content 1fr min-content;
   grid-template-columns: [full-start] 3fr [center-start] 7.5fr [center-end] 3fr [full-end];
-  background-color: var(--color-background); }
+  background-color: var(--color-background);
+  overflow-x: hidden; }
 
 @media screen and (max-width: 420px) {
   html {
