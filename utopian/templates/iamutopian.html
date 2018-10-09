@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% set active_page = "index" %}
+{% set active_page = "iamutopian" %}
 {% block content %}
 <div class="statistics statistics--singular">
   <div class="statistics-element">
@@ -9,22 +9,7 @@
     {{contributions|length}}
   </div>
   <div class="category-filter">
-      {% for category in categories %}
-        {% if category == "all" %}
-        <div class="filter-button category--{{category}}">
-          <svg class="category-icon" onclick="filterContributions('{{category}}')">
-            <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
-          </svg>
-        </div>
-        {% else %}
-        <div class="filter-button category--{{category}} category--inactive">
-          <svg class="category-icon" onclick="filterContributions('{{category}}')">
-            <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
-          </svg>
-        </div>
-        {% endif %}
-      {% endfor %}
-    </div>
+  </div>
 </div>
 <div class="contributions">
   {% for contribution in contributions %}
@@ -65,16 +50,16 @@
     </div>
     {% else %}
     <div class="contribution__category category--{{contribution.category}}" title="{{contribution.category}}">
-      <svg class="category-icon">
+      <svg class="category-icon category-icon--utopian-io">
         <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category}}"></use>
       </svg>
     </div>
     {% endif %}
-    {% if contribution.moderator %}
-    <div class="contribution__status contribution__status--under-review" title="under review by @{{contribution.moderator}}">
+    {% if contribution.nearing_expiration %}
+    <div class="contribution__status contribution__status--nearing-expiration" title="payout {{contribution.until_expiration|timeago}}">
     </div>
     {% else %}
-    <div class="contribution__status contribution__status--not-under-review" title="not under review">
+    <div class="contribution__status contribution__status--under-review">
     </div>
     {% endif %}
   </div>

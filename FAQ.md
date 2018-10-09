@@ -17,6 +17,7 @@ In general you can hover over the icons or colours to find out what they are, bu
 |![](https://i.imgur.com/cNVURSa.png)|@utopian-io's voting power|
 |Other|Category specific icon|
 |Colour: RED|Not being reviewed / age isn't valid for upvote|
+|Colour: ORANGE| Age is valid, but the contribution is nearing its payout|
 |Colour: GREEN|Being reviewed / age is valid|
 
 

@@ -11,6 +11,7 @@ from dateutil.parser import parse
 from flask import Flask, jsonify, render_template, abort
 from flask_cors import CORS
 from flask_restful import Resource, Api
+from itertools import zip_longest
 from pymongo import MongoClient
 from statistics import mean
 from webargs import fields, validate
@@ -95,7 +96,10 @@ class ContributionResource(Resource):
         "status": fields.Str(),
         "author": fields.Str(),
         "moderator": fields.Str(),
-        "staff_picked": fields.Bool()
+        "staff_picked": fields.Bool(),
+        "review_status": fields.Str(),
+        "url": fields.Str(),
+        "voted_on": fields.Bool()
     }
 
     @use_args(query_parameters)
@@ -130,10 +134,10 @@ def string_to_date(input):
     Converts a given string to a date.
     """
     if input == "today":
-        return datetime.now()
+        today_date = date.today()
+        return datetime(today_date.year, today_date.month, today_date.day)
     try:
-        date = parse(input)
-        return date
+        return parse(input)
     except Exception as error:
         abort(422, errors=str(error))
 
@@ -278,7 +282,10 @@ def category_statistics(contributions):
         value["moderators"] = Counter(value["moderators"]).most_common()
         value["rewarded_contributors"] = Counter(
             value["rewarded_contributors"]).most_common()
-        value["average_payout"] = value["total_payout"] / value["reviewed"]
+        try:
+            value["average_payout"] = value["total_payout"] / value["reviewed"]
+        except ZeroDivisionError:
+            value["average_payout"] = 0
         value["pct_voted"] = percentage(value["reviewed"], value["voted"])
 
         # Add Utopian.io's vote statistics
@@ -397,29 +404,25 @@ class WeeklyResource(Resource):
     """
     def get(self, date):
         LOGGER.info(f"Retrieving for {date}")
-        try:
-            # Get date for retrieving posts
-            date = string_to_date(date)
-            week_ago = date - timedelta(days=7)
+        # Get date for retrieving posts
+        date = string_to_date(date)
+        week_ago = date - timedelta(days=7)
 
-            # Retrieve contributions made in week before the given date
-            contributions = DB.contributions
-            print(week_ago, date)
-            pipeline = [
-                {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
-            contributions = [json.loads(json_util.dumps(c))
-                             for c in contributions.aggregate(pipeline)]
+        # Retrieve contributions made in week before the given date
+        contributions = DB.contributions
+        pipeline = [
+            {"$match": {"review_date": {"$gte": week_ago, "$lt": date}}}]
+        contributions = [json.loads(json_util.dumps(c))
+                         for c in contributions.aggregate(pipeline)]
 
-            moderators = moderator_statistics(contributions)
-            categories = category_statistics(contributions)
-            projects = project_statistics(contributions)
-            staff_picks = staff_pick_statistics(contributions)
-            task_requests = task_request_statistics(contributions)
+        moderators = moderator_statistics(contributions)
+        categories = category_statistics(contributions)
+        projects = project_statistics(contributions)
+        staff_picks = staff_pick_statistics(contributions)
+        task_requests = task_request_statistics(contributions)
 
-            return jsonify(
-                [moderators, categories, projects, staff_picks, task_requests])
-        except Exception as error:
-            LOGGER.error(error)
+        return jsonify(
+            [moderators, categories, projects, staff_picks, task_requests])
 
 
 api.add_resource(WeeklyResource, "/api/statistics/<string:date>")
@@ -427,12 +430,42 @@ api.add_resource(BannedUsersResource, "/api/bannedUsers")
 api.add_resource(ContributionResource, "/api/posts")
 
 
+def intro_section(first_day, last_day):
+    """
+    Creates the introduction section / headline for the Utopian weekly post.
+
+    The week is defined by the first and last days of the week.
+    """
+    LOGGER.info("Generating post introduction section...")
+    section = (
+        f"# Weekly Top of Utopian.io: {first_day:%B} {first_day.day} - {last_day:%B} {last_day.day}"
+        "<br><br>[Introduction (summary of the week)]"
+    )
+    return section
+
+
+def footer_section():
+    """
+    Creates the footer section for the Utopian weekly post.
+    """
+    LOGGER.info("Generating post footer section...")
+    section = (
+        "![divider](https://cdn.steemitimages.com/DQmWQWnJf7s671sHmGdzZVQMqEv7DyXL9qknT67vyQdAHfL/utopian_divider.png)"
+        "<br><br>## First Time Contributing in [Utopian.io](https://join.utopian.io/)?"
+        "<br><br>&lt;a href=&quot;https://join.utopian.io/guidelines&quot;&gt;Learn how to contribute on our website&lt;/a&gt;"
+        "<br><br>&lt;center&gt;&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/8S1AtrzYY1Q&quot; frameborder=&quot;0&quot; allow=&quot;autoplay; encrypted-media&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/center&gt;"
+        "<br><br>&lt;center&gt;&lt;a href=&quot;https://discord.gg/h52nFrV&quot;&gt;&lt;img src=&quot;https://cdn.discordapp.com/attachments/396653220702978049/452918421235957763/footer_558.png&quot; /&gt;&lt;/a&gt;&lt;/center&gt;"
+        "<br><br>&lt;center&gt;&lt;h4&gt;&lt;a href=&quot;https://steemconnect.com/sign/account-witness-vote?witness=utopian-io&amp;approve=1&quot;&gt;Vote for the Utopian Witness&lt;/a&gt;&lt;/h4&gt;&lt;/center&gt;"
+    )
+    return section
+
+
 def staff_pick_section(staff_picks):
     """
     Creates the staff pick section for the Utopian weekly post.
     """
     LOGGER.info("Generating staff pick statistics section...")
-    section = ""
+    section = "## Staff Picks"
     for staff_pick in staff_picks["staff_picks"]:
         url = staff_pick["url"]
         post = Comment(url)
@@ -446,12 +479,12 @@ def staff_pick_section(staff_picks):
 
         # Add staff pick to the string
         section += (
-            f"&lt;a href='{url}'&gt;{title}&lt;/a&gt; by @{author} "
-            f"[{category}]<br>[Image (contributor profile image / image from "
+            f"<br><br>### &lt;a href='{url}'&gt;{title}&lt;/a&gt; by @{author} "
+            f"[{category}]<br><br>[Image (contributor profile image / image from "
             "the post)]<br><br>[Paragraph: Background info on project etc.]"
             "<br><br>[Paragraph: CM review, including etc.]<br><br>"
             f"Total payout: {staff_pick['total_payout']:.2f} STU<br>"
-            f"Number of votes: {staff_pick['total_votes']}<br><br>"
+            f"Number of votes: {staff_pick['total_votes']}"
         )
 
     return section
@@ -463,7 +496,7 @@ def post_statistics_section(categories, contributions):
     """
     LOGGER.info("Generating post statistics section...")
     section = (
-        "<br><br># Utopian.io Post Statistics<br><br>"
+        "## Utopian.io Post Statistics<br><br>"
         "The staff picked contributions are only a small (but exceptional) "
         "example of the mass of contributions reviewed and rewarded by "
         "Utopian.io.<br><br>"
@@ -499,9 +532,9 @@ def post_statistics_section(categories, contributions):
         f"less than {most_engagement['total_comments']} comments in its "
         "comment threads.<br>"
         f"* The average vote given by Utopian.io was worth {average_vote:.2f} "
-        "STU.<br><br># Category Statistics<br><br>"
+        "STU.<br><br>## Category Statistics<br><br>"
         "|Category|Reviewed|Rewarded|Total rewards|Top contributor|<br>"
-        "|:-|:-|:-|-:|:-|<br>"
+        "|:-|:-|:-|-:|:-|"
     )
 
     # Create the table with category statistics
@@ -523,17 +556,18 @@ def post_statistics_section(categories, contributions):
 
         # Add the row
         section += (
-            f"|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|<br>")
+            f"<br>|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|")
 
     return section
 
 
-@app.route("/weekly")
-def weekly():
+@app.route("/weekly", defaults={"date": "today"})
+@app.route("/weekly/<date>")
+def weekly(date):
     """
     Returns weekly statistics in a format that can be posted on Steemit.
     """
-    today = datetime.now()
+    today = string_to_date(date)
     week_ago = today - timedelta(days=7)
     contributions = DB.contributions
     pipeline = [
@@ -547,12 +581,17 @@ def weekly():
 
     # Get each section of the post
     try:
+        post_intro_section = intro_section(week_ago, today)
         staff_section = staff_pick_section(staff_picks)
         post_section = post_statistics_section(categories, contributions)
-        LOGGER.info((staff_section + post_section))
+        post_footer_section = footer_section()
     except Exception as error:
         LOGGER.error(error)
-    return render_template("weekly.html", body=(staff_section + post_section))
+        body = f"No statistics to show for this week ({week_ago:%B} {week_ago.day} - {today:%B} {today.day})."
+    else:
+        body = "<br><br>".join([post_intro_section, staff_section, post_section, post_footer_section])
+        LOGGER.info(body)
+    return render_template("weekly.html", body=body)
 
 
 def update_vp(current_vp, updated, recharge_time):
@@ -622,6 +661,27 @@ def exponential_vote(score, category):
     return weight
 
 
+def estimate_vote_time(contributions, recharge_time):
+    """Estimates the vote time of the given contributions."""
+    for i, contribution in enumerate(contributions):
+        if "score" not in contribution.keys():
+            continue
+        if i == 0:
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            vote_time = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
+            contribution["vote_time"] = vote_time
+            continue
+        score = contribution["score"]
+        category = contribution["category"]
+        missing_vp = 2 * exponential_vote(score, category) / 100.0
+        recharge_seconds = missing_vp * 100 * 432000 / 10000
+        vote_time = vote_time + timedelta(seconds=recharge_seconds)
+        contribution["vote_time"] = vote_time
+    return contributions
+
+
 @app.route("/queue")
 def queue():
     contributions = DB.contributions
@@ -634,6 +694,12 @@ def queue():
     for contribution in pending:
         valid.append(contribution)
         contribution["valid_age"] = True
+        created = datetime.now() - contribution["created"]
+        time_until_expiration = timedelta(days=6, hours=12) - created
+        if time_until_expiration < timedelta(hours=12):
+            contribution["nearing_expiration"] = True
+            until_expiration = datetime.now() + time_until_expiration
+            contribution["until_expiration"] = until_expiration
         # if (datetime.now() - timedelta(days=1)) > contribution["created"]:
         #     valid.append(contribution)
         #     contribution["valid_age"] = True
@@ -649,30 +715,94 @@ def queue():
     if not recharge_time:
         recharge_time = "0:0:0"
 
-    for i, contribution in enumerate((valid + invalid)):
-        if i == 0:
-            hours, minutes, seconds = [int(x) for x in
-                                       recharge_time.split(":")]
-            vote_time = datetime.now() + timedelta(
-                hours=hours, minutes=minutes, seconds=seconds)
-            contribution["vote_time"] = vote_time
-            continue
-        score = contribution["score"]
-        category = contribution["category"]
-        missing_vp = 2 * exponential_vote(score, category) / 100.0
-        recharge_seconds = missing_vp * 100 * 432000 / 10000
-        vote_time = vote_time + timedelta(seconds=recharge_seconds)
-        contribution["vote_time"] = vote_time
+    contributions = estimate_vote_time((valid + invalid), recharge_time)
 
     return render_template(
-        "queue.html", contributions=(valid + invalid), current_vp=current_vp,
+        "queue.html", contributions=contributions, current_vp=current_vp,
         recharge_time=recharge_time, recharge_class=recharge_class)
+
+
+@app.route("/comments")
+def moderator_comments():
+    contributions = DB.contributions
+    pending_comments = [contribution for contribution in
+                        contributions.find({"review_status": "pending"})]
+    pending_contributions = [contribution for contribution in
+                             contributions.find({"status": "pending"})]
+
+    valid = []
+    invalid = []
+
+    for contribution in pending_comments:
+        if (datetime.now() - timedelta(days=2)) > contribution["review_date"]:
+            valid.append(contribution)
+            contribution["valid_age"] = True
+        else:
+            invalid.append(contribution)
+            contribution["valid_age"] = False
+
+    valid = sorted(valid, key=lambda x: x["created"])
+    invalid = sorted(invalid, key=lambda x: x["created"])
+
+    current_vp, recharge_time, recharge_class = account_information()
+
+    if not recharge_time:
+        recharge_time = "0:0:0"
+
+    contributions = estimate_vote_time(pending_contributions, recharge_time)
+
+    comments = [c for c in sorted((valid + invalid),
+                key=lambda x: x["review_date"])
+                if c["moderator"] not in ["ignore", "irrelevant", "banned"] or
+                c["comment_url"] != ""]
+
+    for comment, contribution in zip_longest(comments, contributions):
+        if not comment:
+            continue
+        if contribution:
+            if "vote_time" not in contribution.keys():
+                continue
+            comment["vote_time"] = contribution["vote_time"]
+        else:
+            comment["vote_time"] = "TBD"
+
+    return render_template(
+        "comments.html", contributions=comments, current_vp=current_vp,
+        recharge_time=recharge_time, recharge_class=recharge_class)
+
+
+@app.route("/iamutopian")
+def i_am_utopian():
+    contributions = DB.contributions
+    iamutopian_contributions = [
+        contribution for contribution in contributions.find({
+            "voted_on": False, "category": "iamutopian"})]
+
+    for contribution in iamutopian_contributions:
+        contribution["valid_age"] = True
+        created = datetime.now() - contribution["created"]
+        time_until_expiration = timedelta(days=6, hours=12) - created
+        if time_until_expiration < timedelta(hours=12):
+            contribution["nearing_expiration"] = True
+            until_expiration = datetime.now() + time_until_expiration
+            contribution["until_expiration"] = until_expiration
+
+    contributions = sorted(iamutopian_contributions,
+                           key=lambda x: x["created"])
+
+    return render_template(
+        "iamutopian.html", contributions=contributions)
 
 
 @app.context_processor
 def inject_last_updated():
+    categories = sorted(["analysis", "tutorials", "graphics", "copywriting",
+                         "development", "blog", "ideas", "social", "all",
+                         "bug-hunting", "video-tutorials", "translations",
+                         "anti-abuse"])
     account = DB.accounts.find_one({"account": "utopian-io"})
-    return dict(last_updated=account["updated"].strftime("%H:%M %Z"))
+    return dict(last_updated=account["updated"].strftime("%H:%M %Z"),
+                categories=categories)
 
 
 def main():

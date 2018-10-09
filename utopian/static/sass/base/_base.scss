@@ -3,6 +3,7 @@
   --color-grey-light-2: #f4f2f2;
   --color-grey-light-3: #f0eeee;
   --color-grey-light-4: #ccc;
+  --color-grey-light-5: #afa6a6;
 
   --color-header: #24292f;
   --color-background: #f6f8fa;
@@ -16,6 +17,7 @@
   --color-not-under-review: #FF4136;
   --color-under-review: #2ECC40;
 
+  --color-all: #4786ff;
   --color-ideas: #54d2a0;
   --color-development: #000;
   --color-bug-hunting: #d9534f;
@@ -28,9 +30,12 @@
   --color-video-tutorials: #ec3324;
   --color-copywriting: teal;
   --color-blog: #0275d8;
+  --color-iamutopian: #B10DC9;
+  --color-anti-abuse: maroon;
 
   --color-accepted: #2ecc71;
   --color-rejected: #e74c3c;
+  --color-nearing-expiration: #FF851B;
 }
 
 * {
@@ -54,6 +59,7 @@ body {
   font-weight: 400;
   line-height: 1.6;
   outline: none;
+  overflow-y: overlay;
 }
 
 .container {
@@ -67,6 +73,7 @@ body {
     3fr
     [full-end];
   background-color: var(--color-background);
+  overflow-x: hidden;
 }
 
 @media screen and (max-width: 420px) {

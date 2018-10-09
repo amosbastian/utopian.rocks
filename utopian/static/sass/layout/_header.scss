@@ -2,13 +2,7 @@
   background-color: var(--color-header);
   grid-column: full-start / full-end;
   display: grid;
-  grid-template-columns: [header-start]
-    3fr
-    [header-center-start]
-    7.5fr
-    [header-center-end]
-    3fr 
-    [header-end];
+  grid-template-columns: [header-start] 3fr [header-center-start] 7.5fr [header-center-end] 3fr [header-end];
   color: var(--color-grey-light-1);
   font-size: 2rem;
   height: 6rem;
@@ -20,12 +14,12 @@
   margin-left: 2rem;
   align-items: center;
 
-  & > a {
+  &>a {
     display: inline-block;
     height: 4.5rem;
     width: 4.5rem;
 
-    & > img {
+    &>img {
       height: 4.5rem;
       width: 4.5rem;
     }
@@ -35,47 +29,59 @@
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: max-content max-content max-content;
+  grid-template-columns: repeat(5, max-content);
   grid-gap: 1.5rem;
   align-items: center;
   font-size: 1.4rem;
+
   &--link:link,
   &--link:visited {
     text-decoration: none;
     font-weight: 600;
     font-size: inherit;
     line-height: 2.1rem;
-    color: var(--color-grey-light-1);
+    color: var(--color-grey-light-4);
     display: inline-block;
   }
 
   &--link:hover {
-    color: var(--color-grey-light-4);
+    color: var(--color-grey-light-1);
   }
 
   &--link--active {
-    color: var(--color-grey-light-4) !important;
+    color: var(--color-grey-light-1) !important;
   }
 }
 
 @media screen and (max-width: 1024px) {
   .header {
+    width: 100vw;
     height: 12rem;
+    grid-template-columns: [header-start] 2fr [header-center-start] 3fr [header-center-end] 3fr [header-end];
   }
+
   .header-center {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
+
+    &--link:link,
+    &--link:visited {
+      width: 10rem;
+      text-align: center;
+    }
   }
+
   .header-center {
     grid-gap: 3rem;
   }
 
   .header-image {
-    margin-left: 4rem;
-    & > a {
+    // margin-left: 4rem;
+
+    &>a {
       height: 9rem;
       width: 9rem;
-  
-      & > img {
+
+      &>img {
         height: 9rem;
         width: 9rem;
       }
@@ -85,23 +91,51 @@
 
 @media screen and (max-width: 768px) {
   .header {
-    height: 24rem;
+    width: 100vw;
+    height: 27rem; // 20 + 5 + extra
+    // grid-template-columns: [header-start] 2fr [header-center-start] 3fr [header-center-end] 3fr [header-end];
+    grid-template-columns: 1fr;
+    grid-template-rows: 20rem 5rem;
+    grid-template-areas:
+      "title"
+      "nav";
   }
+
   .header-center {
-    font-size: 4.4rem;
+    grid-area: nav;
+    font-size: 1.4rem;
+    display: flex;
+    justify-content: space-around;
+
+    &--link:link,
+    &--link:visited {
+      width: 7rem;
+      text-align: center;
+    }
   }
+
   .header-center {
-    grid-gap: 6rem;
+    grid-gap: 1rem;
   }
+
+  .header-image--container {
+    grid-area: title;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
   .header-image {
-    margin-left: 8rem;
-    & > a {
-      height: 18rem;
-      width: 18rem;
-  
-      & > img {
-        height: 18rem;
-        width: 18rem;
+
+    margin-left: 0rem;
+
+    &>a {
+      height: 17rem;
+      width: 17rem;
+
+      &>img {
+        height: 17rem;
+        width: 17rem;
       }
     }
   }
@@ -109,21 +143,40 @@
 
 @media screen and (max-width: 420px) {
   .header {
-    height: 24rem;
+    width: 100vw;
+    height: 47rem; // 20 + 25 + extra
+    grid-template-columns: 1fr;
+    grid-template-rows: 20rem 25rem;
+    grid-template-areas:
+      "title"
+      "nav";
   }
+
   .header-center {
-    font-size: 6rem;
+    font-size: 3rem;
+    display: flex;
+    flex-direction: column;
   }
+
   .header-center {
     grid-gap: 6rem;
+
+    &--link:link,
+    &--link:visited {
+      width: 100%;
+      text-align: center;
+      padding: 1rem 0;
+    }
   }
+
   .header-image {
-    margin-left: 8rem;
-    & > a {
+    margin-left: 0rem;
+
+    &>a {
       height: 18rem;
       width: 18rem;
-  
-      & > img {
+
+      &>img {
         height: 18rem;
         width: 18rem;
       }

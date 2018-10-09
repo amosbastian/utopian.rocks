@@ -1,5 +1,5 @@
 <header class="header">
-  <span>
+  <span class="header-image--container">
     <div class="header-image">
       <a href="/">
         <img src="{{ url_for('static', filename='utopian_mascot.png') }}" alt="Utopian.rocks">
@@ -23,6 +23,24 @@
     {% else %}
     <a href="/queue" class="header-center--link">
       Waiting for upvote
+    </a>
+    {% endif %}
+    {% if active_page == "comments" %}
+    <a href="/comments" class="header-center--link header-center--link--active">
+      Moderator comments
+    </a>
+    {% else %}
+    <a href="/comments" class="header-center--link">
+      Moderator comments
+    </a>
+    {% endif %}
+    {% if active_page == "iamutopian" %}
+    <a href="/iamutopian" class="header-center--link header-center--link--active">
+      #iamutopian
+    </a>
+    {% else %}
+    <a href="/iamutopian" class="header-center--link">
+      #iamutopian
     </a>
     {% endif %}
     <a href="https://github.com/amosbastian/utopian.rocks/blob/master/FAQ.md" class="header-center--link" target="_blank">

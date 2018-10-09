@@ -1,5 +1,6 @@
 import constants
 import json
+import requests
 from beem.account import Account
 from beem.amount import Amount
 from beem.comment import Comment
@@ -37,7 +38,8 @@ def contribution(row, status):
     except Exception:
         review_date = datetime(1970, 1, 1)
 
-    if (datetime.now() - review_date).days > 7 and status != "unreviewed":
+    if ((datetime.now() - review_date).seconds > 561600 and
+            status != "unreviewed"):
         return
 
     total_payout = 0
@@ -47,6 +49,18 @@ def contribution(row, status):
         comment = Comment(url)
     except Exception:
         return
+
+    if contribution.review_status == "Pending":
+        for reply in comment.get_replies():
+            if reply.author == contribution.moderator:
+                review_date = reply["created"]
+                comment_url = reply.permlink
+                break
+        else:
+            review_date = datetime(1970, 1, 1)
+            comment_url = ""
+    else:
+        comment_url = ""
 
     # Calculate total (pending) payout of contribution
     if comment.time_elapsed() > timedelta(days=7):
@@ -65,17 +79,16 @@ def contribution(row, status):
     elif contribution.vote_status == "Pending":
         status = "pending"
 
-    # Check if contribution was voted on
-    if contribution.vote_status == "Yes":
-        voted_on = True
-        try:
-            utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
-        except Exception:
-            voted_on = False
-            utopian_vote = 0
-    else:
+    try:
+        utopian_vote = Vote(f"{comment.authorperm}|utopian-io").sbd
+    except Exception:
         voted_on = False
         utopian_vote = 0
+
+    if utopian_vote:
+        voted_on = True
+    else:
+        voted_on = False
 
     # Check for when contribution not reviewed
     if contribution.score == "":
@@ -104,7 +117,9 @@ def contribution(row, status):
         "total_comments": comments,
         "utopian_vote": utopian_vote,
         "created": comment["created"],
-        "title": comment.title
+        "title": comment.title,
+        "review_status": contribution.review_status.lower(),
+        "comment_url": comment_url
     }
 
     return new_contribution
@@ -128,25 +143,28 @@ def get_unreviewed():
     return unreviewed[1:]
 
 
-def update_posts():
+def update_posts(local=False):
     """
     Adds all reviewed and unreviewed contributions to the database.
     """
-    reviewed = []
-    unreviewed = []
-
-    # Iterate over all worksheets in the spreadsheet
-    reviewed = get_reviewed()
-    unreviewed = get_unreviewed()
-
-    # Convert row to dictionary
-    reviewed = [contribution(x, "reviewed") for x in reviewed]
-    unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
-
-    # Lazy so drop database and replace
     contributions = constants.DB.contributions
+    if local:
+        with open(f"{constants.DIR_PATH}/contributions.json") as json_data:
+            posts = json.load(json_data)
 
-    for post in reviewed + unreviewed:
+        for post in posts:
+            if "created" in post.keys():
+                post["created"] = parse(post["created"])
+            if "review_date" in post.keys():
+                post["review_date"] = parse(post["review_date"])
+    else:
+        reviewed = get_reviewed()
+        unreviewed = get_unreviewed()
+        reviewed = [contribution(x, "reviewed") for x in reviewed]
+        unreviewed = [contribution(x, "unreviewed") for x in unreviewed]
+        posts = reviewed + unreviewed
+
+    for post in posts:
         if post:
             contributions.replace_one({"url": post["url"]}, post, True)
 
@@ -174,8 +192,9 @@ def update_banned():
 def update_account():
     account = Account("utopian-io")
     current_vp = account.get_voting_power()
-    recharge_time = account.get_recharge_time_str(99.75)
-    recharge_timedelta = account.get_recharge_timedelta(99.75)
+    recharge_time = account.get_recharge_time_str(constants.VOTE_THRESHOLD)
+    recharge_timedelta = account.get_recharge_timedelta(
+        constants.VOTE_THRESHOLD)
 
     if recharge_time == 0 or recharge_timedelta == 0:
         recharge_class = "recharge--low"
@@ -216,10 +235,14 @@ def update_moderators():
 
 
 def main():
-    update_posts()
-    update_account()
-    update_banned()
-    update_moderators()
+    if constants.CONTRIBUTING:
+        update_posts(True)
+        update_account()
+    else:
+        update_posts()
+        update_account()
+        update_banned()
+        update_moderators()
 
 if __name__ == '__main__':
     main()
