@@ -433,3 +433,22 @@
     fill: currentColor;
   }
 }
+
+.announcement {
+  display: grid;
+  grid-column: center-start / center-end;
+  grid-auto-flow: row;
+  margin-top: 2rem;
+  color: #155724;
+  background-color: #d4edda;
+  font-size: 1.4rem;
+  padding: .75rem 1.25rem;
+  border: 1px solid #c3e6cb;
+  border-radius: .25rem;
+}
+
+.announcement-url:link,
+.announcement-url:visited {
+  color: var(--color-link);
+  text-decoration: none;
+}
