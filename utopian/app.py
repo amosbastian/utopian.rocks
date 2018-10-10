@@ -572,7 +572,7 @@ def weekly(date):
     week_ago = today - timedelta(days=7)
     contributions = DB.contributions
     pipeline = [
-        {"$match": {"review_date": {"$gte": week_ago, "$lt": today}}}]
+        {"$match": {"review_date": {"$gte": week_ago}}}]
     contributions = [json.loads(json_util.dumps(c))
                      for c in contributions.aggregate(pipeline)]
 
@@ -588,9 +588,11 @@ def weekly(date):
         post_footer_section = footer_section()
     except Exception as error:
         LOGGER.error(error)
-        body = f"No statistics to show for this week ({week_ago:%B} {week_ago.day} - {today:%B} {today.day})."
+        body = ("No statistics to show for this week ("
+                f"{week_ago:%B} {week_ago.day} - {today:%B} {today.day}).")
     else:
-        body = "<br><br>".join([post_intro_section, staff_section, post_section, post_footer_section])
+        body = "<br><br>".join([post_intro_section, staff_section,
+                                post_section, post_footer_section])
         LOGGER.info(body)
     return render_template("weekly.html", body=body)
 
