@@ -99,7 +99,8 @@ class ContributionResource(Resource):
         "staff_picked": fields.Bool(),
         "review_status": fields.Str(),
         "url": fields.Str(),
-        "voted_on": fields.Bool()
+        "voted_on": fields.Bool(),
+        "repository": fields.Str(),
     }
 
     @use_args(query_parameters)
