@@ -30,7 +30,7 @@
       <div class="body-half">
         {% if contribution.repository %}
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
-          {{contribution.repository.split('https://github.com/')[-1]}}
+          {{contribution.repository.split('https://github.com/')[-1]|truncate(110)}}
         </a>
         <span class="contribution-submitted">
           · {{contribution.created|timeago}}

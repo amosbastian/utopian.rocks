@@ -46,13 +46,13 @@
     <div class="contribution__body">
       <div class="body-half">
         <a href="{{contribution.url}}" class="contribution-url" target="_blank">
-          {{contribution.title|truncate(110)}}
+          @{{contribution.url.split("@")[1]|truncate(110)}}
         </a>
       </div>
       <div class="body-half">
         {% if contribution.repository %}
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
-          {{contribution.repository.split('https://github.com/')[-1]}}
+          {{contribution.repository.split('https://github.com/')[-1]|truncate(110)}}
         </a>
         <span class="contribution-submitted">
           · {{contribution.created|timeago}}

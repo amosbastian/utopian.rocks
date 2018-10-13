@@ -58,13 +58,13 @@
     <div class="contribution__body">
       <div class="body-half">
         <a href="{{contribution.url}}#@{{contribution.moderator}}/{{contribution.comment_url}}" class="contribution-url" target="_blank">
-          {{contribution.comment_url|truncate(110)}}
+          @{{contribution.moderator}}/{{contribution.comment_url|truncate(90)}}
         </a>
       </div>
       <div class="body-half">
         {% if contribution.repository %}
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
-          {{contribution.repository.split('https://github.com/')[-1]}}
+          {{contribution.repository.split('https://github.com/')[-1]|truncate(110)}}
         </a>
           {% if not contribution.vote_time %}
           <span class="contribution-submitted contribution-submitted--nopadding">
