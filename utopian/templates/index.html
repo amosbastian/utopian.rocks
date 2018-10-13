@@ -18,13 +18,13 @@
   <div class="category-filter">
       {% for category in categories %}
         {% if category == "all" %}
-        <div class="filter-button category--{{category}}">
+        <div title="{{category}}" class="filter-button category--{{category}}">
           <svg class="category-icon" onclick="filterContributions('{{category}}')">
             <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
           </svg>
         </div>
         {% else %}
-        <div class="filter-button category--{{category}} category--inactive">
+        <div title="{{category}}" class="filter-button category--{{category}} category--inactive">
           <svg class="category-icon" onclick="filterContributions('{{category}}')">
             <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
           </svg>
