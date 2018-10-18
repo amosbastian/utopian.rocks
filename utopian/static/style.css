@@ -210,6 +210,8 @@ body {
     align-items: center;
     border-left: 1px solid var(--color-contribution-border);
     border-bottom: 1px solid var(--color-contribution-border); }
+  .contribution__status--will-expire {
+    background-color: var(--color-not-under-review); }
   .contribution__status--nearing-expiration {
     background-color: var(--color-nearing-expiration); }
   .contribution__status--under-review {

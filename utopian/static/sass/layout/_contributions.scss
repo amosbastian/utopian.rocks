@@ -26,6 +26,10 @@
     border-bottom: 1px solid var(--color-contribution-border);
   }
 
+  &__status--will-expire {
+    background-color: var(--color-not-under-review);
+  }
+
   &__status--nearing-expiration {
     background-color: var(--color-nearing-expiration);
   }

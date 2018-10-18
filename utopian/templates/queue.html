@@ -3,9 +3,7 @@
 {% block content %}
 <div class="announcement">
   <div>
-    <b>Announcement:</b> check out
-    <a href="https://steemit.com/@jestemkioskiem" class="announcement-url" target="_blank">@jestemkioskiem</a>'s Utopian.rocks
-    <a href="https://steemit.com/utopian-io/@jestemkioskiem/utopian-rocks---the-browser-extension-is-here" class="announcement-url" target="_blank">Chrome extension!</a>
+    <b>NEW TEMPORARY VOTING BEHAVIOUR</b>: if the oldest contribution is within 1 hour of payout then it <i>will</i> be voted on no matter the current voting power! 
   </div>
 </div>
 <div class="statistics">
@@ -108,7 +106,10 @@
       </svg>
     </div>
     {% endif %}
-    {% if contribution.nearing_expiration %}
+    {% if contribution.will_expire %}
+    <div class="contribution__status contribution__status--will-expire" title="will reach payout before 99.75%">
+    </div>
+    {% elif contribution.nearing_expiration %}
     <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - payout {{contribution.until_expiration|timeago}}">
     </div>
     {% elif contribution.valid_age %}

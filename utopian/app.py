@@ -94,6 +94,7 @@ class ContributionResource(Resource):
         "voted_on": fields.Bool(),
         "repository": fields.Str(),
         "beneficiaries_set": fields.Bool(),
+        "is_vipo": fields.Bool(),
     }
 
     @use_args(query_parameters)
@@ -613,8 +614,12 @@ MAX_TASK_REQUEST = 6.0
 EXP_POWER = 2.1
 
 
-def exponential_vote(score, category):
+def exponential_vote(contribution):
     """Calculates the exponential vote for the bot."""
+    score = contribution["score"]
+    category = contribution["category"]
+    is_vipo = contribution["is_vipo"]
+    beneficiaries_set = contribution["beneficiaries_set"]
     try:
         max_vote = MAX_VOTE[category]
     except:
@@ -625,7 +630,23 @@ def exponential_vote(score, category):
         score / 100.0,
         power - (score / 100.0 * (power - 1.0))) * max_vote
 
+    def update_weight(weight):
+        """Updates the voting percentage if beneficiaries utopian.pay set."""
+        weight = float(weight)
+        new_weight = weight + 0.2 * weight + 5.0 / 100.0 + 1.0
+        return new_weight
+
+    if beneficiaries_set:
+        weight = update_weight(weight)
+
+    if is_vipo:
+        weight *= 1.2
+
     return weight
+
+
+STEEM_100_PERCENT = 10000
+STEEM_VOTING_MANA_REGENERATION_SECONDS = 432000
 
 
 def estimate_vote_time(contributions, recharge_time):
@@ -640,10 +661,10 @@ def estimate_vote_time(contributions, recharge_time):
                 hours=hours, minutes=minutes, seconds=seconds)
             contribution["vote_time"] = vote_time
             continue
-        score = contribution["score"]
-        category = contribution["category"]
-        missing_vp = 2 * exponential_vote(score, category) / 100.0
-        recharge_seconds = missing_vp * 100 * 432000 / 10000
+        missing_vp = 2 * exponential_vote(contribution) / 100.0
+        recharge_seconds = (missing_vp * 100 *
+                            STEEM_VOTING_MANA_REGENERATION_SECONDS /
+                            STEEM_100_PERCENT)
         vote_time = vote_time + timedelta(seconds=recharge_seconds)
         contribution["vote_time"] = vote_time
     return contributions
@@ -658,6 +679,8 @@ def queue():
     valid = []
     invalid = []
 
+    current_vp, recharge_time, recharge_class = account_information()
+
     for contribution in pending:
         valid.append(contribution)
         contribution["valid_age"] = True
@@ -667,11 +690,11 @@ def queue():
             contribution["nearing_expiration"] = True
             until_expiration = datetime.now() + time_until_expiration
             contribution["until_expiration"] = until_expiration
+            if until_expiration > parse(recharge_time):
+                contribution["will_expire"] = True
 
     valid = sorted(valid, key=lambda x: x["created"])
     invalid = sorted(invalid, key=lambda x: x["created"])
-
-    current_vp, recharge_time, recharge_class = account_information()
 
     if not recharge_time:
         recharge_time = "0:0:0"

@@ -1,13 +1,18 @@
-import constants
 import json
+from datetime import date, datetime, timedelta
+
 import requests
 from beem.account import Account
 from beem.amount import Amount
 from beem.comment import Comment
 from beem.vote import Vote
-from contribution import Contribution
-from datetime import datetime, date, timedelta
 from dateutil.parser import parse
+
+import constants
+from contribution import Contribution
+
+
+VIPO_LIST = [vipo["account"] for vipo in constants.DB.vipo.find()]
 
 
 class User():
@@ -128,6 +133,7 @@ def contribution(row, status):
         "review_status": contribution.review_status.lower(),
         "comment_url": comment_url,
         "beneficiaries_set": beneficiary_set(comment),
+        "is_vipo": author in VIPO_LIST,
     }
 
     return new_contribution
