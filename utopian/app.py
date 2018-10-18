@@ -690,7 +690,11 @@ def queue():
             contribution["nearing_expiration"] = True
             until_expiration = datetime.now() + time_until_expiration
             contribution["until_expiration"] = until_expiration
-            if until_expiration > parse(recharge_time):
+
+            t = datetime.strptime(recharge_time, "%H:%M:%S")
+            time_until_vote = timedelta(
+                hours=t.hour, minutes=t.minute, seconds=t.second)
+            if time_until_expiration < time_until_vote:
                 contribution["will_expire"] = True
 
     valid = sorted(valid, key=lambda x: x["created"])

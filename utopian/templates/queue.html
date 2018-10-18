@@ -3,7 +3,7 @@
 {% block content %}
 <div class="announcement">
   <div>
-    <b>NEW TEMPORARY VOTING BEHAVIOUR</b>: if the oldest contribution is within 1 hour of payout then it <i>will</i> be voted on no matter the current voting power! 
+    <b>NEW TEMPORARY VOTING BEHAVIOUR</b>: if the oldest contribution is within 13 hours of payout then it <i>will</i> be voted on no matter the current voting power! 
   </div>
 </div>
 <div class="statistics">
@@ -107,10 +107,10 @@
     </div>
     {% endif %}
     {% if contribution.will_expire %}
-    <div class="contribution__status contribution__status--will-expire" title="will reach payout before 99.75% - payout {{contribution.until_expiration|timeago}}">
+    <div class="contribution__status contribution__status--will-expire" title="will reach last 12 hours before 99.75% - {{contribution.until_expiration|timeago}}">
     </div>
     {% elif contribution.nearing_expiration %}
-    <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - payout {{contribution.until_expiration|timeago}}">
+    <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - last 12 hours {{contribution.until_expiration|timeago}}">
     </div>
     {% elif contribution.valid_age %}
     <div class="contribution__status contribution__status--under-review" title="age is valid">
