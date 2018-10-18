@@ -57,9 +57,7 @@ def moderaors():
 
 @app.route("/json/<json_file>")
 def rewards(json_file):
-    """
-    Return all moderator's points for the given week.
-    """
+    """Return all moderator's points for the given week."""
     filename = os.path.join(app.static_folder, "{}.json".format(json_file))
     try:
         with open(filename) as fp:
@@ -71,9 +69,7 @@ def rewards(json_file):
 
 @app.route("/")
 def index():
-    """
-    Sends all unreviewed contributions to index.html.
-    """
+    """Sends all unreviewed contributions to index.html."""
     contributions = DB.contributions
     unreviewed = contributions.find({"status": "unreviewed"})
     unreviewed = [contribution for contribution in unreviewed]
@@ -81,16 +77,12 @@ def index():
 
 
 def without_score(contribution):
-    """
-    Returns a contribution without the score.
-    """
+    """Returns a contribution without the score."""
     return {x: contribution[x] for x in contribution if x != "score"}
 
 
 class ContributionResource(Resource):
-    """
-    Endpoint for contributions in the spreadsheet.
-    """
+    """Endpoint for contributions in the spreadsheet."""
     query_parameters = {
         "category": fields.Str(),
         "status": fields.Str(),
@@ -101,12 +93,12 @@ class ContributionResource(Resource):
         "url": fields.Str(),
         "voted_on": fields.Bool(),
         "repository": fields.Str(),
+        "beneficiaries_set": fields.Bool(),
     }
 
     @use_args(query_parameters)
     def get(self, query_parameters):
-        """
-        Uses the given query parameters to search for contributions in the
+        """Uses the given query parameters to search for contributions in the
         database.
         """
         contributions = [json.loads(json_util.dumps(without_score(c)))
@@ -115,9 +107,7 @@ class ContributionResource(Resource):
 
 
 class BannedUsersResource(Resource):
-    """
-    Endpoint for banned users in the spreadsheet.
-    """
+    """Endpoint for banned users in the spreadsheet."""
     query_parameters = {
         "name": fields.Str(),
         "banned": fields.Bool()
@@ -131,9 +121,7 @@ class BannedUsersResource(Resource):
 
 
 def string_to_date(input):
-    """
-    Converts a given string to a date.
-    """
+    """Converts a given string to a date."""
     if input == "today":
         today_date = date.today()
         return datetime(today_date.year, today_date.month, today_date.day)
@@ -144,9 +132,7 @@ def string_to_date(input):
 
 
 def average(score):
-    """
-    Returns the average score of the given list of scores.
-    """
+    """Returns the average score of the given list of scores."""
     try:
         return mean(score)
     except Exception:
@@ -154,9 +140,7 @@ def average(score):
 
 
 def percentage(reviewed, voted):
-    """
-    Returns the percentage of voted contributions.
-    """
+    """Returns the percentage of voted contributions."""
     try:
         return 100.0 * voted / reviewed
     except ZeroDivisionError:
@@ -164,9 +148,7 @@ def percentage(reviewed, voted):
 
 
 def moderator_statistics(contributions):
-    """
-    Returns a dictionary containing statistics about all moderators.
-    """
+    """Returns a dictionary containing statistics about all moderators."""
     moderators = {}
     for contribution in contributions:
         if contribution["status"] == "unreviewed":
@@ -206,9 +188,7 @@ def moderator_statistics(contributions):
 
 
 def category_statistics(contributions):
-    """
-    Returns a dictionary containing statistics about all categories.
-    """
+    """Returns a dictionary containing statistics about all categories."""
     categories = {}
     categories.setdefault(
         "all", {
@@ -300,9 +280,7 @@ def category_statistics(contributions):
 
 
 def project_statistics(contributions):
-    """
-    Returns a dictionary containing statistics about all projects.
-    """
+    """Returns a dictionary containing statistics about all projects."""
     projects = {}
     for contribution in contributions:
         # Don't count unreviewed contributions
@@ -372,9 +350,7 @@ def project_statistics(contributions):
 
 
 def staff_pick_statistics(contributions):
-    """
-    Returns a list of contributions that were staff picked.
-    """
+    """Returns a list of contributions that were staff picked."""
     staff_picks = []
     for contribution in contributions:
         # If contribution wasn't staff picked skip it
@@ -387,9 +363,7 @@ def staff_pick_statistics(contributions):
 
 
 def task_request_statistics(contributions):
-    """
-    Returns a list of task requests.
-    """
+    """Returns a list of task requests."""
     task_requests = []
     for contribution in contributions:
         # If contribution wasn't staff picked skip it
@@ -400,9 +374,7 @@ def task_request_statistics(contributions):
 
 
 class WeeklyResource(Resource):
-    """
-    Endpoint for weekly contribution data (requested).
-    """
+    """Endpoint for weekly contribution data (requested)."""
     def get(self, date):
         LOGGER.info(f"Retrieving for {date}")
         # Get date for retrieving posts
@@ -432,23 +404,21 @@ api.add_resource(ContributionResource, "/api/posts")
 
 
 def intro_section(first_day, last_day):
-    """
-    Creates the introduction section / headline for the Utopian weekly post.
+    """Creates the introduction section / headline for the Utopian weekly post.
 
     The week is defined by the first and last days of the week.
     """
     LOGGER.info("Generating post introduction section...")
     section = (
-        f"# Weekly Top of Utopian.io: {first_day:%B} {first_day.day} - {last_day:%B} {last_day.day}"
+        f"# Weekly Top of Utopian.io: {first_day:%B} {first_day.day} - "
+        f"{last_day:%B} {last_day.day}"
         "<br><br>[Introduction (summary of the week)]"
     )
     return section
 
 
 def footer_section():
-    """
-    Creates the footer section for the Utopian weekly post.
-    """
+    """Creates the footer section for the Utopian weekly post."""
     LOGGER.info("Generating post footer section...")
     section = (
         "![divider](https://cdn.steemitimages.com/DQmWQWnJf7s671sHmGdzZVQMqEv7DyXL9qknT67vyQdAHfL/utopian_divider.png)"
@@ -462,9 +432,7 @@ def footer_section():
 
 
 def staff_pick_section(staff_picks):
-    """
-    Creates the staff pick section for the Utopian weekly post.
-    """
+    """Creates the staff pick section for the Utopian weekly post."""
     LOGGER.info("Generating staff pick statistics section...")
     section = "## Staff Picks"
     for staff_pick in staff_picks["staff_picks"]:
@@ -492,9 +460,7 @@ def staff_pick_section(staff_picks):
 
 
 def post_statistics_section(categories, contributions):
-    """
-    Creates the post statistics part for the Utopian weekly post.
-    """
+    """Creates the post statistics part for the Utopian weekly post."""
     LOGGER.info("Generating post statistics section...")
     section = (
         "## Utopian.io Post Statistics<br><br>"
@@ -565,9 +531,7 @@ def post_statistics_section(categories, contributions):
 @app.route("/weekly", defaults={"date": "today"})
 @app.route("/weekly/<date>")
 def weekly(date):
-    """
-    Returns weekly statistics in a format that can be posted on Steemit.
-    """
+    """Returns weekly statistics in a format that can be posted on Steemit."""
     today = string_to_date(date)
     week_ago = today - timedelta(days=7)
     contributions = DB.contributions
@@ -703,12 +667,6 @@ def queue():
             contribution["nearing_expiration"] = True
             until_expiration = datetime.now() + time_until_expiration
             contribution["until_expiration"] = until_expiration
-        # if (datetime.now() - timedelta(days=1)) > contribution["created"]:
-        #     valid.append(contribution)
-        #     contribution["valid_age"] = True
-        # else:
-        #     invalid.append(contribution)
-        #     contribution["valid_age"] = False
 
     valid = sorted(valid, key=lambda x: x["created"])
     invalid = sorted(invalid, key=lambda x: x["created"])

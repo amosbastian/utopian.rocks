@@ -13,7 +13,7 @@ CONTRIBUTING = False
 
 if not CONTRIBUTING:
     SCOPE = ["https://spreadsheets.google.com/feeds",
-         "https://www.googleapis.com/auth/drive"]
+             "https://www.googleapis.com/auth/drive"]
     CREDENTIALS = ServiceAccountCredentials.from_json_keyfile_name(
         f"{DIR_PATH}/client_secret.json", SCOPE)
     GSPREAD_CLIENT = gspread.authorize(CREDENTIALS)
@@ -37,3 +37,4 @@ if not CONTRIBUTING:
     UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
 
     BANNED_USERS = SHEET.worksheet("Banned users")
+    VIPO = SHEET.worksheet("VIPO")

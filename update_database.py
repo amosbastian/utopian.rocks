@@ -18,10 +18,17 @@ class User():
         self.banned = row[3]
 
 
+def beneficiary_set(post):
+    for beneficiary in post.json()["beneficiaries"]:
+        if beneficiary["account"] == "utopian.pay":
+            weight = beneficiary["weight"]
+            if weight >= 500:
+                return True
+    return False
+
+
 def contribution(row, status):
-    """
-    Convert row to dictionary, only selecting values we want.
-    """
+    """Convert row to dictionary, only selecting values we want."""
     contribution = Contribution(row)
     url = contribution.url
 
@@ -119,16 +126,15 @@ def contribution(row, status):
         "created": comment["created"],
         "title": comment.title,
         "review_status": contribution.review_status.lower(),
-        "comment_url": comment_url
+        "comment_url": comment_url,
+        "beneficiaries_set": beneficiary_set(comment),
     }
 
     return new_contribution
 
 
 def get_reviewed():
-    """
-    Return all the rows in the most recent two review worksheets.
-    """
+    """Return all the rows in the most recent two review worksheets."""
     previous = constants.PREVIOUS_REVIEWED.get_all_values()
     current = constants.CURRENT_REVIEWED.get_all_values()
     reviewed = previous[1:] + current[1:]
@@ -136,17 +142,13 @@ def get_reviewed():
 
 
 def get_unreviewed():
-    """
-    Return all the rows in the unreviewed worksheet.
-    """
+    """Return all the rows in the unreviewed worksheet."""
     unreviewed = constants.UNREVIEWED.get_all_values()
     return unreviewed[1:]
 
 
 def update_posts(local=False):
-    """
-    Adds all reviewed and unreviewed contributions to the database.
-    """
+    """Adds all reviewed and unreviewed contributions to the database."""
     contributions = constants.DB.contributions
     if local:
         with open(f"{constants.DIR_PATH}/contributions.json") as json_data:
@@ -170,6 +172,7 @@ def update_posts(local=False):
 
 
 def update_banned():
+    """Updates banned users."""
     users = constants.DB.users
 
     for user in constants.BANNED_USERS.get_all_values()[1:]:
@@ -190,6 +193,7 @@ def update_banned():
 
 
 def update_account():
+    """Updates utopian-io account data."""
     account = Account("utopian-io")
     current_vp = account.get_voting_power()
     recharge_time = account.get_recharge_time_str(constants.VOTE_THRESHOLD)
@@ -234,6 +238,22 @@ def update_moderators():
                 {"account": account.lower()}, upsert=True)
 
 
+def get_vipo():
+    """Return all VIPO."""
+    return constants.VIPO.col_values(1)[1:]
+
+
+def update_vipo():
+    """Update VIPO."""
+    vipo_list = get_vipo()
+    vipo = constants.DB.vipo
+
+    for account in vipo_list:
+        vipo.update(
+            {"account": account.lower().strip()},
+            {"account": account.lower().strip()}, upsert=True)
+
+
 def main():
     if constants.CONTRIBUTING:
         update_posts(True)
@@ -243,6 +263,7 @@ def main():
         update_account()
         update_banned()
         update_moderators()
+        update_vipo()
 
 if __name__ == '__main__':
     main()
