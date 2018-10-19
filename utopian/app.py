@@ -199,6 +199,7 @@ def category_statistics(contributions):
             "voted": 0,
             "not_voted": 0,
             "unvoted": 0,
+            "rewardable": 0,
             "task-requests": 0,
             "moderators": [],
             "rewarded_contributors": [],
@@ -226,6 +227,7 @@ def category_statistics(contributions):
                 "voted": 0,
                 "not_voted": 0,
                 "unvoted": 0,
+                "rewardable": 0,
                 "moderators": [],
                 "rewarded_contributors": [],
                 "total_payout": 0,
@@ -239,7 +241,11 @@ def category_statistics(contributions):
                 categories[category]["unvoted"] += 1
                 categories[category]["not_voted"] += 1
             elif score > MIN_SCORE:
-                categories[category]["voted"] += 1
+                if utopian_vote > 0:
+                    categories[category]["voted"] += 1
+                else:
+                    categories[category]["not_voted"] += 1
+                categories[category]["rewardable"] += 1
             else:
                 categories[category]["not_voted"] += 1
 
@@ -501,8 +507,8 @@ def post_statistics_section(categories, contributions):
         "comment threads.<br>"
         f"* The average vote given by Utopian.io was worth {average_vote:.2f} "
         "STU.<br><br>## Category Statistics<br><br>"
-        "|Category|Reviewed|Rewarded|Total rewards|Top contributor|<br>"
-        "|:-|:-|:-|-:|:-|"
+        "|Category|Reviewed|Rewardable|Rewarded|Total rewards|Top contributor|<br>"
+        "|:-|:-|:-|:-|-:|:-|"
     )
 
     # Create the table with category statistics
@@ -517,6 +523,7 @@ def post_statistics_section(categories, contributions):
             continue
 
         # Get all the data needed
+        rewardable = category["rewardable"]
         reviewed = category["reviewed"]
         rewards = f"{category['utopian_total']:.2f}"
         author = f"@{category['rewarded_contributors'][0][0]}"
@@ -524,7 +531,7 @@ def post_statistics_section(categories, contributions):
 
         # Add the row
         section += (
-            f"<br>|{category}|{reviewed}|{rewarded}|{rewards} STU|{author}|")
+            f"<br>|{category}|{reviewed}|{rewardable}|{rewarded}|{rewards} STU|{author}|")
 
     return section
 
