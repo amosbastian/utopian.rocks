@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import timeago
+from collections import defaultdict
 from beem.comment import Comment
 from beem.account import Account
 from bson import json_util
@@ -204,7 +205,9 @@ def category_statistics(contributions):
             "moderators": [],
             "rewarded_contributors": [],
             "total_payout": 0,
-            "utopian_total": []
+            "utopian_total": [],
+            "authors_vote_weights": defaultdict(list),
+            "authors_scores": defaultdict(list)
         }
     )
     for contribution in contributions:
@@ -231,7 +234,9 @@ def category_statistics(contributions):
                 "moderators": [],
                 "rewarded_contributors": [],
                 "total_payout": 0,
-                "utopian_total": []
+                "utopian_total": [],
+                "authors_vote_weights": defaultdict(list),
+                "authors_scores": defaultdict(list)
             }
         )
 
@@ -254,6 +259,8 @@ def category_statistics(contributions):
             categories[category]["average_score"].append(score)
             categories[category]["total_payout"] += total_payout
             categories[category]["utopian_total"].append(utopian_vote)
+            categories[category]["authors_vote_weights"][author].append(utopian_vote)
+            categories[category]["authors_scores"][author].append(score)
 
             if score > 0:
                 categories[category]["average_without_0"].append(score)
@@ -526,7 +533,9 @@ def post_statistics_section(categories, contributions):
         # Get all the data needed
         reviewed = category["reviewed"]
         rewards = f"{category['utopian_total']:.2f}"
-        author = f"@{category['rewarded_contributors'][0][0]}"
+        scores_per_author = category['authors_scores']
+        weights_per_author = category['authors_vote_weights']
+        author = f"@{sorted(scores_per_author, key=lambda x: (sum(scores_per_author[x]), sum(weights_per_author[x])), reverse=True)[0]}"
         category = category["category"]
 
         # Add the row
