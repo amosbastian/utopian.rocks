@@ -27,13 +27,13 @@ if not CONTRIBUTING:
     NEXT_WEEK = THIS_WEEK + timedelta(days=7)
 
     # Reviewed
-    TITLE_PREVIOUS = f"Reviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
-    TITLE_CURRENT = f"Reviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
+    TITLE_PREVIOUS = f"Reviewed - {LAST_WEEK:%b} {LAST_WEEK.day} - {THIS_WEEK:%b} {THIS_WEEK.day}"
+    TITLE_CURRENT = f"Reviewed - {THIS_WEEK:%b} {THIS_WEEK.day} - {NEXT_WEEK:%b} {NEXT_WEEK.day}"
     PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
     CURRENT_REVIEWED = SHEET.worksheet(TITLE_CURRENT)
 
     # Unreviewed
-    TITLE_UNREVIEWED = f"Unreviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
+    TITLE_UNREVIEWED = f"Unreviewed - {THIS_WEEK:%b} {THIS_WEEK.day} - {NEXT_WEEK:%b} {NEXT_WEEK.day}"
     UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
 
     BANNED_USERS = SHEET.worksheet("Banned users")
