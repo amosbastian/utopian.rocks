@@ -412,9 +412,34 @@ class WeeklyResource(Resource):
             [moderators, categories, projects, staff_picks, task_requests])
 
 
+def convert(contribution):
+    del contribution["_id"]
+    contribution["created"] = str(contribution["created"])
+    contribution["review_date"] = str(contribution["review_date"])
+    return contribution
+
+
+class BatchResource(Resource):
+    """Endpoint for the posts to be voted in a batch."""
+    def get(self):
+        pending_contributions = DB.contributions.find({
+            "$or": [
+                {"status": "pending"},
+                {"review_status": "pending"}
+            ]
+        })
+
+        pending = sorted(pending_contributions, key=lambda x: x["created"])
+        oldest = pending[0]["created"]
+        eligible = [json.loads(json_util.dumps(convert(c))) for c in pending
+                    if c["created"] < oldest + timedelta(days=1)]
+        return jsonify(eligible)
+
+
 api.add_resource(WeeklyResource, "/api/statistics/<string:date>")
 api.add_resource(BannedUsersResource, "/api/bannedUsers")
 api.add_resource(ContributionResource, "/api/posts")
+api.add_resource(BatchResource, "/api/batch")
 
 
 def intro_section(first_day, last_day):
