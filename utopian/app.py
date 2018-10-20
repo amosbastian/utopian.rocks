@@ -414,6 +414,8 @@ class WeeklyResource(Resource):
 
 def convert(contribution):
     del contribution["_id"]
+    contribution["voting_weight"] = exponential_vote(contribution)
+    del contribution["score"]
     contribution["created"] = str(contribution["created"])
     contribution["review_date"] = str(contribution["review_date"])
     return contribution
@@ -423,9 +425,13 @@ def batch_comments(contributions):
     """Get all comments to be upvoted."""
     sorted_by_review = sorted(contributions, key=lambda x: x["review_date"])
     for contribution in sorted_by_review:
-        if contribution["review_date"] != datetime(1970, 1, 1):
+        if (contribution["review_date"] != datetime(1970, 1, 1) and
+                contribution["review_status"] == "pending"):
             oldest = contribution["review_date"]
             break
+
+    if oldest > datetime.now() - timedelta(days=2):
+        return []
 
     batch = [c for c in sorted_by_review
              if c["review_date"] <= oldest + timedelta(days=1) and
