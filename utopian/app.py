@@ -419,27 +419,58 @@ def convert(contribution):
     return contribution
 
 
+def batch_comments(contributions):
+    """Get all comments to be upvoted."""
+    sorted_by_review = sorted(contributions, key=lambda x: x["review_date"])
+    for contribution in sorted_by_review:
+        if contribution["review_date"] != datetime(1970, 1, 1):
+            oldest = contribution["review_date"]
+            break
+
+    batch = [c for c in sorted_by_review
+             if c["review_date"] <= oldest + timedelta(days=1) and
+             c["review_status"] == "pending"]
+    return batch
+
+
+def batch_contributions(contributions):
+    """Get all contributions to be upvoted."""
+    sorted_by_creation = sorted(contributions, key=lambda x: x["created"])
+
+    for contribution in sorted_by_creation:
+        if contribution["status"] == "pending":
+            oldest = contribution["created"]
+            break
+
+    return [c for c in sorted_by_creation
+            if c["created"] <= oldest + timedelta(days=1) and
+            c["status"] == "pending"]
+
+
 class BatchResource(Resource):
     """Endpoint for the posts to be voted in a batch."""
-    def get(self):
-        pending_contributions = DB.contributions.find({
+    def get(self, batch_type):
+        all_contributions = [c for c in DB.contributions.find({
             "$or": [
                 {"status": "pending"},
                 {"review_status": "pending"}
             ]
-        })
+        })]
 
-        pending = sorted(pending_contributions, key=lambda x: x["created"])
-        oldest = pending[0]["created"]
-        eligible = [json.loads(json_util.dumps(convert(c))) for c in pending
-                    if c["created"] < oldest + timedelta(days=1)]
+        if batch_type == "comments":
+            batch = batch_comments(all_contributions)
+        elif batch_type == "contributions":
+            batch = batch_contributions(all_contributions)
+        else:
+            return jsonify({})
+        eligible = [json.loads(json_util.dumps(convert(c))) for c in batch]
         return jsonify(eligible)
 
 
 api.add_resource(WeeklyResource, "/api/statistics/<string:date>")
 api.add_resource(BannedUsersResource, "/api/bannedUsers")
 api.add_resource(ContributionResource, "/api/posts")
-api.add_resource(BatchResource, "/api/batch")
+api.add_resource(BatchResource, "/api/batch/<string:batch_type>")
 
 
 def intro_section(first_day, last_day):
