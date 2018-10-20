@@ -519,11 +519,11 @@ def post_statistics_section(categories, contributions):
 
         # Don't include category is no contributions were rewarded
         rewarded = category["voted"]
-        if rewarded == 0:
+        rewardable = category["rewardable"]
+        if rewardable == 0:
             continue
 
         # Get all the data needed
-        rewardable = category["rewardable"]
         reviewed = category["reviewed"]
         rewards = f"{category['utopian_total']:.2f}"
         author = f"@{category['rewarded_contributors'][0][0]}"
