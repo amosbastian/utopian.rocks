@@ -732,9 +732,12 @@ def queue():
             until_expiration = datetime.now() + time_until_expiration
             contribution["until_expiration"] = until_expiration
 
-            t = datetime.strptime(recharge_time, "%H:%M:%S")
-            time_until_vote = timedelta(
-                hours=t.hour, minutes=t.minute, seconds=t.second)
+            try:
+                t = datetime.strptime(recharge_time, "%H:%M:%S")
+                time_until_vote = timedelta(
+                    hours=t.hour, minutes=t.minute, seconds=t.second)
+            except:
+                continue
             if time_until_expiration < time_until_vote:
                 contribution["will_expire"] = True
 
