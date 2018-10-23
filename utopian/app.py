@@ -434,7 +434,7 @@ def batch_comments(contributions):
         return []
 
     batch = [c for c in sorted_by_review
-             if c["review_date"] <= oldest + timedelta(days=1) and
+             if c["review_date"] <= oldest + timedelta(days=1, hours= 12) and
              c["review_status"] == "pending"]
     return batch
 
@@ -449,7 +449,7 @@ def batch_contributions(contributions):
             break
 
     return [c for c in sorted_by_creation
-            if c["created"] <= oldest + timedelta(days=1) and
+            if c["created"] <= oldest + timedelta(days=1, hours= 12) and
             c["status"] == "pending"]
 
 
