@@ -597,7 +597,7 @@ def post_statistics_section(categories, contributions):
         rewards = f"{category['utopian_total']:.2f}"
         scores_per_author = category['authors_scores']
         weights_per_author = category['authors_vote_weights']
-        author = f"@{sorted(scores_per_author, key=lambda x: (sum(scores_per_author[x]**2), sum(weights_per_author[x])), reverse=True)[0]}"
+        author = f"@{sorted(scores_per_author, key=lambda x: (sum([score**2 for score in scores_per_author[x]]), sum(weights_per_author[x])), reverse=True)[0]}"
         category = category["category"]
 
         # Add the row
