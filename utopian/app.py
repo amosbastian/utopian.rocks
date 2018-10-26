@@ -441,16 +441,7 @@ def batch_comments(contributions):
 
 def batch_contributions(contributions):
     """Get all contributions to be upvoted."""
-    sorted_by_creation = sorted(contributions, key=lambda x: x["created"])
-
-    for contribution in sorted_by_creation:
-        if contribution["status"] == "pending":
-            oldest = contribution["created"]
-            break
-
-    return [c for c in sorted_by_creation
-            if c["created"] <= oldest + timedelta(days=1) and
-            c["status"] == "pending"]
+    return [c for c in contributions if c["status"] == "pending"]
 
 
 class BatchResource(Resource):
