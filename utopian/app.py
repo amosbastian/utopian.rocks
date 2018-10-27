@@ -678,6 +678,9 @@ MAX_VOTE = {
     "video-tutorials": 35.0,
     "copywriting": 30.0,
     "blog": 30.0,
+    "anti-abuse": 50.0,
+    "iamutopian-moderator": 40.0,
+    "iamutopian-manager": 55.0,
 }
 MAX_TASK_REQUEST = 6.0
 EXP_POWER = 2.1
