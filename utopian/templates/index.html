@@ -70,6 +70,12 @@
         <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category.split('task-')[1]}}"></use>
       </svg>
     </div>
+    {% elif contribution.category == "iamutopian" %}
+    <div class="contribution__category category--{{contribution.category}}" title="{{contribution.category}}">
+      <svg class="category-icon category-icon--utopian-io">
+        <use xlink:href="../static/img/sprite.svg#icon-{{contribution.category}}"></use>
+      </svg>
+    </div>
     {% else %}
     <div class="contribution__category category--{{contribution.category}}" title="{{contribution.category}}">
       <svg class="category-icon">
