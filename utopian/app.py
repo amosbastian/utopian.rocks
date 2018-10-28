@@ -679,8 +679,7 @@ MAX_VOTE = {
     "copywriting": 30.0,
     "blog": 30.0,
     "anti-abuse": 50.0,
-    "iamutopian-moderator": 40.0,
-    "iamutopian-manager": 55.0,
+    "iamutopian": 50.0,
 }
 MAX_TASK_REQUEST = 6.0
 EXP_POWER = 2.1
@@ -690,15 +689,6 @@ def exponential_vote(contribution):
     """Calculates the exponential vote for the bot."""
     score = contribution["score"]
     category = contribution["category"]
-
-    if category == "iamutopian":
-        managers = [manager["account"] for manager
-                    in constants.DB_UTEMPIAN.managers.find()]
-        author = contribution["author"]
-        if author in managers:
-            category = "iamutopian-manager"
-        else:
-            category = "iamutopian-moderator"
 
     is_vipo = contribution["is_vipo"]
     beneficiaries_set = contribution["beneficiaries_set"]
