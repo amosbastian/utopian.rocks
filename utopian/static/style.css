@@ -95,7 +95,7 @@ body {
 .header-center {
   display: grid;
   grid-column: header-center-start / header-center-end;
-  grid-template-columns: repeat(5, max-content);
+  grid-template-columns: repeat(4, max-content);
   grid-gap: 1.5rem;
   align-items: center;
   font-size: 1.4rem; }
@@ -334,7 +334,7 @@ body {
 
 .category-filter {
   display: grid;
-  grid-template-columns: repeat(13, max-content);
+  grid-template-columns: repeat(14, max-content);
   align-items: center;
   justify-content: flex-end;
   grid-gap: 2rem; }

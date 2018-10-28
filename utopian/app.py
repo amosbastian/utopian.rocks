@@ -844,35 +844,12 @@ def moderator_comments():
         recharge_time=recharge_time, recharge_class=recharge_class)
 
 
-@app.route("/iamutopian")
-def i_am_utopian():
-    contributions = DB.contributions
-    iamutopian_contributions = [
-        contribution for contribution in contributions.find({
-            "voted_on": False, "category": "iamutopian"})]
-
-    for contribution in iamutopian_contributions:
-        contribution["valid_age"] = True
-        created = datetime.now() - contribution["created"]
-        time_until_expiration = timedelta(days=6, hours=12) - created
-        if time_until_expiration < timedelta(hours=12):
-            contribution["nearing_expiration"] = True
-            until_expiration = datetime.now() + time_until_expiration
-            contribution["until_expiration"] = until_expiration
-
-    contributions = sorted(iamutopian_contributions,
-                           key=lambda x: x["created"])
-
-    return render_template(
-        "iamutopian.html", contributions=contributions)
-
-
 @app.context_processor
 def inject_last_updated():
     categories = sorted(["analysis", "tutorials", "graphics", "copywriting",
                          "development", "blog", "ideas", "social", "all",
                          "bug-hunting", "video-tutorials", "translations",
-                         "anti-abuse"])
+                         "anti-abuse", "iamutopian"])
     account = DB.accounts.find_one({"account": "utopian-io"})
     return dict(last_updated=account["updated"].strftime("%H:%M %Z"),
                 categories=categories)
