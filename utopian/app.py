@@ -434,6 +434,7 @@ def batch_comments(contributions):
 
     batch = [c for c in sorted_by_review
              if c["review_date"] <= oldest + timedelta(days=1) and
+             c["review_date"] <= datetime.now() - timedelta(days=2) and
              c["review_status"] == "pending"]
     return batch
 
