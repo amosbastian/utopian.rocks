@@ -71,31 +71,23 @@
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
           {{contribution.repository.split('https://github.com/')[-1]|truncate(110)}}
         </a>
-          {% if not contribution.vote_time %}
-          <span class="contribution-submitted contribution-submitted--nopadding">
-            {{contribution.vote_time}}
-          </span>
-          {% elif contribution.vote_time == "TBD" %}
-          <span class="contribution-submitted" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
-          · {{contribution.vote_time}}
+          {% if contribution.vote_time != "TBD" %}
+          <span class="contribution-submitted" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
+            · upvote {{contribution.vote_time|timeago}}
           </span>
           {% else %}
-          <span class="contribution-submitted" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
-          · {{contribution.vote_time|timeago}}
+          <span class="contribution-submitted">
+            · TBD
           </span>
           {% endif %}
         {% else %}
-          {% if not contribution.vote_time %}
-          <span class="contribution-submitted contribution-submitted--nopadding">
-            in 1 hour
-          </span>
-          {% elif contribution.vote_time == "TBD" %}
-          <span class="contribution-submitted contribution-submitted--nopadding">
-            {{contribution.vote_time}}
+          {% if contribution.vote_time != "TBD" %}
+          <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
+            upvote {{contribution.vote_time|timeago}}
           </span>
           {% else %}
-          <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.review_date.strftime('%Y-%m-%d %H:%M:%S')}}">
-            {{contribution.vote_time|timeago}}
+          <span class="contribution-submitted contribution-submitted--nopadding">
+            TBD
           </span>
           {% endif %}
         {% endif %}
@@ -122,11 +114,11 @@
     </div>
     {% endif %}
     {% endif %}
-    {% if contribution.valid_age %}
-    <div class="contribution__status contribution__status--under-review" title="age is valid">
+    {% if contribution.next_batch %}
+    <div class="contribution__status contribution__status--under-review" title="included in next batch">
     </div>
     {% else %}
-    <div class="contribution__status contribution__status--not-under-review" title="age is not valid">
+    <div class="contribution__status contribution__status--not-under-review" title="not included in next batch">
     </div>
     {% endif %}
   </div>

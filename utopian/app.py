@@ -1015,7 +1015,10 @@ def queue():
             {"review_status": "pending"}
         ]
     })]
+
     current_vp, recharge_time, recharge_class = account_information()
+    if not recharge_time:
+        recharge_time = "0:0:0"
 
     comments = batch_comments(all_contributions)
     _, comment_usage = init_comments(comments)
@@ -1054,47 +1057,41 @@ def queue():
 
 @app.route("/comments")
 def moderator_comments():
-    contributions = DB.contributions
-    pending_comments = [contribution for contribution in
-                        contributions.find({"review_status": "pending"})]
-    pending_contributions = [contribution for contribution in
-                             contributions.find({"status": "pending"})]
-
-    valid = []
-    invalid = []
-
-    for contribution in pending_comments:
-        if (datetime.now() - timedelta(days=2)) > contribution["review_date"]:
-            valid.append(contribution)
-            contribution["valid_age"] = True
-        else:
-            invalid.append(contribution)
-            contribution["valid_age"] = False
-
-    valid = sorted(valid, key=lambda x: x["created"])
-    invalid = sorted(invalid, key=lambda x: x["created"])
+    """Returns all pending review comments and sets attribute `next_batch` if
+    the comment will be included in the next voting round.
+    """
+    all_contributions = [c for c in DB.contributions.find({
+        "$or": [
+            {"status": "pending"},
+            {"review_status": "pending"}
+        ]
+    })]
 
     current_vp, recharge_time, recharge_class = account_information()
-
     if not recharge_time:
         recharge_time = "0:0:0"
 
-    contributions = estimate_vote_time(pending_contributions, recharge_time)
+    batch = batch_comments(all_contributions)
+    pending_comments = []
 
-    comments = [c for c in sorted((valid + invalid),
-                key=lambda x: x["review_date"])
-                if c["moderator"] not in ["ignore", "irrelevant", "banned"] or
-                c["comment_url"] != ""]
-
-    for comment, contribution in zip_longest(comments, contributions):
-        if not comment:
+    for comment in all_contributions:
+        if comment["review_status"] != "pending":
             continue
-        if contribution:
-            if "vote_time" not in contribution.keys():
-                continue
-            comment["vote_time"] = contribution["vote_time"]
+
+        if comment in batch:
+            comment["next_batch"] = True
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            comment["vote_time"] = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
         else:
+            comment["next_batch"] = False
             comment["vote_time"] = "TBD"
+
+        pending_comments.append(comment)
+
+    comments = sorted(pending_comments, key=lambda x: x["review_date"])
+    comments = sorted(comments, key=lambda x: x["next_batch"], reverse=True)
 
     return render_template(
         "comments.html", contributions=comments, current_vp=current_vp,
