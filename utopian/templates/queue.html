@@ -3,7 +3,7 @@
 {% block content %}
 <div class="announcement">
   <div>
-    <b>NEW TEMPORARY VOTING BEHAVIOUR</b>: if the oldest contribution is within 13 hours of payout then it <i>will</i> be voted on no matter the current voting power! 
+    <b>Announcement</b>: a new voting bot is being used. Read more about its behaviour here <a href="https://steemit.com/utopian-io/@amosbastian/developing-the-new-utopian-bot" class="announcement-url" target="_blank">https://steemit.com/utopian-io/@amosbastian/developing-the-new-utopian-bot</a>! 
   </div>
 </div>
 <div class="statistics">
@@ -71,23 +71,23 @@
         <a href="{{contribution.repository}}" class="contribution-repository" target="_blank">
           {{contribution.repository.split('https://github.com/')[-1]|truncate(110)}}
         </a>
-          {% if contribution.vote_time %}
+          {% if contribution.vote_time != "TBD" %}
           <span class="contribution-submitted" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
             · upvote {{contribution.vote_time|timeago}}
           </span>
           {% else %}
           <span class="contribution-submitted">
-            · upvote in 1 hour
+            · TBD
           </span>
           {% endif %}
         {% else %}
-          {% if contribution.vote_time %}
+          {% if contribution.vote_time != "TBD" %}
           <span class="contribution-submitted contribution-submitted--nopadding" title="{{contribution.vote_time.strftime('%Y-%m-%d %H:%M:%S')}}">
             upvote {{contribution.vote_time|timeago}}
           </span>
           {% else %}
           <span class="contribution-submitted contribution-submitted--nopadding">
-            upvote in 1 hour
+            TBD
           </span>
           {% endif %}
         {% endif %}
@@ -112,17 +112,11 @@
       </svg>
     </div>
     {% endif %}
-    {% if contribution.will_expire %}
-    <div class="contribution__status contribution__status--will-expire" title="will reach last 12 hours before 99.75% - {{contribution.until_expiration|timeago}}">
-    </div>
-    {% elif contribution.nearing_expiration %}
-    <div class="contribution__status contribution__status--nearing-expiration" title="age is valid - last 12 hours {{contribution.until_expiration|timeago}}">
-    </div>
-    {% elif contribution.valid_age %}
-    <div class="contribution__status contribution__status--under-review" title="age is valid">
+    {% if contribution.next_batch %}
+    <div class="contribution__status contribution__status--under-review" title="included in next batch">
     </div>
     {% else %}
-    <div class="contribution__status contribution__status--not-under-review" title="age is not valid">
+    <div class="contribution__status contribution__status--will-expire" title="not included in next batch">
     </div>
     {% endif %}
   </div>
