@@ -122,13 +122,15 @@ class BannedUsersResource(Resource):
         return jsonify(banned_users)
 
 
-def string_to_date(input):
+def string_to_date(date_input):
     """Converts a given string to a date."""
-    if input == "today":
+    if date_input == "today":
         today_date = date.today()
         return datetime(today_date.year, today_date.month, today_date.day)
+    elif date_input == "now":
+        return datetime.now()
     try:
-        return parse(input)
+        return parse(date_input)
     except Exception as error:
         abort(422, errors=str(error))
 
