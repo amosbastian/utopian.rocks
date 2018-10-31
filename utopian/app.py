@@ -1,22 +1,60 @@
 import json
 import logging
 import os
-import timeago
-from collections import defaultdict
-from beem.comment import Comment
-from beem.account import Account
-from bson import json_util
-from collections import Counter
-from datetime import datetime, timedelta, date
-from dateutil.parser import parse
-from flask import Flask, jsonify, render_template, abort
-from flask_cors import CORS
-from flask_restful import Resource, Api
+from collections import Counter, defaultdict
+from datetime import date, datetime, timedelta
 from itertools import zip_longest
-from pymongo import MongoClient
+from operator import itemgetter
 from statistics import mean
+
+import timeago
+from beem.account import Account
+from beem.comment import Comment
+from bson import json_util
+from dateutil.parser import parse
+from flask import Flask, abort, jsonify, render_template
+from flask_cors import CORS
+from flask_restful import Api, Resource
+from pymongo import MongoClient
 from webargs import fields, validate
-from webargs.flaskparser import use_args, use_kwargs, parser, abort
+from webargs.flaskparser import abort, parser, use_args, use_kwargs
+
+VP_TOTAL = 18.0
+VP_COMMENTS = 3.2
+CATEGORY_WEIGHTING = {
+    "ideas": 10.0,
+    "development": 10.0,
+    "bug-hunting": 10.0,
+    "translations": 10.0,
+    "graphics": 10.0,
+    "analysis": 10.0,
+    "social": 10.0,
+    "documentation": 10.0,
+    "tutorials": 10.0,
+    "video-tutorials": 10.0,
+    "copywriting": 10.0,
+    "blog": 10.0,
+    "anti-abuse": 10.0,
+    "task-request": 10.0,
+    "iamutopian": 10.0,
+}
+MODERATION_REWARD = {
+    "ideas": 6.0,
+    "development": 10.0,
+    "graphics": 8.0,
+    "bug-hunting": 7.0,
+    "analysis": 8.0,
+    "social": 5.0,
+    "video-tutorials": 8.0,
+    "tutorials": 8.0,
+    "copywriting": 5.0,
+    "documentation": 5.0,
+    "blog": 6.0,
+    "translations": 8.0,
+    "iamutopian": 6.0,
+    "anti-abuse": 6.0,
+    "task-request": 2.5,
+}
 
 # Score needed for a vote
 MIN_SCORE = 10
@@ -752,43 +790,265 @@ def estimate_vote_time(contributions, recharge_time):
     return contributions
 
 
+def get_batch(contributions, category_share, voting_power):
+    """Votes and replies to the given contribution if there is still some mana
+    left in its category's share.
+    """
+    used_share = []
+    batch = []
+
+    for contribution in sorted(contributions, key=lambda x: x["score"],
+                               reverse=True):
+        voting_weight = contribution["voting_weight"]
+        category = contribution["category"]
+
+        if "task" in category:
+            category = "task-request"
+
+        if category in used_share:
+            continue
+
+        usage = voting_weight / 100.0 * 0.02 * voting_power
+
+        if category_share[category] - usage < 0:
+            used_share.append(category)
+            continue
+
+        category_share[category] -= usage
+        voting_power -= usage
+        batch.append(contribution)
+
+    return batch
+
+
+def distribute_remainder(remainder, category_usage, new_share, need_more_vp):
+    """Distributes the remaining voting power over the categories that need it.
+    """
+    while remainder > 0:
+        # Get voting power needed for every category
+        needed_per_category = {category: category_usage[category] - share
+                               for category, share in new_share.items()
+                               if category in need_more_vp}
+
+        # Get category who needs the least to reach its usage
+        least_under = min(needed_per_category.items(), key=itemgetter(1))
+        least_under_category = least_under[0]
+        least_needed = least_under[1]
+
+        # If this amount can be added to all categories without using the
+        # entire remainder then do this
+        if len(needed_per_category) * least_needed < remainder:
+            for category in need_more_vp:
+                new_share[category] += least_needed
+                remainder -= least_needed
+            need_more_vp.remove(least_under_category)
+        # Distribute the remainder evenly over the categories that need it
+        else:
+            remaining_categories = len(need_more_vp)
+            for category in need_more_vp:
+                percentage_share = 1.0 / remaining_categories
+                to_be_added = percentage_share * remainder
+                new_vp = new_share[category] + to_be_added
+
+                # Category's new share is still less than what it needs
+                if new_vp < category_usage[category]:
+                    new_share[category] += to_be_added
+                    remainder -= to_be_added
+                # Category's new share is more than it needs, so distribute to
+                # the other categories
+                else:
+                    not_needed = new_vp - category_usage[category]
+                    remainder -= to_be_added - not_needed
+                    new_share[category] = category_usage[category]
+
+                remaining_categories -= 1
+
+    return new_share
+
+
+def calculate_new_share(category_share, category_usage):
+    """Calculates the new share of the voting power for each category."""
+    new_share = {}
+    remainder = 0
+    need_more_vp = []
+
+    for category, share in category_share.items():
+        try:
+            usage = category_usage[category]
+            # Category's share is more than the voting power it will use
+            if share > usage:
+                remainder += share - usage
+                new_share[category] = usage
+            # Category needs more voting power to vote everything
+            else:
+                new_share[category] = share
+                need_more_vp.append(category)
+        except KeyError:
+            remainder += share
+
+    return distribute_remainder(remainder, category_usage, new_share,
+                                need_more_vp)
+
+
+def contribution_voting_power(contributions, voting_power):
+    """Returns the amount of voting power that will be used to upvote all the
+    currently pending contributions.
+    """
+    starting_vp = voting_power
+    scaler = 1.0
+
+    for contribution in contributions:
+        category = contribution["category"]
+        voting_weight = contribution["voting_weight"]
+        usage = scaler * voting_weight / 100.0 * 0.02 * voting_power
+        voting_power -= usage
+
+    return starting_vp - voting_power
+
+
+def get_category_usage(contributions, voting_power):
+    """Returns a dictionary containing the key, value pair of the category and
+    the amount of voting power it will need to upvote all contributions in the
+    category.
+    """
+    category_usage = {}
+
+    for contribution in contributions:
+        category = contribution["category"]
+
+        if "task" in category:
+            category = "task-request"
+
+        category_usage.setdefault(category, 0)
+
+        voting_weight = contribution["voting_weight"]
+        vp_usage = voting_weight / 100.0 * 0.02 * voting_power
+
+        category_usage[category] += vp_usage
+        voting_power -= vp_usage
+
+    return category_usage
+
+
+def get_category_share(voting_power):
+    """Returns a dictionary with a key, value pair of each category and their
+    share of the calculated voting power that can be used for contributions.
+    """
+    total_vote = sum(CATEGORY_WEIGHTING.values())
+    category_share = {category: max_vote / total_vote * voting_power
+                      for category, max_vote in CATEGORY_WEIGHTING.items()}
+
+    return category_share
+
+
+def init_contributions(contributions, comment_usage):
+    """Initialises everything needed for upvoting the contributions."""
+    voting_power = 100.0 - comment_usage
+    contribution_usage = contribution_voting_power(contributions, voting_power)
+
+    if contribution_usage + comment_usage > VP_TOTAL:
+        contribution_usage = VP_TOTAL - comment_usage
+
+    category_share = get_category_share(contribution_usage)
+    category_usage = get_category_usage(contributions, voting_power)
+
+    if contribution_usage + comment_usage == VP_TOTAL:
+        new_share = calculate_new_share(category_share, category_usage)
+    else:
+        new_share = category_usage
+
+    return new_share
+
+
+def comment_voting_power(comments, comment_weights, scaling=1.0):
+    """Returns the amount of voting power that will be used to upvote all the
+    currently pending review comments.
+    """
+    voting_power = 100.0
+    for contribution in comments:
+        category = contribution["category"]
+        try:
+            voting_weight = comment_weights[category]
+        except KeyError:
+            voting_weight = comment_weights["task-request"]
+
+        usage = scaling * voting_weight / 100.0 * 0.02 * voting_power
+        voting_power -= usage
+
+    return 100.0 - voting_power
+
+
+def get_comment_weights():
+    """Returns a dictionary containing the key, value pair of the category and
+    the voting weight needed upvote a review comment with each category's point
+    equivalence in STU.
+    """
+    account = Account("utopian-io")
+    comment_weights = {
+        category: 100.0 * points / account.get_voting_value_SBD() for
+        category, points in MODERATION_REWARD.items()
+    }
+
+    return comment_weights
+
+
+def init_comments(comments):
+    """Initialises everything needed for upvoting the comments."""
+    comment_weights = get_comment_weights()
+    comment_usage = comment_voting_power(comments, comment_weights)
+
+    if comment_usage > VP_COMMENTS:
+        comment_weights = update_weights(comment_weights, comment_usage)
+        comment_usage = comment_voting_power(comments, comment_weights)
+
+    return comment_weights, comment_usage
+
+
 @app.route("/queue")
 def queue():
-    contributions = DB.contributions
-    pending = [contribution for contribution in
-               contributions.find({"status": "pending"})]
-
-    valid = []
-    invalid = []
+    """Returns all pending contributions and sets attribute `next_batch` if the
+    contribution will be included in the next voting round.
+    """
+    all_contributions = [c for c in DB.contributions.find({
+        "$or": [
+            {"status": "pending"},
+            {"review_status": "pending"}
+        ]
+    })]
 
     current_vp, recharge_time, recharge_class = account_information()
-
-    for contribution in pending:
-        valid.append(contribution)
-        contribution["valid_age"] = True
-        created = datetime.now() - contribution["created"]
-        time_until_expiration = timedelta(days=6, hours=12) - created
-        if time_until_expiration < timedelta(hours=12):
-            contribution["nearing_expiration"] = True
-            until_expiration = datetime.now() + time_until_expiration
-            contribution["until_expiration"] = until_expiration
-
-            try:
-                t = datetime.strptime(recharge_time, "%H:%M:%S")
-                time_until_vote = timedelta(
-                    hours=t.hour, minutes=t.minute, seconds=t.second)
-            except:
-                continue
-            if time_until_expiration < time_until_vote:
-                contribution["will_expire"] = True
-
-    valid = sorted(valid, key=lambda x: x["created"])
-    invalid = sorted(invalid, key=lambda x: x["created"])
-
     if not recharge_time:
         recharge_time = "0:0:0"
 
-    contributions = estimate_vote_time((valid + invalid), recharge_time)
+    comments = batch_comments(all_contributions)
+    _, comment_usage = init_comments(comments)
+
+    contributions = [convert(c)
+                     for c in batch_contributions(all_contributions)]
+    category_share = init_contributions(contributions, comment_usage)
+    batch = get_batch(contributions, category_share, 100.0 - comment_usage)
+
+    pending_contributions = []
+    for contribution in all_contributions:
+        if contribution["status"] != "pending":
+            continue
+
+        if contribution in batch:
+            contribution["next_batch"] = True
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            contribution["vote_time"] = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
+        else:
+            contribution["next_batch"] = False
+            contribution["vote_time"] = "TBD"
+
+        pending_contributions.append(contribution)
+
+    contributions = sorted(
+        pending_contributions,
+        key=lambda x: (x["next_batch"], x["score"]),
+        reverse=True)
 
     return render_template(
         "queue.html", contributions=contributions, current_vp=current_vp,
@@ -797,47 +1057,41 @@ def queue():
 
 @app.route("/comments")
 def moderator_comments():
-    contributions = DB.contributions
-    pending_comments = [contribution for contribution in
-                        contributions.find({"review_status": "pending"})]
-    pending_contributions = [contribution for contribution in
-                             contributions.find({"status": "pending"})]
-
-    valid = []
-    invalid = []
-
-    for contribution in pending_comments:
-        if (datetime.now() - timedelta(days=2)) > contribution["review_date"]:
-            valid.append(contribution)
-            contribution["valid_age"] = True
-        else:
-            invalid.append(contribution)
-            contribution["valid_age"] = False
-
-    valid = sorted(valid, key=lambda x: x["created"])
-    invalid = sorted(invalid, key=lambda x: x["created"])
+    """Returns all pending review comments and sets attribute `next_batch` if
+    the comment will be included in the next voting round.
+    """
+    all_contributions = [c for c in DB.contributions.find({
+        "$or": [
+            {"status": "pending"},
+            {"review_status": "pending"}
+        ]
+    })]
 
     current_vp, recharge_time, recharge_class = account_information()
-
     if not recharge_time:
         recharge_time = "0:0:0"
 
-    contributions = estimate_vote_time(pending_contributions, recharge_time)
+    batch = batch_comments(all_contributions)
+    pending_comments = []
 
-    comments = [c for c in sorted((valid + invalid),
-                key=lambda x: x["review_date"])
-                if c["moderator"] not in ["ignore", "irrelevant", "banned"] or
-                c["comment_url"] != ""]
-
-    for comment, contribution in zip_longest(comments, contributions):
-        if not comment:
+    for comment in all_contributions:
+        if comment["review_status"] != "pending":
             continue
-        if contribution:
-            if "vote_time" not in contribution.keys():
-                continue
-            comment["vote_time"] = contribution["vote_time"]
+
+        if comment in batch:
+            comment["next_batch"] = True
+            hours, minutes, seconds = [int(x) for x in
+                                       recharge_time.split(":")]
+            comment["vote_time"] = datetime.now() + timedelta(
+                hours=hours, minutes=minutes, seconds=seconds)
         else:
+            comment["next_batch"] = False
             comment["vote_time"] = "TBD"
+
+        pending_comments.append(comment)
+
+    comments = sorted(pending_comments, key=lambda x: x["review_date"])
+    comments = sorted(comments, key=lambda x: x["next_batch"], reverse=True)
 
     return render_template(
         "comments.html", contributions=comments, current_vp=current_vp,
