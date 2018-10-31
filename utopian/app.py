@@ -416,6 +416,8 @@ class WeeklyResource(Resource):
 
 def convert(contribution):
     del contribution["_id"]
+    if contribution["staff_picked"]:
+        contribution["score"] = 100
     contribution["voting_weight"] = exponential_vote(contribution)
     contribution["created"] = str(contribution["created"])
     contribution["review_date"] = str(contribution["review_date"])
