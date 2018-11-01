@@ -32,6 +32,18 @@ def beneficiary_set(post):
     return False
 
 
+def valid_age(post):
+    """Checks if post is within last twelve hours before payout."""
+    account = constants.DB.accounts.find_one({"account": "utopian-io"})
+    recharge_time = account["recharge_time"]
+    hours, minutes, seconds = [int(x) for x in recharge_time.split(":")]
+    recharging = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+
+    if post.time_elapsed() + recharging > timedelta(days=6, hours=12):
+        return False
+    return True
+
+
 def contribution(row, status):
     """Convert row to dictionary, only selecting values we want."""
     contribution = Contribution(row)
@@ -134,6 +146,7 @@ def contribution(row, status):
         "comment_url": comment_url,
         "beneficiaries_set": beneficiary_set(comment),
         "is_vipo": author in VIPO_LIST,
+        "valid_age": valid_age(comment)
     }
 
     return new_contribution

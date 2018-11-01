@@ -500,7 +500,8 @@ class BatchResource(Resource):
             "$or": [
                 {"status": "pending"},
                 {"review_status": "pending"}
-            ]
+            ],
+            "valid_age": True,
         })]
 
         if batch_type == "comments":
@@ -1031,7 +1032,8 @@ def queue():
         "$or": [
             {"status": "pending"},
             {"review_status": "pending"}
-        ]
+        ],
+        "valid_age": True,
     })]
 
     current_vp, recharge_time, recharge_class = account_information()
