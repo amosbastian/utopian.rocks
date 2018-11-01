@@ -7,6 +7,7 @@ from itertools import zip_longest
 from operator import itemgetter
 from statistics import mean
 
+import numpy as np
 import timeago
 from beem.account import Account
 from beem.comment import Comment
@@ -897,7 +898,8 @@ def contribution_voting_power(contributions, voting_power):
     starting_vp = voting_power
     scaler = 1.0
 
-    for contribution in contributions:
+    for contribution in sorted(contributions, key=lambda x: x["score"],
+                               reverse=True):
         category = contribution["category"]
         voting_weight = contribution["voting_weight"]
         usage = scaler * voting_weight / 100.0 * 0.02 * voting_power
@@ -913,7 +915,8 @@ def get_category_usage(contributions, voting_power):
     """
     category_usage = {}
 
-    for contribution in contributions:
+    for contribution in sorted(contributions, key=lambda x: x["score"],
+                               reverse=True):
         category = contribution["category"]
 
         if "task" in category:
@@ -965,7 +968,8 @@ def comment_voting_power(comments, comment_weights, scaling=1.0):
     currently pending review comments.
     """
     voting_power = 100.0
-    for contribution in comments:
+    for contribution in sorted(comments, key=lambda x: x["review_date"],
+                               reverse=True):
         category = contribution["category"]
         try:
             voting_weight = comment_weights[category]
@@ -976,6 +980,20 @@ def comment_voting_power(comments, comment_weights, scaling=1.0):
         voting_power -= usage
 
     return 100.0 - voting_power
+
+
+def update_weights(comment_weights, comment_usage):
+    """Updates the weights used to upvote comments so that the actual voting
+    power usage is equal to the estimated usage.
+    """
+    desired_usage = 1.0 - VP_COMMENTS / 100.0
+    actual_usage = 1.0 - comment_usage / 100.0
+    scaler = np.log(desired_usage) / np.log(actual_usage)
+
+    for category in comment_weights.keys():
+        comment_weights[category] *= scaler
+
+    return comment_weights
 
 
 def get_comment_weights():
