@@ -135,6 +135,7 @@ class ContributionResource(Resource):
         "repository": fields.Str(),
         "beneficiaries_set": fields.Bool(),
         "is_vipo": fields.Bool(),
+        "valid_age": fields.Bool(),
     }
 
     @use_args(query_parameters)
