@@ -1075,7 +1075,8 @@ def queue():
 
     remaining_contributions = []
     for contribution in all_contributions:
-        if contribution in batch or contribution["status"] != "pending":
+        if (contribution in batch or contribution["status"] != "pending" or
+                not contribution["valid_age"]):
             continue
 
         contribution["next_batch"] = False
