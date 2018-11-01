@@ -187,6 +187,23 @@ body {
         height: 18rem;
         width: 18rem; } }
 
+.announcement {
+  display: grid;
+  grid-column: center-start / center-end;
+  grid-auto-flow: row;
+  margin-top: 2rem;
+  color: #155724;
+  background-color: #d4edda;
+  font-size: 1.4rem;
+  padding: .75rem 1.25rem;
+  border: 1px solid #c3e6cb;
+  border-radius: .25rem; }
+
+.announcement-url:link,
+.announcement-url:visited {
+  color: var(--color-link);
+  text-decoration: none; }
+
 .contributions {
   display: grid;
   grid-column: center-start / center-end; }
@@ -360,6 +377,8 @@ body {
   text-align: center; }
 
 @media screen and (max-width: 1024px) {
+  .announcement {
+    font-size: 2.4rem; }
   .contribution-repository:link,
   .contribution-repository:visited {
     font-size: 2rem; }
@@ -405,6 +424,8 @@ body {
     fill: currentColor; } }
 
 @media screen and (max-width: 768px) {
+  .category-filter {
+    grid-template-columns: repeat(7, max-content); }
   .contribution-repository:link,
   .contribution-repository:visited {
     font-size: 1.8rem;
@@ -487,23 +508,6 @@ body {
     width: 3rem;
     height: 3rem;
     fill: currentColor; } }
-
-.announcement {
-  display: grid;
-  grid-column: center-start / center-end;
-  grid-auto-flow: row;
-  margin-top: 2rem;
-  color: #155724;
-  background-color: #d4edda;
-  font-size: 1.4rem;
-  padding: .75rem 1.25rem;
-  border: 1px solid #c3e6cb;
-  border-radius: .25rem; }
-
-.announcement-url:link,
-.announcement-url:visited {
-  color: var(--color-link);
-  text-decoration: none; }
 
 .footer {
   margin-top: 5rem;
