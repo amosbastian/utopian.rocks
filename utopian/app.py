@@ -490,7 +490,8 @@ def batch_comments(contributions):
 
 def batch_contributions(contributions):
     """Get all contributions to be upvoted."""
-    return [c for c in contributions if c["status"] == "pending"]
+    return [c for c in contributions if c["status"] == "pending" and
+            c["valid_age"]]
 
 
 class BatchResource(Resource):
@@ -500,8 +501,7 @@ class BatchResource(Resource):
             "$or": [
                 {"status": "pending"},
                 {"review_status": "pending"}
-            ],
-            "valid_age": True,
+            ]
         })]
 
         if batch_type == "comments":
@@ -1051,8 +1051,7 @@ def queue():
         "$or": [
             {"status": "pending"},
             {"review_status": "pending"}
-        ],
-        "valid_age": True,
+        ]
     })]
 
     current_vp, recharge_time, recharge_class = account_information()
