@@ -378,7 +378,7 @@ body {
 
 @media screen and (max-width: 1024px) {
   .announcement {
-    font-size: 2.4rem; }
+    font-size: 2rem; }
   .contribution-repository:link,
   .contribution-repository:visited {
     font-size: 2rem; }
