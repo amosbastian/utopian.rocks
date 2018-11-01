@@ -792,6 +792,28 @@ def estimate_vote_time(contributions, recharge_time):
     return contributions
 
 
+def sort_batch_contributions(contributions):
+    """Sorts the contributions so that the top contribution for each category
+    are at the front, with the remaining contributions sorted by score.
+    """
+    categories = []
+    top_each_category = []
+    for contribution in sorted(contributions, key=lambda x: x["score"],
+                               reverse=True):
+        category = contribution["category"]
+        if category in categories:
+            continue
+
+        categories.append(category)
+        top_each_category.append(contribution)
+
+    remaining_contributions = sorted(
+        [c for c in contributions if c not in top_each_category],
+        key=lambda x: x["score"], reverse=True)
+
+    return top_each_category + remaining_contributions
+
+
 def get_batch(contributions, category_share, voting_power):
     """Votes and replies to the given contribution if there is still some mana
     left in its category's share.
@@ -799,8 +821,7 @@ def get_batch(contributions, category_share, voting_power):
     used_share = []
     batch = []
 
-    for contribution in sorted(contributions, key=lambda x: x["score"],
-                               reverse=True):
+    for contribution in sort_batch_contributions(contributions):
         voting_weight = contribution["voting_weight"]
         category = contribution["category"]
 
@@ -899,8 +920,7 @@ def contribution_voting_power(contributions, voting_power):
     starting_vp = voting_power
     scaler = 1.0
 
-    for contribution in sorted(contributions, key=lambda x: x["score"],
-                               reverse=True):
+    for contribution in sort_batch_contributions(contributions):
         category = contribution["category"]
         voting_weight = contribution["voting_weight"]
         usage = scaler * voting_weight / 100.0 * 0.02 * voting_power
@@ -916,8 +936,7 @@ def get_category_usage(contributions, voting_power):
     """
     category_usage = {}
 
-    for contribution in sorted(contributions, key=lambda x: x["score"],
-                               reverse=True):
+    for contribution in sort_batch_contributions(contributions):
         category = contribution["category"]
 
         if "task" in category:
@@ -1048,27 +1067,23 @@ def queue():
     category_share = init_contributions(contributions, comment_usage)
     batch = get_batch(contributions, category_share, 100.0 - comment_usage)
 
-    pending_contributions = []
+    for contribution in batch:
+        contribution["next_batch"] = True
+        hours, minutes, seconds = [int(x) for x in recharge_time.split(":")]
+        contribution["vote_time"] = datetime.now() + timedelta(
+            hours=hours, minutes=minutes, seconds=seconds)
+
+    remaining_contributions = []
     for contribution in all_contributions:
-        if contribution["status"] != "pending":
+        if contribution in batch or contribution["status"] != "pending":
             continue
 
-        if contribution in batch:
-            contribution["next_batch"] = True
-            hours, minutes, seconds = [int(x) for x in
-                                       recharge_time.split(":")]
-            contribution["vote_time"] = datetime.now() + timedelta(
-                hours=hours, minutes=minutes, seconds=seconds)
-        else:
-            contribution["next_batch"] = False
-            contribution["vote_time"] = "TBD"
+        contribution["next_batch"] = False
+        contribution["vote_time"] = "TBD"
+        remaining_contributions.append(contribution)
 
-        pending_contributions.append(contribution)
-
-    contributions = sorted(
-        pending_contributions,
-        key=lambda x: (x["next_batch"], x["score"]),
-        reverse=True)
+    contributions = batch + sorted(remaining_contributions,
+                                   key=lambda x: x["score"], reverse=True)
 
     return render_template(
         "queue.html", contributions=contributions, current_vp=current_vp,
