@@ -11,7 +11,9 @@
     <svg class="contribution-header-icon">
       <use xlink:href="../static/img/sprite.svg#icon-pencil"></use>
     </svg>
-    {{contributions|length}}
+    <p class="contribution-counter">
+      {{contributions|length}}
+    </p>
   </div>
   <div class="statistics-element">
     <svg class="contribution-header-icon">
@@ -33,13 +35,13 @@
     {% for category in categories %}
       {% if category == "all" %}
       <div title="{{category}}" class="filter-button category--{{category}}">
-        <svg class="category-icon" onclick="filterContributions('{{category}}')">
+        <svg class="category-icon">
           <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
         </svg>
       </div>
       {% else %}
       <div title="{{category}}" class="filter-button category--{{category}} category--inactive">
-        <svg class="category-icon" onclick="filterContributions('{{category}}')">
+        <svg class="category-icon">
           <use xlink:href="../static/img/sprite.svg#icon-{{category}}"></use>
         </svg>
       </div>
@@ -49,7 +51,7 @@
 </div>
 <div class="contributions">
   {% for contribution in contributions %}
-  <div class="contribution {{contribution.category}}">
+  <div class="contribution {{contribution.category}} show">
     <div class="contribution__author--queue" title="@{{contribution.author}}">
       <div>
         {{loop.index}}.
@@ -125,6 +127,5 @@
 <script>
   votingPower();
   countdown();
-  filterContributions('all');
 </script>
 {% endblock %}

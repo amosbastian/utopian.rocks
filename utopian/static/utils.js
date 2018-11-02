@@ -45,27 +45,76 @@ function votingPower() {
   var wait = setTimeout(votingPower, 43200);
 }
 
-function filterContributions(category) {
-  let contributions = document.getElementsByClassName('contribution');
-  let temporaryCategory = category;
-  if (temporaryCategory === 'all') { 
-    temporaryCategory = '';
+const contributions = document.getElementsByClassName('contribution');
+
+let filterCategories = [];
+let filterButtons;
+let allButton;
+
+document.addEventListener("DOMContentLoaded", () => {
+  filterButtons = document.querySelectorAll(".filter-button");
+  allButton = document.querySelector('.category--all');
+
+  filterButtons.forEach(element => {
+    const buttonCategory = element.classList[1].replace('category--', '');
+    element.addEventListener('click', () => {
+      if (buttonCategory != 'all') {
+        element.classList.toggle('category--inactive');
+      }
+      filterContributions(buttonCategory);
+    });
+  });
+});
+
+
+function updateCounter() {
+  contributionCounter = document.querySelector('.contribution-counter');
+  numberContributions = document.querySelectorAll('.show').length;
+  contributionCounter.innerHTML = numberContributions;
+}
+
+/* Shows all contributions and turn all category buttons to inactive */
+function showContributions() {
+  for (let contribution of contributions) {
+    contribution.classList.add('show');
   }
+
+  filterButtons.forEach(element => {
+    const buttonCategory = element.classList[1].replace('category--', '');
+    if (buttonCategory != 'all') {
+      element.classList.add('category--inactive');
+    } else {
+      element.classList.remove('category--inactive');
+    }
+  });
+}
+
+/* Show all contributions if category === 'all', else toggle category's 
+   contributions */
+function filterContributions(category) {
+  if (category === 'all') {
+    filterCategories = [];
+    showContributions();
+    updateCounter();
+    return;
+  } 
+
+  allButton.classList.add('category--inactive');
+
+  if (filterCategories.includes(category)) {
+    filterCategories = filterCategories.filter(element => {
+      return element !== category;
+    });
+  } else {
+    filterCategories.push(category);
+  }
+
   for (let contribution of contributions) {
     contribution.classList.remove('show');
-    if (contribution.classList.contains(temporaryCategory) || temporaryCategory === '') {
+    const contributionCategory = contribution.classList[1];
+    if (filterCategories.includes(contributionCategory)) {
       contribution.classList.add('show');
     }
   }
-
-  let filterButtons = document.getElementsByClassName('filter-button');
-  for (let button of filterButtons) {
-    if (!button.classList.contains('category--inactive')) {
-      button.classList.add('category--inactive');
-    }
-
-    if (button.classList.contains('category--' + category)) {
-      button.classList.remove('category--inactive');
-    }
-  }
+  updateCounter();
 }
