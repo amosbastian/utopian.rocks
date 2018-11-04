@@ -51,7 +51,7 @@
 </div>
 <div class="contributions">
   {% for contribution in contributions %}
-  <div class="contribution contribution--without-score {{contribution.category}}">
+  <div class="contribution {{contribution.category}} contribution--without-score">
     <div class="contribution__author--queue" title="@{{contribution.moderator}}">
       <div>
         {{loop.index}}.
