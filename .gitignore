@@ -18,6 +18,7 @@ docs/_static/
 docs/_templates/
 
 test.py
+test2.py
 test.html
 
 .vscode/

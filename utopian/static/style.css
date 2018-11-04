@@ -220,6 +220,8 @@ body {
   border-right: 1px solid var(--color-contribution-border);
   height: 6.4rem;
   padding-left: .8rem; }
+  .contribution--without-score {
+    grid-template-columns: 5rem 1fr 5rem .5rem; }
   .contribution__status {
     cursor: pointer;
     display: grid;
