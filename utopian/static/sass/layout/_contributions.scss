@@ -28,7 +28,7 @@
 
 .contribution {
   display: none;
-  grid-template-columns: 5rem 1fr 5rem .5rem;
+  grid-template-columns: 5rem 1fr 5rem 5rem .5rem;
   background-color: var(--color-contribution);
   border-bottom: 1px solid var(--color-contribution-border);
   border-left: 1px solid var(--color-contribution-border);
@@ -91,7 +91,157 @@
     justify-content: center;
     align-items: center;
   }
+
+  &__score:link,
+  &__score:visited {
+    text-decoration: none;
+    color: var(--color-header);
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
 }
+
+/* ---------------------------------------------------------------------------- */
+/* Progress circle adapted from https://blog.greggant.com/posts/2017/10/23/pure-css-scss-circular-progress-bar.html */
+
+$borderWidth: .3rem;
+$animationTime: 0.1s;
+$border-color-default: #eee;
+$highScoreColor: #2ecc71;
+$mediumHighScoreColor: #FFDC00;
+$mediumLowScoreColor: #f39c12;
+$lowScoreColor: #e74c3c;
+$size: 4rem;
+$howManySteps: 100;
+
+.progress {
+  width: $size;
+  height: $size;
+  line-height: $size;
+  background: none;
+  margin: 0 auto;
+  box-shadow: none;
+  position: relative;
+
+  &:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: $borderWidth solid $border-color-default;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  > span {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+  }
+
+  .progress-left {
+    left: 0;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 100%;
+    background: none;
+    border-width: $borderWidth;
+    border-style: solid;
+    position: absolute;
+    top: 0;
+    &--low {
+      border-color: $lowScoreColor;
+    }
+    &--medium-low {
+      border-color: $mediumLowScoreColor;
+    }
+    &--medium-high {
+      border-color: $mediumHighScoreColor;
+    }
+    &--high {
+      border-color: $highScoreColor;
+    }
+  }
+  
+  .progress-left .progress-bar {
+    left: 100%;
+    border-top-right-radius: ($size/2);;
+    border-bottom-right-radius: ($size/2);;
+    border-left: 0;
+    -webkit-transform-origin: center left;
+    transform-origin: center left;
+  }
+
+  .progress-right {
+    right: 0;
+    .progress-bar {
+      left: -100%;
+      border-top-left-radius: ($size/2);;
+      border-bottom-left-radius: ($size/2);;
+      border-right: 0;
+      -webkit-transform-origin: center right;
+      transform-origin: center right;
+    }
+  }
+
+  .progress-value {
+    display: flex;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    text-align: center;
+    line-height: 20px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+}
+
+@for $i from 1 through $howManySteps {
+	$stepName: ($i*(100 / $howManySteps));
+
+	@if $i <= ($howManySteps/2) { 
+		.progress[data-percentage="#{$stepName}"] {
+			.progress-right .progress-bar {
+				 animation: loading-#{$i} $animationTime linear forwards;
+			}
+			.progress-left .progress-bar {animation: 0;}
+		}
+	}
+	@if $i > ($howManySteps/2)  {  
+		.progress[data-percentage="#{$stepName}"] {
+			.progress-right .progress-bar {
+				animation: loading-#{($howManySteps/2)} $animationTime linear forwards;
+			}
+			.progress-left .progress-bar {
+      animation: loading-#{$i - ($howManySteps/2)} $animationTime linear forwards $animationTime;
+    }
+		}
+	}
+}
+
+@for $i from 1 through ($howManySteps/2) { 
+	$degrees: (180/($howManySteps/2));
+	$degrees: ($degrees*$i);
+	@keyframes loading-#{$i}{
+    0%{
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100%{
+        -webkit-transform: rotate($degrees);
+			transform: rotate(#{$degrees}deg);
+    }
+	}
+}
+
+/* ---------------------------------------------------------------------------- */
 
 .show {
   display: grid;
@@ -239,6 +389,10 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .progress-value {
+    font-size: 2.5rem !important;
+  }
+
   .announcement {
     font-size: 2rem;
   }

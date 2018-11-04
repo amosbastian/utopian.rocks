@@ -795,30 +795,18 @@ def estimate_vote_time(contributions, recharge_time):
 
 
 def sort_batch_contributions(contributions):
-    """Sorts the contributions so that the top contribution for each category
-    are at the front, with the remaining contributions sorted by score.
+    """Returns the list of contributions sorted by creation date (old -> young)
+    and score (high -> low).
     """
-    categories = []
-    top_each_category = []
-    for contribution in sorted(contributions, key=lambda x: x["score"],
-                               reverse=True):
-        category = contribution["category"]
-        if category in categories:
-            continue
+    by_creation = sorted(contributions, key=lambda x: x["created"])
+    by_score = sorted(by_creation, key=lambda x: x["score"], reverse=True)
 
-        categories.append(category)
-        top_each_category.append(contribution)
-
-    remaining_contributions = sorted(
-        [c for c in contributions if c not in top_each_category],
-        key=lambda x: x["score"], reverse=True)
-
-    return top_each_category + remaining_contributions
+    return by_score
 
 
 def get_batch(contributions, category_share, voting_power):
-    """Votes and replies to the given contribution if there is still some mana
-    left in its category's share.
+    """Returns the batch of contributions that will be voted on in the next
+    voting round.
     """
     used_share = []
     batch = []
@@ -950,7 +938,6 @@ def get_category_usage(contributions, voting_power):
         vp_usage = voting_weight / 100.0 * 0.02 * voting_power
 
         category_usage[category] += vp_usage
-        voting_power -= vp_usage
 
     return category_usage
 

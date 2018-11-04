@@ -95,6 +95,37 @@
         {% endif %}
       </div>
     </div>
+    <a class="contribution__score" href="{{contribution.url}}/#@{{contribution.moderator}}/{{contribution.comment_url}}">
+      <div class="progress" data-percentage="{{contribution.score|int}}">
+        <span class="progress-left">
+          {% if contribution.score <= 25 %}
+          <span class="progress-bar progress-bar--low"></span>
+          {% elif contribution.score <= 50 %}
+          <span class="progress-bar progress-bar--medium-low"></span>
+          {% elif contribution.score <= 75 %}
+          <span class="progress-bar progress-bar--medium-high"></span>
+          {% else %}
+          <span class="progress-bar progress-bar--high"></span>
+          {% endif %}
+        </span>
+        <span class="progress-right">
+            {% if contribution.score <= 25 %}
+          <span class="progress-bar progress-bar--low"></span>
+          {% elif contribution.score <= 50 %}
+          <span class="progress-bar progress-bar--medium-low"></span>
+          {% elif contribution.score <= 75 %}
+          <span class="progress-bar progress-bar--medium-high"></span>
+          {% else %}
+          <span class="progress-bar progress-bar--high"></span>
+          {% endif %}
+        </span>
+        <div class="progress-value">
+          <div>
+            {{contribution.score|int}}
+          </div>
+        </div>
+      </div>
+    </a>
     {% if "task" in contribution.category %}
     <div class="contribution__category category--{{contribution.category.split('task-')[1]}}" title="{{contribution.category}}">
       <svg class="category-icon">
