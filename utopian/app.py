@@ -658,7 +658,7 @@ def weekly(date):
     week_ago = today - timedelta(days=7)
     contributions = DB.contributions
     pipeline = [
-        {"$match": {"review_date": {"$gte": week_ago}}}]
+        {"$match": {"review_date": {"$gte": week_ago, "$lte": today}}}]
     contributions = [json.loads(json_util.dumps(c))
                      for c in contributions.aggregate(pipeline)]
 
