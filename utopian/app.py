@@ -472,21 +472,19 @@ def convert(contribution):
 
 def batch_comments(contributions):
     """Get all comments to be upvoted."""
+    _, recharge_time, _ = account_information()
     sorted_by_review = sorted(contributions, key=lambda x: x["review_date"])
-    for contribution in sorted_by_review:
-        if (contribution["review_date"] != datetime(1970, 1, 1) and
-                contribution["review_status"] == "pending"):
-            oldest = contribution["review_date"]
-            break
 
-    if oldest > datetime.now() - timedelta(days=2):
-        return []
+    recharge_time = parse(recharge_time)
+    recharge_time = timedelta(
+        hours=recharge_time.hour,
+        minutes=recharge_time.minute,
+        seconds=recharge_time.second)
 
-    batch = [c for c in sorted_by_review
-             if c["review_date"] <= oldest + timedelta(days=1) and
-             c["review_date"] <= datetime.now() - timedelta(days=2) and
-             c["review_status"] == "pending" and
-             c["comment_url"]]
+    batch = [c for c in sorted_by_review if
+             c["review_date"] <= datetime.now() - timedelta(days=2) +
+             recharge_time]
+
     return batch
 
 
