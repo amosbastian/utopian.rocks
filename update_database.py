@@ -52,8 +52,6 @@ def contribution(row, status):
     if url == "":
         return
 
-    database_contribution = constants.DB.contributions.find_one({"url": url})
-
     if contribution.staff_pick.lower() == "yes":
         staff_picked = True
     else:
@@ -76,9 +74,7 @@ def contribution(row, status):
     except Exception:
         return
 
-    if database_contribution["comment_url"] != "":
-        comment_url = database_contribution["comment_url"]
-    elif (contribution.moderator != ""):
+    if contribution.review_status == "Pending":
         for reply in comment.get_replies():
             if reply.author == contribution.moderator:
                 review_date = reply["created"]
