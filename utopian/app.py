@@ -21,7 +21,7 @@ from webargs import fields, validate
 from webargs.flaskparser import abort, parser, use_args, use_kwargs
 
 VP_TOTAL = 18.0
-VP_COMMENTS = 3.2
+VP_COMMENTS = 5.0
 CATEGORY_WEIGHTING = {
     "ideas": 10.0,
     "development": 10.0,
