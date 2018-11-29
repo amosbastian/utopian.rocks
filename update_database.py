@@ -76,20 +76,23 @@ def contribution(row, status):
     except Exception:
         return
 
-    if database_contribution["comment_url"]:
-        comment_url = database_contribution["comment_url"]
-    else:
-        if contribution.review_status == "Pending":
-            for reply in comment.get_replies():
-                if reply.author == contribution.moderator:
-                    review_date = reply["created"]
-                    comment_url = reply.permlink
-                    break
-            else:
-                review_date = datetime(1970, 1, 1)
-                comment_url = ""
+    try:
+        if database_contribution["comment_url"]:
+            comment_url = database_contribution["comment_url"]
         else:
-            comment_url = ""
+            if contribution.review_status == "Pending":
+                for reply in comment.get_replies():
+                    if reply.author == contribution.moderator:
+                        review_date = reply["created"]
+                        comment_url = reply.permlink
+                        break
+                else:
+                    review_date = datetime(1970, 1, 1)
+                    comment_url = ""
+            else:
+                comment_url = ""
+    except:
+        comment_url = ""
 
     # Calculate total (pending) payout of contribution
     if comment.time_elapsed() > timedelta(days=7):
