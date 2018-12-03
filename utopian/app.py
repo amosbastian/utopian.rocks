@@ -478,9 +478,12 @@ def convert(contribution):
     if contribution["staff_picked"]:
         contribution["score"] = 100
 
-    contribution["voting_weight"] = exponential_vote(contribution)
-    contribution["created"] = str(contribution["created"])
-    contribution["review_date"] = str(contribution["review_date"])
+    if "voting_weight" in contribution.keys():
+        contribution["voting_weight"] = exponential_vote(contribution)
+    if "created" in contribution.keys():
+        contribution["created"] = str(contribution["created"])
+    if "review_date" in contribution.keys():
+        contribution["review_date"] = str(contribution["review_date"])
     return contribution
 
 
@@ -756,6 +759,7 @@ def exponential_vote(contribution):
 
     is_vipo = contribution["is_vipo"]
     beneficiaries_set = contribution["beneficiaries_set"]
+
     try:
         max_vote = MAX_VOTE[category]
     except:
