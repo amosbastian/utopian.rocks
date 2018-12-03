@@ -136,6 +136,8 @@ class ContributionResource(Resource):
         "beneficiaries_set": fields.Bool(),
         "is_vipo": fields.Bool(),
         "valid_age": fields.Bool(),
+        "skip": fields.Int(),
+        "limit": fields.Int(),
     }
 
     @use_args(query_parameters)
@@ -143,8 +145,17 @@ class ContributionResource(Resource):
         """Uses the given query parameters to search for contributions in the
         database.
         """
-        contributions = [json.loads(json_util.dumps(without_score(c)))
-                         for c in DB.contributions.find(query_parameters)]
+        parameters = {key: value for key, value in query_parameters.items()
+                      if key != "skip" and key != "limit"}
+        contributions = DB.contributions.find(parameters)
+
+        if "skip" in query_parameters.keys():
+            contributions = contributions.skip(query_parameters["skip"])
+        if "limit" in query_parameters.keys():
+            contributions = contributions.limit(query_parameters["limit"])
+
+        contributions = [json.loads(json_util.dumps(convert(c)))
+                         for c in contributions]
         return jsonify(contributions)
 
 
@@ -457,13 +468,16 @@ class WeeklyResource(Resource):
 def convert(contribution):
     del contribution["_id"]
 
-    if contribution["score"] < 0:
+    if not contribution["score"]:
+        contribution["score"] = 0
+    elif contribution["score"] < 0:
         contribution["score"] = 0
     elif contribution["score"] > 100:
         contribution["score"] = 100
 
     if contribution["staff_picked"]:
         contribution["score"] = 100
+
     contribution["voting_weight"] = exponential_vote(contribution)
     contribution["created"] = str(contribution["created"])
     contribution["review_date"] = str(contribution["review_date"])
