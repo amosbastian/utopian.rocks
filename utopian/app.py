@@ -478,8 +478,8 @@ def convert(contribution):
     if contribution["staff_picked"]:
         contribution["score"] = 100
 
-    if "voting_weight" in contribution.keys():
-        contribution["voting_weight"] = exponential_vote(contribution)
+    contribution["voting_weight"] = exponential_vote(contribution)
+
     if "created" in contribution.keys():
         contribution["created"] = str(contribution["created"])
     if "review_date" in contribution.keys():
@@ -757,8 +757,15 @@ def exponential_vote(contribution):
     score = contribution["score"]
     category = contribution["category"]
 
-    is_vipo = contribution["is_vipo"]
-    beneficiaries_set = contribution["beneficiaries_set"]
+    if "is_vipo" in contribution.keys():
+        is_vipo = contribution["is_vipo"]
+    else:
+        is_vipo = False
+
+    if "beneficiaries_set" in contribution.keys():
+        beneficiaries_set = contribution["beneficiaries_set"]
+    else:
+        beneficiaries_set = False
 
     try:
         max_vote = MAX_VOTE[category]
@@ -1068,6 +1075,13 @@ def queue():
 
     contributions = [convert(c)
                      for c in batch_contributions(all_contributions)]
+
+    for contribution in contributions:
+        try:
+            print(contribution["voting_power"])
+        except:
+            print(contribution)
+
     category_share = init_contributions(contributions, comment_usage)
     batch = get_batch(contributions, category_share, 100.0 - comment_usage)
 
