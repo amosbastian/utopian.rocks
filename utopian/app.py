@@ -1076,12 +1076,6 @@ def queue():
     contributions = [convert(c)
                      for c in batch_contributions(all_contributions)]
 
-    for contribution in contributions:
-        try:
-            print(contribution["voting_power"])
-        except:
-            print(contribution)
-
     category_share = init_contributions(contributions, comment_usage)
     batch = get_batch(contributions, category_share, 100.0 - comment_usage)
 
