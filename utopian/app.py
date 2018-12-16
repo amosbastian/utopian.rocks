@@ -733,20 +733,20 @@ def account_information():
 
 
 MAX_VOTE = {
-    "ideas": 20.0,
-    "development": 55.0,
-    "bug-hunting": 13.0,
-    "translations": 35.0,
-    "graphics": 40.0,
-    "analysis": 45.0,
-    "social": 30.0,
-    "documentation": 30.0,
-    "tutorials": 30.0,
-    "video-tutorials": 35.0,
-    "copywriting": 30.0,
-    "blog": 30.0,
-    "anti-abuse": 50.0,
-    "iamutopian": 50.0,
+    "ideas": 35.0,
+    "development": 70.0,
+    "bug-hunting": 28.0,
+    "translations": 50.0,
+    "graphics": 55.0,
+    "analysis": 60.0,
+    "social": 45.0,
+    "documentation": 45.0,
+    "tutorials": 45.0,
+    "video-tutorials": 45.0,
+    "copywriting": 45.0,
+    "blog": 45.0,
+    "anti-abuse": 65.0,
+    "iamutopian": 65.0,
 }
 MAX_TASK_REQUEST = 6.0
 EXP_POWER = 2.1
