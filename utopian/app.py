@@ -466,7 +466,8 @@ class WeeklyResource(Resource):
 
 
 def convert(contribution):
-    del contribution["_id"]
+    if "_id" in contribution.keys():
+        del contribution["_id"]
 
     if not contribution["score"]:
         contribution["score"] = 0
@@ -520,13 +521,23 @@ class BatchResource(Resource):
                 {"review_status": "pending"}
             ]
         })]
+        comments = batch_comments(all_contributions)
+        _, comment_usage = init_comments(comments)
+
+        contributions = [convert(c)
+                         for c in batch_contributions(all_contributions)]
+
+        category_share = init_contributions(contributions, comment_usage)
+        next_batch = get_batch(contributions, category_share,
+                               100.0 - comment_usage)
 
         if batch_type == "comments":
-            batch = batch_comments(all_contributions)
+            batch = comments
         elif batch_type == "contributions":
-            batch = batch_contributions(all_contributions)
+            batch = next_batch
         else:
             return jsonify({})
+
         eligible = [json.loads(json_util.dumps(convert(c))) for c in batch]
         return jsonify(eligible)
 
