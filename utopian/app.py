@@ -500,7 +500,8 @@ def batch_comments(contributions):
 
     batch = [c for c in sorted_by_review if
              c["review_date"] <= datetime.now() - timedelta(days=2) +
-             recharge_time and c["comment_url"]]
+             recharge_time and c["comment_url"] and
+             c["review_status"] == "pending"]
 
     return batch
 
