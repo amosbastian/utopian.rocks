@@ -781,7 +781,7 @@ def exponential_vote(contribution):
     def update_weight(weight):
         """Updates the voting percentage if beneficiaries utopian.pay set."""
         weight = float(weight)
-        new_weight = weight + 0.2 * weight + 6.0
+        new_weight = weight + 0.1 * weight + 6.0
         return new_weight
 
     if beneficiaries_set:
