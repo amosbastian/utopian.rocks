@@ -567,9 +567,6 @@ $howManySteps: 100;
   }
 
   .statistics {
-    grid-template-areas:
-    "number-contributions recharge-time voting-power"
-    "filter-element filter-element filter-element";
     font-size: 3rem;
   }
 
