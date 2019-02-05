@@ -1436,6 +1436,7 @@ body {
 .filter-button {
   height: 3.5rem;
   display: grid;
+  cursor: pointer;
   justify-content: center;
   align-items: center;
   background-color: white;
@@ -1473,7 +1474,7 @@ body {
 
 @media screen and (max-width: 1024px) {
   .progress-value {
-    font-size: 2.5rem !important; }
+    font-size: 1.8rem !important; }
   .announcement {
     font-size: 2rem; }
   .contribution-repository:link,
@@ -1506,6 +1507,10 @@ body {
     grid-template-areas: "number-contributions recharge-time voting-power" "filter-element filter-element filter-element";
     grid-template-columns: 1fr 1fr 1fr;
     font-size: 3rem; }
+    .statistics--singular {
+      grid-template-areas: "recharge-time number-contributions voting-power" "filter-element filter-element filter-element" !important; }
+      .statistics--singular > .statistics-element {
+        justify-content: center; }
   .statistics-element {
     grid-gap: 1rem;
     margin-bottom: 1rem; }
@@ -1554,7 +1559,6 @@ body {
   .contribution-submitted {
     font-size: 1.8rem; }
   .statistics {
-    grid-template-areas: "number-contributions recharge-time voting-power" "filter-element filter-element filter-element";
     font-size: 3rem; }
   .statistics-element {
     grid-gap: 2rem; }
