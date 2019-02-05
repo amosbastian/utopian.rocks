@@ -480,6 +480,7 @@ $howManySteps: 100;
     font-size: 3rem;
 
     &--singular {
+      grid-template-columns: 1fr;
       &>.statistics-element {
         justify-content: center;
       }
