@@ -283,11 +283,11 @@ def update_vipo():
 
 def main():
     if constants.CONTRIBUTING:
+        update_account()
         update_posts(True)
-        update_account()
     else:
-        update_posts()
         update_account()
+        update_posts()
         update_banned()
         update_moderators()
         update_vipo()

@@ -1564,7 +1564,7 @@ body {
   .contribution {
     width: 100vw;
     height: 12rem;
-    grid-gap: 4rem;
+    grid-gap: 2rem;
     padding-left: 3.2rem; }
     .contribution__body {
       grid-gap: 0rem;
