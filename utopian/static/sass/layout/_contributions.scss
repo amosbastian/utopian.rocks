@@ -502,6 +502,7 @@ $howManySteps: 100;
 
   .filter-button {
     height: 7rem;
+    cursor: pointer;
 
     &:first-child,
     &:nth-child(8) {
