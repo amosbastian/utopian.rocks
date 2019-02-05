@@ -480,8 +480,10 @@ $howManySteps: 100;
     font-size: 3rem;
 
     &--singular {
-      grid-template-columns: 1fr;
-      &>.statistics-element {
+      grid-template-areas:
+        "recharge-time number-contributions voting-power"
+        "filter-element filter-element filter-element";
+      & > .statistics-element {
         justify-content: center;
       }
     }
