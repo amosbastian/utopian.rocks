@@ -2,7 +2,7 @@
 {% set active_page = "index" %}
 {% block content %}
 <div class="statistics statistics--singular">
-  <div class="statistics-element">
+  <div class="statistics-element" style="grid-area: number-contributions;">
     <svg class="contribution-header-icon">
       <use xlink:href="../static/img/sprite.svg#icon-pencil"></use>
     </svg>
@@ -10,7 +10,11 @@
       {{contributions|length}}
     </p>
   </div>
-  <div class="category-filter">
+  <div class="statistics-element" style="grid-area: recharge-time;">
+  </div>
+  <div class="statistics-element" style="grid-area: voting-power;">
+  </div>
+  <div class="category-filter" style="grid-area: filter-element;">
       {% for category in categories %}
         {% if category == "all" %}
         <div title="{{category}}" class="filter-button category--{{category}}">

@@ -2,7 +2,7 @@
 {% set active_page = "comments" %}
 {% block content %}
 <div class="statistics">
-  <div class="statistics-element">
+  <div class="statistics-element" style="grid-area: number-contributions;">
     <svg class="contribution-header-icon">
       <use xlink:href="../static/img/sprite.svg#icon-pencil"></use>
     </svg>
@@ -10,7 +10,7 @@
       {{contributions|length}}
     </p>
   </div>
-  <div class="statistics-element">
+  <div class="statistics-element" style="grid-area: recharge-time;">
     <svg class="contribution-header-icon">
       <use xlink:href="../static/img/sprite.svg#icon-clock"></use>
     </svg>
@@ -18,7 +18,7 @@
       {{recharge_time}}
     </span>
   </div>
-  <div class="statistics-element">
+  <div class="statistics-element" style="grid-area: voting-power;">
     <svg class="contribution-header-icon">
       <use xlink:href="../static/img/sprite.svg#icon-power"></use>
     </svg>
@@ -26,7 +26,7 @@
       {{current_vp}}
     </span>
   </div>
-  <div class="category-filter">
+  <div class="category-filter" style="grid-area: filter-element;">
     {% for category in categories %}
       {% if category == "all" %}
       <div title="{{category}}" class="filter-button category--{{category}}">

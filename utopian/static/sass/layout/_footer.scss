@@ -66,6 +66,15 @@
     padding-left: 8rem;
     padding-right: 8rem;
     font-size: 3rem;
+    grid-gap: 1rem;
+
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+
+    &>* {
+      justify-content: center;
+      align-items: center;
+    }
 
     &__icon {
       width: 3.5rem;
