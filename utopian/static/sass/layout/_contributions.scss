@@ -482,7 +482,7 @@ $howManySteps: 100;
     &--singular {
       grid-template-areas:
         "recharge-time number-contributions voting-power"
-        "filter-element filter-element filter-element";
+        "filter-element filter-element filter-element" !important;
       & > .statistics-element {
         justify-content: center;
       }
