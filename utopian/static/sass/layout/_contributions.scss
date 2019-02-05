@@ -478,6 +478,13 @@ $howManySteps: 100;
       "filter-element filter-element filter-element";
     grid-template-columns: 1fr 1fr 1fr;
     font-size: 3rem;
+
+    &--singular {
+      grid-template-columns: 1fr;
+      &>.statistics-element {
+        justify-content: center;
+      }
+    }
   }
 
   .statistics-element {
