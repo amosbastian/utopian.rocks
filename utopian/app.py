@@ -466,7 +466,8 @@ class WeeklyResource(Resource):
 
 
 def convert(contribution):
-    del contribution["_id"]
+    if "_id" in contribution.keys():
+        del contribution["_id"]
 
     if not contribution["score"]:
         contribution["score"] = 0
@@ -522,10 +523,20 @@ class BatchResource(Resource):
             ]
         })]
 
+        comments = batch_comments(all_contributions)
+        _, comment_usage = init_comments(comments)
+
+        contributions = [convert(c)
+                         for c in batch_contributions(all_contributions)]
+
+        category_share = init_contributions(contributions, comment_usage)
+        next_batch = get_batch(contributions, category_share,
+                               100.0 - comment_usage)
+
         if batch_type == "comments":
-            batch = batch_comments(all_contributions)
+            batch = comments
         elif batch_type == "contributions":
-            batch = batch_contributions(all_contributions)
+            batch = next_batch
         else:
             return jsonify({})
         eligible = [json.loads(json_util.dumps(convert(c))) for c in batch]
@@ -747,7 +758,7 @@ MAX_VOTE = {
     "copywriting": 45.0,
     "blog": 45.0,
     "anti-abuse": 65.0,
-    "iamutopian": 65.0,
+    "iamutopian": 55.0,
 }
 MAX_TASK_REQUEST = 6.0
 EXP_POWER = 2.1
@@ -818,14 +829,19 @@ def estimate_vote_time(contributions, recharge_time):
     return contributions
 
 
-def sort_batch_contributions(contributions):
-    """Returns the list of contributions sorted by creation date (old -> young)
-    and score (high -> low).
-    """
-    by_creation = sorted(contributions, key=lambda x: x["created"])
-    by_score = sorted(by_creation, key=lambda x: x["score"], reverse=True)
+AGE_WEIGHTING = 3.0
 
-    return by_score
+
+def sort_batch_contributions(contributions):
+    """Returns the list of contributions sorted by score and their age in
+    days * AGE_WEIGHTING.
+    """
+    for contribution in contributions:
+        contribution_age = (datetime.now() - parse(contribution["created"]))
+        days_old = contribution_age.days + contribution_age.seconds / 3600 / 24.0
+        contribution["age_weighted_score"] = contribution["score"] + AGE_WEIGHTING * days_old
+
+    return sorted(contributions, key=lambda x: x["age_weighted_score"], reverse=True)
 
 
 def get_batch(contributions, category_share, voting_power):
@@ -855,6 +871,7 @@ def get_batch(contributions, category_share, voting_power):
         voting_power -= usage
         batch.append(contribution)
 
+    batch = sorted(batch, key=lambda x: x["score"], reverse=True)
     return batch
 
 
