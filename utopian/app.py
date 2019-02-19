@@ -90,7 +90,7 @@ def page_not_found(e):
 
 
 @app.route("/api/moderators")
-def moderaors():
+def moderators():
     moderators = [moderator["account"] for moderator in DB.moderators.find()]
     return jsonify(moderators)
 
