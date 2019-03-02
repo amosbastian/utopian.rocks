@@ -2,7 +2,10 @@
   <span class="header-image--container">
     <div class="header-image">
       <a href="/">
-        <img src="{{ url_for('static', filename='utopian_mascot.png') }}" alt="Utopian.rocks">
+        <img
+          src="{{ url_for('static', filename='utopian_mascot.png') }}"
+          alt="Utopian.rocks"
+        />
       </a>
     </div>
   </span>
@@ -15,8 +18,7 @@
     <a href="/" class="header-center--link">
       Waiting for review
     </a>
-    {% endif %}
-    {% if active_page == "queue" %}
+    {% endif %} {% if active_page == "queue" %}
     <a href="/queue" class="header-center--link header-center--link--active">
       Waiting for upvote
     </a>
@@ -24,8 +26,7 @@
     <a href="/queue" class="header-center--link">
       Waiting for upvote
     </a>
-    {% endif %}
-    {% if active_page == "comments" %}
+    {% endif %} {% if active_page == "comments" %}
     <a href="/comments" class="header-center--link header-center--link--active">
       Moderator comments
     </a>
@@ -34,7 +35,11 @@
       Moderator comments
     </a>
     {% endif %}
-    <a href="https://github.com/amosbastian/utopian.rocks/blob/master/FAQ.md" class="header-center--link" target="_blank">
+    <a
+      href="https://github.com/amosbastian/utopian.rocks/blob/master/FAQ.md"
+      class="header-center--link"
+      target="_blank"
+    >
       FAQ
     </a>
   </div>

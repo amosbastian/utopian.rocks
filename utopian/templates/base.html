@@ -1,29 +1,59 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115799370-1"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-115799370-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-  gtag('config', 'UA-115799370-1');
-  </script>
-  <script type="text/javascript" src="{{ url_for('static', filename='utils.js', version='02112018-2') }}"></script>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <title>Utopian.rocks</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css', version='05022019-3') }}">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body class="container">
+      gtag("config", "UA-115799370-1");
+    </script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='utils.js', version='02112018-2') }}"
+    ></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Utopian.rocks</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css', version='05022019-3') }}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+  </head>
+  <body class="container">
     {% include "header.html" %}
-    {% block content %}{% endblock %}
-    {% include "footer.html" %}
-</body>
+    <div
+      style="display: grid; grid-column: center-start / center-end; justify-content: center;"
+    >
+      <a href="https://igg.me/at/utopian">
+        <img
+          src="https://cdn.steemitimages.com/DQmZiyoT4Jh2nUJ8rLr8y8Y9a4fH86VDbD7oLX4haVMUrPt/970x90.jpg"
+          alt="Support Utopian on Indiegogo!"
+        />
+      </a>
+    </div>
+    {% block content %}{% endblock %} {% include "footer.html" %}
+  </body>
 </html>
